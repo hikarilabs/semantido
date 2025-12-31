@@ -5,24 +5,30 @@
 
 -----
 
-## Table of Contents
+Table of Contents
+-----
 
+- [About](#about)
 - [Installation](#installation)
+- [Contributing](#contributing)
 - [License](#license)
 
-## About
-In the world of GenAI, providing a reliable semantic layer foundations for RAG and agentic systems becomes the real differentiator. `semantido` aims to simplify
-the generation of a semantic layer for SQLAlchemy models. 
+About
+-----
+In the world of GenAI, providing a reliable semantic layer foundations for a reliable RAG and agentic systems becomes the real differentiator. 
+The value is in your data and workflows. `semantido` handles the semantic layer plumbing so you can focus on what makes your system unique.
 
-Philosophy: The value is in your data and workflows. `semantido` handles the semantic layer plumbing so you can focus on what makes your system unique.
-
-## Installation
+-----
 
 ```console
 pip install semantido
 ```
 
-## License
+Contributing
+-----
+Contributions to this library are welcomed and highly encouraged.
+See `CONTRIBUTING.md: https://github.com/hikarilabs/semantido/blob/main/CONTRIBUTING.md` for more information on how to get started.
 
-`my-project` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
-This library is GPL-3.0 licensed and focused on 
+License
+-----
+`semantido` is distributed under the terms of the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html) license.

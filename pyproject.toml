@@ -6,9 +6,9 @@ build-backend = "hatchling.build"
 name = "semantido"
 dynamic = ["version"]
 description = "Semantic layer for SQLAlchemy that auto-generates LLM-ready schema, relationships, constraints, and examples from your existing models."
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.11"
-license = "GNU General Public License v3.0"
+license = "GPL-3.0-only"
 authors = [
   { name="Dragos Crintea", email="dragos.crintea@semantido.ai" },
 ]
@@ -21,11 +21,23 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 license-files = ["LICEN[CS]E*"]
-dependencies = []
+dependencies = [
+    "sqlalchemy"
+]
+
+[project.optional-dependencies]
+dev = [
+    "mkdocs==1.6.1",
+    "mkdocstrings[python]==1.0.0",
+    "mkdocs-material==9.7.1",
+    "pytest==9.0.2",
+    "pytest-cov==7.0.0",
+    "pylint==4.0.4"
+]
 
 [project.urls]
 Homepage = "https://github.com/hikarilabs/semantido"
 Issues = "https://github.com/hilarilabs/semantido/issues"
 
 [tool.hatch.version]
-path = "src/my_project/__version__.py"
+path = "src/semantido/__version__.py"
