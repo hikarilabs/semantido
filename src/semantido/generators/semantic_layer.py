@@ -100,9 +100,11 @@ class SemanticLayer:
                             "name": column.name,
                             "data_type": column.data_type,
                             "description": column.description,
-                            "privacy_level": column.privacy_level.value
-                            if isinstance(column.privacy_level, Enum)
-                            else column.privacy_level,
+                            "privacy_level": (
+                                column.privacy_level.value
+                                if isinstance(column.privacy_level, Enum)
+                                else column.privacy_level
+                            ),
                             "sample_values": column.sample_values,
                             "synonyms": column.synonyms,
                             "is_foreign_key": column.is_foreign_key,
@@ -119,9 +121,11 @@ class SemanticLayer:
                     "from_table": relationship.from_table,
                     "to_table": relationship.to_table,
                     "join_condition": relationship.join_condition,
-                    "relationship_type": relationship.relationship_type.value
-                    if isinstance(relationship.relationship_type, Enum)
-                    else relationship.relationship_type,
+                    "relationship_type": (
+                        relationship.relationship_type.value
+                        if isinstance(relationship.relationship_type, Enum)
+                        else relationship.relationship_type
+                    ),
                     "description": relationship.description,
                 }
                 for relationship in self.relationships

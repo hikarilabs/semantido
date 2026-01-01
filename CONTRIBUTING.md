@@ -15,45 +15,47 @@ Guidelines for making `semantido` the coolest semantic wrapper for SQLAlchemy:
 To install the project along with the dev optional dependencies run:
 
 ```bash
-pip install ".[dev]"
+$ pip install ".[dev]"
 ```
 
 Making changes
 -----
 Some notes on making changes to ``semantido``.
-- If you've added a new feature or modified an existing feature, make sure to
-  add or update any applicable documentation in docstrings and in the
-  documentation (in ``docs/``). The reference documentation can be re-generated
-  using ``nox -s docgen``.
+- If you've added a new feature or modified an existing feature, make sure to  add or update any applicable documentation in docstrings and in the
+documentation (in ``docs/``). The reference documentation can be re-generated with:
+```bash
+nox -s docgen
+```
 
 - The codebase *aims* for greater than 90% test coverage after each commit. This is a guideline, not a *must*.
   You can test coverage with:
 
 ```bash
-pytest --cov=semantido tests/
-``
+$ pytest --cov=semantido tests/
+```
 
 Testing changes
 -----
-To test your changes, run unit tests with ``nox``::
-    $ nox -s unit
-
+This project uses hatch as the "all-in-one" project manager. To test your changes, run unit tests with ``hatch``.
+```bash
+$ hatch test
+```
 
 Coding Style
 -----
 This library is PEP8 & Pylint compliant. Pylint config is defined at
-``pylintrc`` for package code and ``pylintrc.tests`` for test code. Use
-``nox`` to check for non-compliant code::
-   $ nox -s lint
+``.pylintrc`` for package code. Use default pylint command to check for non-compliant code 
 
-Documentation Coverage and Building HTML Documentation
+```bash
+$ pylint src/*
+```
+
+Documentation Coverage and Markdown Documentation
 -----
-If you fix a bug, and the bug, all documentation which references must be
-changed to reflect the bug fix, ideally in the same commit that fixes the bug
-or adds the feature.
+If you fix a bug, all documentation which references the change must be updated to reflect the fix, ideally in the same commit.
 To build and review docs use  ``nox``::
    $ nox -s docs
-The HTML version of the docs will be built in ``docs/_build/html``
+The Markdown version of the docs will be built in ``docs/``
 
 Versioning
 -----

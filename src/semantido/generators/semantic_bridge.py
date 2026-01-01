@@ -1,4 +1,4 @@
-from typing import Type, Text
+from typing import Type
 
 from sqlalchemy import (
     String,
@@ -60,7 +60,8 @@ class SQLAlchemySemanticBridge:
 
         return self.semantic_layer
 
-    def _extract_table(self, clazz: Type, mapper) -> Table:
+    @staticmethod
+    def _extract_table(clazz: Type, mapper) -> Table:
         """
 
         :param clazz:
@@ -82,7 +83,7 @@ class SQLAlchemySemanticBridge:
         columns = []
 
         for name, prop in mapper.columns.items():
-            column = self._extract_column(clazz, name, prop)
+            column = SQLAlchemySemanticBridge._extract_column(clazz, name, prop)
             columns.append(column)
 
         return Table(
@@ -96,7 +97,8 @@ class SQLAlchemySemanticBridge:
             business_context=business_context,
         )
 
-    def _extract_column(self, clazz: Type, column_name: str, prop) -> Column:
+    @staticmethod
+    def _extract_column(clazz: Type, column_name: str, prop) -> Column:
         """
 
         :param clazz:
@@ -106,7 +108,7 @@ class SQLAlchemySemanticBridge:
         """
         sql_column_meta = prop
 
-        data_type = SQLAlchemySemanticBridge._map_SQLAlchemy_type(sql_column_meta.type)
+        data_type = SQLAlchemySemanticBridge._map_sql_alchemy_type(sql_column_meta.type)
         description = getattr(
             clazz, f"{column_name}_description", f"Column: {column_name}"
         )
@@ -136,7 +138,8 @@ class SQLAlchemySemanticBridge:
             application_rules=application_rules,
         )
 
-    def _extract_relationships(self, clazz, mapper) -> list[Relationship]:
+    @staticmethod
+    def _extract_relationships(clazz, mapper) -> list[Relationship]:
         """
         Extracts relationship information between tables
         :param clazz:
@@ -178,7 +181,7 @@ class SQLAlchemySemanticBridge:
         return relationships
 
     @staticmethod
-    def _map_SQLAlchemy_type(sql_type) -> str:
+    def _map_sql_alchemy_type(sql_type) -> str:
         """Utility function mapping SQLAlchemy types to PG type"""
         type_mapping = {
             String: "VARCHAR",

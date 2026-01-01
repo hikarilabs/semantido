@@ -1,4 +1,9 @@
+# jetbrains pycharm config files
 .idea
 
+# virtual environment files
 .venv
+
+# python build files
+dist
 
