@@ -231,14 +231,15 @@ class SQLAlchemySemanticBridge:
     def _build_join_condition(relationship_meta) -> str:
         """Builds the join condition string for a given relationship metadata.
 
-        Example output:
-        - If you have a relationship between a users table and a posts table where
-        posts.user_id references users.id, the method returns:
-        "users.id = posts.user_id"
-        - If the relationship involves multiple columns (a composite key), the method joins
-        them with AND. For example, if a sales table joins a products table on both
-        store_id and product_id the method returns:
-        "products.store_id = sales.store_id AND products.product_id = sales.product_id"
+        Examples:
+            If you have a relationship between a users table and a posts table where
+            posts.user_id references users.id, the method returns:
+            "users.id = posts.user_id"
+
+            If the relationship involves multiple columns (a composite key), the method joins
+            them with AND. For example, if a sales table joins a products table on both
+            store_id and product_id the method returns:
+            "products.store_id = sales.store_id AND products.product_id = sales.product_id"
 
         Args:
             relationship_meta (RelationshipMeta):

@@ -24,7 +24,7 @@ Some notes on making changes to ``semantido``.
 - If you've added a new feature or modified an existing feature, make sure to  add or update any applicable documentation in docstrings and in the
 documentation (in ``docs/``). The reference documentation can be re-generated with:
 ```bash
-nox -s docgen
+mkdocs build
 ```
 
 - The codebase *aims* for greater than 90% test coverage after each commit. This is a guideline, not a *must*.
@@ -48,6 +48,11 @@ This library is PEP8 & Pylint compliant. Pylint config is defined at
 
 ```bash
 $ pylint src/*
+```
+Run black for code formatting with:
+
+```bash
+$ black src/
 ```
 
 Documentation Coverage and Markdown Documentation

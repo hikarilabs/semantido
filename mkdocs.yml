@@ -1,0 +1,15 @@
+site_name: Sematido Docs
+
+theme:
+  name: material
+
+plugins:
+  - mkdocstrings
+  - search
+
+nav:
+  - Semantido Docs: index.md
+  - tutorials.md
+  - How-To Guides: how-to-guides.md
+  - reference.md
+  - explanation.md
