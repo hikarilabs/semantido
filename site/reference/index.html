@@ -66,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#semantido.decorators" class="md-skip">
+        <a href="#decorators" class="md-skip">
           Skip to content
         </a>
       
@@ -335,10 +335,38 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#semantido.decorators" class="md-nav__link">
+  <a href="#decorators" class="md-nav__link">
     <span class="md-ellipsis">
       
-        decorators
+        Decorators
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decorators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semantic_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @semantic_table
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.decorators.semantic_table.semantic_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        semantic_table
       
     </span>
   </a>
@@ -405,10 +433,38 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#semantido.decorators" class="md-nav__link">
+  <a href="#decorators" class="md-nav__link">
     <span class="md-ellipsis">
       
-        decorators
+        Decorators
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decorators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semantic_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @semantic_table
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.decorators.semantic_table.semantic_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        semantic_table
       
     </span>
   </a>
@@ -438,39 +494,217 @@
 an <strong>information-oriented</strong> approach. Use it as a
 reference for the technical implementation of the
 <code>semantido</code> project code.</p>
+<h2 id="decorators">Decorators</h2>
+<h3 id="semantic_table">@semantic_table</h3>
 
 
-<div class="doc doc-object doc-module">
+<div class="doc doc-object doc-function">
 
 
 
-<a id="semantido.decorators"></a>
+<a id="semantido.decorators.semantic_table.semantic_table"></a>
     <div class="doc doc-contents first">
 
+        <p>A class decorator to enrich SQLAlchemy models with semantic metadata.</p>
+<p>This metadata is used by the <code>SQLAlchemySemanticBridge</code> to build a semantic layer,
+helping tools and LLMs understand the purpose, context, and filtering requirements
+of the underlying database table.Decorator for adding semantic information to SQLAlchemy models</p>
 
 
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>description</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A human-readable explanation of what the table represents.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>synonyms</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="list">list</span>[<span title="str">str</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Alternative names for the entity (e.g., ["client", "customer"]).</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>sql_filters</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="list">list</span>[<span title="str">str</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of SQL fragments used for default filtering or row-level security.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>application_context</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The technical or functional scope within the app.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>business_context</code>
+            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The business domain or logic this table belongs to.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
+<p><span class="doc-section-title">Examples:</span></p>
+    <pre><code class="language-python">@semantic_table(
+    description=&quot;User information and login profile&quot;,
+    synonyms=[&quot;user profile&quot;, &quot;client&quot;],
+    application_context=&quot;Registered users on the platform&quot;
+)
+class User(Base):
+    __tablename__ = &quot;users&quot;
+    id = Column(Integer, primary_key=True)
+</code></pre>
 
 
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/semantido/decorators/semantic_table.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">semantic_table</span><span class="p">(</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">synonyms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">sql_filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">application_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">business_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class decorator to enrich SQLAlchemy models with semantic metadata.</span>
 
+<span class="sd">    This metadata is used by the `SQLAlchemySemanticBridge` to build a semantic layer,</span>
+<span class="sd">    helping tools and LLMs understand the purpose, context, and filtering requirements</span>
+<span class="sd">    of the underlying database table.Decorator for adding semantic information to SQLAlchemy models</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        description: A human-readable explanation of what the table represents.</span>
+<span class="sd">        synonyms: Alternative names for the entity (e.g., [&quot;client&quot;, &quot;customer&quot;]).</span>
+<span class="sd">        sql_filters: A list of SQL fragments used for default filtering or row-level security.</span>
+<span class="sd">        application_context: The technical or functional scope within the app.</span>
+<span class="sd">        business_context: The business domain or logic this table belongs to.</span>
 
-<div class="doc doc-children">
+<span class="sd">    Examples:</span>
+<span class="sd">        ```python</span>
+<span class="sd">        @semantic_table(</span>
+<span class="sd">            description=&quot;User information and login profile&quot;,</span>
+<span class="sd">            synonyms=[&quot;user profile&quot;, &quot;client&quot;],</span>
+<span class="sd">            application_context=&quot;Registered users on the platform&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        class User(Base):</span>
+<span class="sd">            __tablename__ = &quot;users&quot;</span>
+<span class="sd">            id = Column(Integer, primary_key=True)</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__semantic_description__</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__semantic_synonyms__</span> <span class="o">=</span> <span class="n">synonyms</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__semantic_sql_filters__</span> <span class="o">=</span> <span class="n">sql_filters</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__semantic_application_context__</span> <span class="o">=</span> <span class="n">application_context</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__semantic_business_context__</span> <span class="o">=</span> <span class="n">business_context</span>
+        <span class="k">return</span> <span class="bp">cls</span>
 
-
-
-
-
-
-
-
-
-
-
-  </div>
-
+    <span class="k">return</span> <span class="n">decorator</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>

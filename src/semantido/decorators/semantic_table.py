@@ -13,11 +13,7 @@
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>.
 
-"""Semantic Table Decorator
-
-This is the core decorator for adding semantic information to SQLAlchemy models.
-
-"""
+"""Defines the decorator for attaching semantic metadata to SQLAlchemy models."""
 
 from typing import Optional
 
@@ -29,16 +25,30 @@ def semantic_table(
     application_context: Optional[str] = None,
     business_context: Optional[str] = None,
 ):
-    """
-    Decorator for adding semantic information to SQLAlchemy models
+    """A class decorator to enrich SQLAlchemy models with semantic metadata.
 
-    Usage:
+    This metadata is used by the `SQLAlchemySemanticBridge` to build a semantic layer,
+    helping tools and LLMs understand the purpose, context, and filtering requirements
+    of the underlying database table.Decorator for adding semantic information to SQLAlchemy models
+
+    Args:
+        description: A human-readable explanation of what the table represents.
+        synonyms: Alternative names for the entity (e.g., ["client", "customer"]).
+        sql_filters: A list of SQL fragments used for default filtering or row-level security.
+        application_context: The technical or functional scope within the app.
+        business_context: The business domain or logic this table belongs to.
+
+    Examples:
+        ```python
         @semantic_table(
             description="User information and login profile",
-            synonyms: ["user profile", "client"],
-            application_context: "Registered users on the platform")
-        class User(Base)
-        ...
+            synonyms=["user profile", "client"],
+            application_context="Registered users on the platform"
+        )
+        class User(Base):
+            __tablename__ = "users"
+            id = Column(Integer, primary_key=True)
+        ```
     """
 
     def decorator(cls):
