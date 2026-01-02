@@ -13,6 +13,12 @@
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>.
 
+"""Semantic Table Decorator
+
+This is the core decorator for adding semantic information to SQLAlchemy models.
+
+"""
+
 from typing import Optional
 
 

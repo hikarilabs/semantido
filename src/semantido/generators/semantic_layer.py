@@ -33,6 +33,7 @@ class RelationshipType(Enum):
 
 @dataclass
 class Column:
+    # pylint: disable=R0902
     """Represents a database column with semantic information"""
 
     name: str
@@ -48,6 +49,7 @@ class Column:
 
 @dataclass
 class Table:
+    # pylint: disable=R0902
     """
     Represents a database table with semantic information.
 

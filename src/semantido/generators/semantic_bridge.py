@@ -51,6 +51,10 @@ class SQLAlchemySemanticBridge:
         self.semantic_layer = SemanticLayer()
         self._model_registry: dict[str, Type] = {}
 
+    def get_semantic_layer(self) -> SemanticLayer:
+        """Getter function for the current semantic layer"""
+        return self.semantic_layer
+
     def sync_from_models(self) -> SemanticLayer:
         self.semantic_layer.tables.clear()
         self.semantic_layer.relationships.clear()
@@ -155,11 +159,19 @@ class SQLAlchemySemanticBridge:
 
     @staticmethod
     def _extract_relationships(clazz, mapper) -> list[Relationship]:
-        """
-        Extracts relationship information between tables
-        :param clazz:
-        :param mapper:
-        :return:
+        """Inspects a SQLAlchemy mapped class and its mapper to extract
+         semantic relationship metadata.
+
+        This method iterates through all relationships defined on the SQLAlchemy model,
+        identifying the target tables, determining the cardinality (One-to-Many vs Many-to-One),
+        builds the SQL join conditions, and retrieves any custom descriptions defined on the class.
+
+        Args:
+            clazz: The SQLAlchemy model class to inspect.
+            mapper: The SQLAlchemy Mapper object associated with the class.
+
+        Returns:
+            list: A list of Relationship objects representing the semantic links to other tables.
         """
 
         relationships = []
@@ -216,7 +228,26 @@ class SQLAlchemySemanticBridge:
         return str(sql_type)
 
     @staticmethod
-    def _build_join_condition(relationship_meta):
+    def _build_join_condition(relationship_meta) -> str:
+        """Builds the join condition string for a given relationship metadata.
+
+        Example output:
+        - If you have a relationship between a users table and a posts table where
+        posts.user_id references users.id, the method returns:
+        "users.id = posts.user_id"
+        - If the relationship involves multiple columns (a composite key), the method joins
+        them with AND. For example, if a sales table joins a products table on both
+        store_id and product_id the method returns:
+        "products.store_id = sales.store_id AND products.product_id = sales.product_id"
+
+        Args:
+            relationship_meta (RelationshipMeta):
+            The relationship metadata given by SQLAlchemy models.
+
+        Returns:
+            str: The join condition string for the given relationship metadata.
+
+        """
         local_cols = []
         remote_cols = []
 
@@ -229,7 +260,3 @@ class SQLAlchemySemanticBridge:
         ]
 
         return " AND ".join(conditions)
-
-    def get_semantic_layer(self) -> SemanticLayer:
-        """Getter function for the current semantic layer"""
-        return self.semantic_layer

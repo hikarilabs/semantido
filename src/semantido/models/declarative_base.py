@@ -19,12 +19,9 @@ from semantido.models.semantic_base import SemanticBase
 
 
 class Base(DeclarativeBase):
+    # pylint: disable=R0903
     """Default SQLAlchemy base class for declarative models."""
-
-    pass
 
 
 class SemanticDeclarativeBase(SemanticBase, DeclarativeBase):
     """Mixin for declarative models with semantic data support."""
-
-    pass

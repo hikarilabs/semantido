@@ -31,6 +31,7 @@ class SemanticBase:
         Get or create a semantic bridge for this base.
         :return:
         """
+        # pylint: disable=C0415
         from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
 
         if not hasattr(cls, "_semantic_bridge"):
