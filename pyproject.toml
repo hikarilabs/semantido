@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "Semantic layer for SQLAlchemy models that auto-generates LLM-ready schema with rich semantic metadata for text-to-SQL systems and LLM-powered database interactions"
 readme = "README.md"
 requires-python = ">=3.11"
-license = "GPL-3.0-only"
+license = "Apache-2.0"
 authors = [
   { name="Dragos Crintea", email="dragos.crintea@semantido.ai" },
 ]

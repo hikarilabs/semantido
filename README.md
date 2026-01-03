@@ -31,4 +31,4 @@ See `CONTRIBUTING.md: https://github.com/hikarilabs/semantido/blob/main/CONTRIBU
 
 License
 -----
-`semantido` is distributed under the terms of the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html) license.
+`semantido` is distributed under the terms of the [Apache License 2.0](https://spdx.org/licenses/Apache-2.0.html) license.
