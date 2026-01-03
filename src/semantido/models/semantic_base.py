@@ -13,23 +13,39 @@
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>.
 
+"""Provides the base mixin for integrating SQLAlchemy models with the semantic layer."""
+
 from semantido.generators.semantic_layer import SemanticLayer
 
 
 class SemanticBase:
     """
-    Mixin adding semantic layer capabilities to SQLAlchemy models
+    A mixin class that adds semantic layer capabilities to SQLAlchemy models.
 
-    Usage:
+    This mixin provides utility methods to automatically bridge SQLAlchemy's
+    internal schema metadata with the semantic layer, allowing for easy
+    synchronization of table and relationship definitions.
+
+    Examples:
+        ```python
+        from sqlalchemy.orm import DeclarativeBase
+        from semantido.models.semantic_base import SemanticBase
+
         class Base(SemanticBase, DeclarativeBase):
-            ...
-    """
+            pass
+        ```
+        """
 
     @classmethod
     def get_semantic_bridge(cls):
         """
-        Get or create a semantic bridge for this base.
-        :return:
+        Retrieves or initializes the `SQLAlchemySemanticBridge` for this base class.
+
+        This method performs a lazy initialization of the bridge by traversing
+        the Method Resolution Order (MRO) to find the SQLAlchemy registry.
+
+        Returns:
+            SQLAlchemySemanticBridge: The bridge instance associated with this model hierarchy.
         """
         # pylint: disable=C0415
         from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
@@ -44,6 +60,14 @@ class SemanticBase:
 
     @classmethod
     def sync_semantic_layer(cls) -> "SemanticLayer":
-        """Sync the semantic layer with current model definitions"""
+        """
+        Synchronizes the semantic layer with the current state of all mapped models.
+
+        This method clears existing semantic metadata and re-extracts all tables,
+        columns, and relationships from the SQLAlchemy registry.
+
+        Returns:
+            SemanticLayer: The updated semantic layer containing the synchronized metadata.
+        """
         bridge = cls.get_semantic_bridge()
         return bridge.sync_from_models()

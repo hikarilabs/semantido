@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>.
 
+"""Extracts and synchronizes semantic metadata from SQLAlchemy models into a unified layer."""
+
 from typing import Type
 
 from sqlalchemy import (
@@ -39,23 +41,43 @@ from semantido.generators.semantic_layer import (
 class SQLAlchemySemanticBridge:
     """
     Bridge between SQLAlchemy models and the semantic layer.
-    Extracts schema information and keeps the semantic layer in sync when underlying model changes.
+
+    This class serves as the extraction engine that inspects SQLAlchemy's internal
+    registry to generate a structured `SemanticLayer`. It handles the conversion of
+    SQL types to normalized types, builds join conditions for relationships, and
+    retrieves semantic metadata attached via decorators.
     """
 
     def __init__(self, base):
         """
+        Initializes the bridge with a SQLAlchemy declarative base.
 
-        :param base:
+        Args:
+            base: The SQLAlchemy declarative base or registry to inspect.
         """
         self.base = base
         self.semantic_layer = SemanticLayer()
         self._model_registry: dict[str, Type] = {}
 
     def get_semantic_layer(self) -> SemanticLayer:
-        """Getter function for the current semantic layer"""
+        """
+        Retrieves the current semantic layer instance.
+
+        Returns:
+            SemanticLayer: The object containing extracted table and relationship metadata.
+        """
         return self.semantic_layer
 
     def sync_from_models(self) -> SemanticLayer:
+        """
+        Extracts schema and semantic information from all mapped models.
+
+        This method clears any previously cached metadata and performs a full scan
+        of the SQLAlchemy registry to rebuild the semantic layer.
+
+        Returns:
+            SemanticLayer: The fully populated semantic layer.
+        """
         self.semantic_layer.tables.clear()
         self.semantic_layer.relationships.clear()
         self._model_registry.clear()
@@ -82,10 +104,14 @@ class SQLAlchemySemanticBridge:
     @staticmethod
     def _extract_table(clazz: Type, mapper) -> Table:
         """
+        Transforms a SQLAlchemy mapped class into a semantic Table definition.
 
-        :param clazz:
-        :param mapper:
-        :return:
+        Args:
+            clazz: The Python class representing the model.
+            mapper: The SQLAlchemy Mapper object containing low-level schema info.
+
+        Returns:
+            Table: A semantic representation of the table and its metadata.
         """
 
         table_name = mapper.persist_selectable.name
@@ -119,11 +145,15 @@ class SQLAlchemySemanticBridge:
     @staticmethod
     def _extract_column(clazz: Type, column_name: str, prop) -> Column:
         """
+        Extracts semantic metadata and schema info for a specific column.
 
-        :param clazz:
-        :param name: Column Name
-        :param prop: Column Metadata
-        :return:
+        Args:
+            clazz: The model class where the column is defined.
+            column_name: The name of the column attribute.
+            prop: The SQLAlchemy column metadata or property.
+
+        Returns:
+            Column: The semantic Column object.
         """
         sql_column_meta = prop
 
@@ -209,7 +239,15 @@ class SQLAlchemySemanticBridge:
 
     @staticmethod
     def _map_sql_alchemy_type(sql_type) -> str:
-        """Utility function mapping SQLAlchemy types to PG type"""
+        """
+        Maps SQLAlchemy types to Postgres types.
+
+        Args:
+            sql_type: The SQLAlchemy type instance
+
+        Returns:
+            str: A Postgres standardized type name (e.g., "INTEGER", "VARCHAR").
+        """
         type_mapping = {
             String: "VARCHAR",
             Text: "TEXT",

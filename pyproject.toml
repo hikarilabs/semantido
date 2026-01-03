@@ -27,9 +27,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "mkdocs==1.6.1",
-    "mkdocstrings[python]==1.0.0",
-    "mkdocs-material==9.7.1",
     "pytest==9.0.2",
     "pytest-cov==7.0.0",
     "pylint==4.0.4",
@@ -42,3 +39,14 @@ Issues = "https://github.com/hikarilabs/semantido/issues"
 
 [tool.hatch.version]
 path = "src/semantido/__version__.py"
+
+[tool.hatch.envs.docs]
+dependencies = [
+    "mkdocs==1.6.1",
+    "mkdocstrings[python]==1.0.0",
+    "mkdocs-material==9.7.1",
+]
+
+[tool.hatch.envs.docs.scripts]
+build = "mkdocs build --clean --strict"
+serve = "mkdocs serve --dev-addr localhost:8000"

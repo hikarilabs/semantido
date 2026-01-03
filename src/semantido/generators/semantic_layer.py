@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>.
 
+"""Defines the data structures for the semantic representation of the database schema."""
+
 import json
 from enum import Enum
 from typing import Optional
@@ -20,12 +22,23 @@ from dataclasses import dataclass, field
 
 
 class PrivacyLevel(Enum):
+    """
+    Defines the data sensitivity levels for columns.
+
+    Used to inform downstream consumers (like LLMs or BI tools) about
+    the accessibility and security requirements of specific data points.
+    """
     PUBLIC = "public"
     RESTRICTED = "restricted"
     CONFIDENTIAL = "confidential"
 
 
 class RelationshipType(Enum):
+    """
+    Specifies the cardinality of a database relationship.
+
+    Helps in determining how to construct joins and aggregate data.
+    """
     ONE_TO_MANY = "one-to-many"
     MANY_TO_ONE = "many-to-one"
     MANY_TO_MANY = "many-to-many"
@@ -34,7 +47,20 @@ class RelationshipType(Enum):
 @dataclass
 class Column:
     # pylint: disable=R0902
-    """Represents a database column with semantic information"""
+    """
+    Represents a database column with enriched semantic metadata.
+
+    Attributes:
+        name: The physical name of the column in the database.
+        data_type: The normalized data type (e.g., VARCHAR, INTEGER).
+        description: A human-readable explanation of the column's content.
+        privacy_level: The sensitivity classification of the data.
+        sample_values: A list of example data points to help clarify the content.
+        synonyms: Alternative terms for the column name.
+        is_foreign_key: Boolean flag indicating if this column links to another table.
+        references: The target table and column (format: 'table.column') if a foreign key.
+        application_rules: Specific business logic or constraints applied to this column.
+    """
 
     name: str
     data_type: str
@@ -51,11 +77,20 @@ class Column:
 class Table:
     # pylint: disable=R0902
     """
-    Represents a database table with semantic information.
+    Represents a database table enriched with semantic and contextual information.
 
-    It captures both the application and business contexts in which this table is used.
-    This aims to disambiguate the meaning of a table using generic words such as Account,
-    which can represent different things given the application and/or business context.
+    By capturing application and business contexts, this class helps disambiguate
+    entities that might have generic names but specific roles in different domains.
+
+    Attributes:
+        name: The physical name of the table in the database.
+        description: A human-readable explanation of the table's purpose.
+        columns: A list of Column objects belonging to this table.
+        primary_key: The name of the primary key column.
+        synonyms: Alternative names for the entity represented by the table.
+        sql_filters: Default SQL fragments for filtering or security.
+        application_context: The functional area of the application using this table.
+        business_context: The business domain or logic this table serves.
     """
 
     name: str
@@ -64,17 +99,22 @@ class Table:
     primary_key: str
     synonyms: Optional[list[str]] = None
     sql_filters: Optional[list[str]] = None
-
-    # application context in which this table is used
     application_context: Optional[str] = None
-
-    # business context in which this table is used
     business_context: Optional[str] = None
 
 
 @dataclass
 class Relationship:
-    """Represents a relationship between tables"""
+    """
+    Represents a semantic link between two database tables.
+
+    Attributes:
+        from_table: The name of the source table.
+        to_table: The name of the target table.
+        join_condition: The SQL fragment defining how the tables link.
+        relationship_type: The cardinality of the link.
+        description: A plain-language explanation of the relationship logic.
+    """
 
     from_table: str
     to_table: str
@@ -87,21 +127,44 @@ class Relationship:
 
 @dataclass
 class SemanticLayer:
-    """Main semantic layer containing all the database application schema context"""
+    """
+    The central repository for all semantic metadata extracted from the database.
+
+    This class serves as the final output of the synchronization process,
+    containing structured information about tables, their relationships,
+    and a global application glossary. It provides methods for serializing
+    this metadata to JSON for use by external tools or LLMs.
+    """
 
     tables: dict[str, Table] = field(default_factory=dict)
     relationships: list[Relationship] = field(default_factory=list)
     application_glossary: dict[str, str] = field(default_factory=dict)
 
     def add_table(self, table: Table):
-        """Add a table to the semantic layer"""
+        """
+        Registers a new table definition in the semantic layer.
+
+        Args:
+            table: The Table object containing columns and semantic metadata.
+        """
         self.tables[table.name] = table
 
     def add_relationship(self, relationship: Relationship):
-        """Add a relationship between tables to the semantic layer"""
+        """
+        Registers a relationship between two tables in the semantic layer.
+
+        Args:
+            relationship: The Relationship object defining the join logic and cardinality.
+        """
         self.relationships.append(relationship)
 
     def to_dict(self) -> dict:
+        """
+        Converts the entire semantic layer into a nested dictionary structure.
+
+        Returns:
+            dict: A dictionary representation suitable for JSON serialization.
+        """
         return {
             "tables": {
                 name: {
@@ -150,10 +213,20 @@ class SemanticLayer:
         }
 
     def to_json(self):
-        """Export semantic layer as a JSON string"""
+        """
+        Exports the entire semantic layer as a formatted JSON string.
+
+        Returns:
+            str: Indented JSON string representing the semantic layer.
+        """
         return json.dumps(self.to_dict(), indent=4)
 
     def save_to_file(self, file_path: str):
-        """Save semantic layer as a JSON file"""
+        """
+        Serializes and saves the semantic layer to a JSON file.
+
+        Args:
+            file_path: The filesystem path where the JSON file will be created.
+        """
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(), f, indent=4)

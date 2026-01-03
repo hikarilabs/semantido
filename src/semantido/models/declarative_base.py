@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License along with this program.
 # If not, see <https://www.gnu.org/licenses/>.
 
+"""Defines the standard and semantic-enabled SQLAlchemy declarative base classes."""
+
 from sqlalchemy.orm import DeclarativeBase
 
 from semantido.models.semantic_base import SemanticBase
