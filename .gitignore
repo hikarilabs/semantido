@@ -7,3 +7,5 @@
 # python build files
 dist
 
+# mkdocs local files
+site
