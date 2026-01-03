@@ -1,7 +1,7 @@
 # Semantido
 
-[![PyPI - Version](https://img.shields.io/pypi/v/my-project.svg)](https://pypi.org/project/semantido)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/my-project.svg)](https://pypi.org/project/semantido)
+[![PyPI - Version](https://img.shields.io/pypi/v/semantido.svg)](https://pypi.org/project/semantido)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/semantido.svg)](https://pypi.org/project/semantido)
 
 -----
 

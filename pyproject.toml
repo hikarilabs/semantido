@@ -51,6 +51,9 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/semantido"]
 
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
+
 [tool.hatch.envs.docs]
 dependencies = [
     "mkdocs==1.6.1",
