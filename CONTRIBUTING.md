@@ -36,15 +36,15 @@ $ pytest --cov=semantido tests/
 
 Testing changes
 -----
-This project uses hatch as the "all-in-one" project manager. To test your changes, run unit tests with ``hatch``.
+This project uses hatch as the "all-in-one" project manager. To test your changes, run unit tests with default ``hatch`` command.
 ```bash
 $ hatch test
 ```
 
 Coding Style
 -----
-This library is PEP8 & Pylint compliant. Pylint config is defined at
-``.pylintrc`` for package code. Use default pylint command to check for non-compliant code 
+This library is PEP8 & Pylint compliant. Pylint config is defined at ``.pylintrc`` for package code.
+Use default pylint command to check for non-compliant code 
 
 ```bash
 $ pylint src/*
@@ -57,10 +57,17 @@ $ black src/
 
 Documentation Coverage and Markdown Documentation
 -----
-If you fix a bug, all documentation which references the change must be updated to reflect the fix, ideally in the same commit.
-To build and review docs use  ``nox``::
-   $ nox -s docs
-The Markdown version of the docs will be built in ``docs/``
+If you fix a bug, all documentation which references the change must be updated to reflect the fix, ideally in the same commit.  
+  
+To build the docs: 
+```bash
+$ hatch run docs:build
+```
+To view the docs locally run:
+```bash
+$ hatch run docs:serve
+```
+The Markdown version of the site will be built in ``site/``
 
 Versioning
 -----
