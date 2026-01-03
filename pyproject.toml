@@ -41,6 +41,16 @@ Issues = "https://github.com/hikarilabs/semantido/issues"
 [tool.hatch.version]
 path = "src/semantido/__version__.py"
 
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.github",
+    "/docs",
+    "/tests"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/semantido"]
+
 [tool.hatch.envs.docs]
 dependencies = [
     "mkdocs==1.6.1",

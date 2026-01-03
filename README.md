@@ -27,7 +27,7 @@ pip install semantido
 Contributing
 -----
 Contributions to this library are welcomed and highly encouraged.
-See `CONTRIBUTING.md: https://github.com/hikarilabs/semantido/blob/main/CONTRIBUTING.md` for more information on how to get started.
+See [CONTRIBUTING.md](https://github.com/hikarilabs/semantido/blob/main/CONTRIBUTING.md) for more information on how to get started.
 
 License
 -----
