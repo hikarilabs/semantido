@@ -38,6 +38,7 @@ class SemanticBase:
 
     @classmethod
     def get_semantic_bridge(cls):
+        # pylint: disable=C0415
         """
         Retrieves or initializes the `SQLAlchemySemanticBridge` for this base class.
 
@@ -47,7 +48,6 @@ class SemanticBase:
         Returns:
             SQLAlchemySemanticBridge: The bridge instance associated with this model hierarchy.
         """
-        # pylint: disable=C0415
         from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
 
         if not hasattr(cls, "_semantic_bridge"):

@@ -35,6 +35,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/hikarilabs/semantido"
+Documentation = "https://hikarilabs.github.io/semantido/"
 Issues = "https://github.com/hikarilabs/semantido/issues"
 
 [tool.hatch.version]
