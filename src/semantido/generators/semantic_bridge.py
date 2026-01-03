@@ -49,12 +49,6 @@ class SQLAlchemySemanticBridge:
     """
 
     def __init__(self, base):
-        """
-        Initializes the bridge with a SQLAlchemy declarative base.
-
-        Args:
-            base: The SQLAlchemy declarative base or registry to inspect.
-        """
         self.base = base
         self.semantic_layer = SemanticLayer()
         self._model_registry: dict[str, Type] = {}

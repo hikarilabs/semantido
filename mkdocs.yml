@@ -8,8 +8,7 @@ plugins:
   - search
 
 nav:
-  - Semantido Docs: index.md
-  - tutorials.md
-  - How-To Guides: how-to-guides.md
-  - reference.md
-  - explanation.md
+  - Index: index.md
+  - Why Semantido: explanation.md
+  - Code Reference: reference.md
+  - Tutorials: tutorials.md

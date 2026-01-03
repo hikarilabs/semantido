@@ -28,6 +28,7 @@ class PrivacyLevel(Enum):
     Used to inform downstream consumers (like LLMs or BI tools) about
     the accessibility and security requirements of specific data points.
     """
+
     PUBLIC = "public"
     RESTRICTED = "restricted"
     CONFIDENTIAL = "confidential"
@@ -39,6 +40,7 @@ class RelationshipType(Enum):
 
     Helps in determining how to construct joins and aggregate data.
     """
+
     ONE_TO_MANY = "one-to-many"
     MANY_TO_ONE = "many-to-one"
     MANY_TO_MANY = "many-to-many"
@@ -212,7 +214,7 @@ class SemanticLayer:
             ],
         }
 
-    def to_json(self):
+    def to_json(self) -> str:
         """
         Exports the entire semantic layer as a formatted JSON string.
 

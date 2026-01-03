@@ -34,7 +34,7 @@ class SemanticBase:
         class Base(SemanticBase, DeclarativeBase):
             pass
         ```
-        """
+    """
 
     @classmethod
     def get_semantic_bridge(cls):

@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../how-to-guides/">
+        <link rel="prev" href="../explanation/">
       
       
-        <link rel="next" href="../explanation/">
+        <link rel="next" href="../tutorials/">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>Reference - Sematido Docs</title>
+        <title>Code Reference - Sematido Docs</title>
       
     
     
@@ -102,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Reference
+              Code Reference
             
           </span>
         </div>
@@ -205,7 +205,7 @@
   <span class="md-ellipsis">
     
   
-    Semantido Docs
+    Index
   
 
     
@@ -225,41 +225,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorials/" class="md-nav__link">
+      <a href="../explanation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Tutorials
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-to-guides/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How-To Guides
+    Why Semantido
   
 
     
@@ -293,7 +266,7 @@
   <span class="md-ellipsis">
     
   
-    Reference
+    Code Reference
   
 
     
@@ -311,7 +284,7 @@
   <span class="md-ellipsis">
     
   
-    Reference
+    Code Reference
   
 
     
@@ -373,6 +346,249 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#generators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generators
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        semantic_bridge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_bridge.SQLAlchemySemanticBridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SQLAlchemySemanticBridge
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SQLAlchemySemanticBridge">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_bridge.SQLAlchemySemanticBridge.get_semantic_layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_semantic_layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_bridge.SQLAlchemySemanticBridge.sync_from_models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync_from_models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        semantic_layer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.Column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Column
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.PrivacyLevel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrivacyLevel
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.Relationship" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.RelationshipType" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RelationshipType
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SemanticLayer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SemanticLayer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.add_relationship" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_relationship
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.add_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.save_to_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_to_file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.to_dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.to_json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_json
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.Table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.models.declarative_base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        declarative_base
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.models.declarative_base.Base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.models.declarative_base.SemanticDeclarativeBase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SemanticDeclarativeBase
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -388,14 +604,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../explanation/" class="md-nav__link">
+      <a href="../tutorials/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Explanation
+    Tutorials
   
 
     
@@ -471,6 +687,249 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#generators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generators
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        semantic_bridge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_bridge.SQLAlchemySemanticBridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SQLAlchemySemanticBridge
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SQLAlchemySemanticBridge">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_bridge.SQLAlchemySemanticBridge.get_semantic_layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_semantic_layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_bridge.SQLAlchemySemanticBridge.sync_from_models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sync_from_models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        semantic_layer
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.Column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Column
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.PrivacyLevel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrivacyLevel
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.Relationship" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.RelationshipType" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RelationshipType
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SemanticLayer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SemanticLayer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.add_relationship" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_relationship
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.add_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_table
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.save_to_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_to_file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.to_dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.SemanticLayer.to_json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_json
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.generators.semantic_layer.Table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.models.declarative_base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        declarative_base
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.models.declarative_base.Base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantido.models.declarative_base.SemanticDeclarativeBase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SemanticDeclarativeBase
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -488,12 +947,9 @@
 
 
 
-  <h1>Reference</h1>
+  <h1>Code Reference</h1>
 
-<p>This part of the project documentation focuses on
-an <strong>information-oriented</strong> approach. Use it as a
-reference for the technical implementation of the
-<code>semantido</code> project code.</p>
+<p>Technical implementation of the <code>semantido</code> project.</p>
 <h2 id="decorators">Decorators</h2>
 <h3 id="semantic_table">@semantic_table</h3>
 
@@ -705,6 +1161,2397 @@ class User(Base):
     <span class="k">return</span> <span class="n">decorator</span>
 </code></pre></div></td></tr></table></div>
             </details>
+    </div>
+
+</div><h2 id="generators">Generators</h2>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="semantido.generators.semantic_bridge"></a>
+    <div class="doc doc-contents first">
+
+        <p>Extracts and synchronizes semantic metadata from SQLAlchemy models into a unified layer.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.generators.semantic_bridge.SQLAlchemySemanticBridge" class="doc doc-heading">
+            <code>SQLAlchemySemanticBridge</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Bridge between SQLAlchemy models and the semantic layer.</p>
+<p>This class serves as the extraction engine that inspects SQLAlchemy's internal
+registry to generate a structured <code>SemanticLayer</code>. It handles the conversion of
+SQL types to normalized types, builds join conditions for relationships, and
+retrieves semantic metadata attached via decorators.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/generators/semantic_bridge.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SQLAlchemySemanticBridge</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bridge between SQLAlchemy models and the semantic layer.</span>
+
+<span class="sd">    This class serves as the extraction engine that inspects SQLAlchemy&#39;s internal</span>
+<span class="sd">    registry to generate a structured `SemanticLayer`. It handles the conversion of</span>
+<span class="sd">    SQL types to normalized types, builds join conditions for relationships, and</span>
+<span class="sd">    retrieves semantic metadata attached via decorators.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span> <span class="o">=</span> <span class="n">SemanticLayer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_semantic_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SemanticLayer</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the current semantic layer instance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SemanticLayer: The object containing extracted table and relationship metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync_from_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SemanticLayer</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts schema and semantic information from all mapped models.</span>
+
+<span class="sd">        This method clears any previously cached metadata and performs a full scan</span>
+<span class="sd">        of the SQLAlchemy registry to rebuild the semantic layer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SemanticLayer: The fully populated semantic layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_registry</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="c1"># Get all mapped classes</span>
+        <span class="k">for</span> <span class="n">mapper</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">mappers</span><span class="p">:</span>
+            <span class="n">clazz</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">class_</span>
+            <span class="n">table_name</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">persist_selectable</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="c1"># Add the current mapped table to the model registry</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_registry</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">clazz</span>
+
+            <span class="c1"># Extract table information</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_table</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+            <span class="c1"># Extract table relationships</span>
+            <span class="n">relationships</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_relationships</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="n">relationships</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span><span class="o">.</span><span class="n">add_relationship</span><span class="p">(</span><span class="n">relationship</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_table</span><span class="p">(</span><span class="n">clazz</span><span class="p">:</span> <span class="n">Type</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transforms a SQLAlchemy mapped class into a semantic Table definition.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            clazz: The Python class representing the model.</span>
+<span class="sd">            mapper: The SQLAlchemy Mapper object containing low-level schema info.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Table: A semantic representation of the table and its metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">table_name</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">persist_selectable</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">description</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="s2">&quot;__semantic_description__&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Table: </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">synonyms</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="s2">&quot;__semantic_synonyms__&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">sql_filters</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="s2">&quot;__semantic_sql_filters__&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">application_context</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="s2">&quot;__semantic_application_context__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">business_context</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="s2">&quot;__semantic_business_context__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">primary_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">primary_key</span><span class="p">]</span>
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="n">primary_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">primary_keys</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="n">SQLAlchemySemanticBridge</span><span class="o">.</span><span class="n">_extract_column</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">prop</span><span class="p">)</span>
+            <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+            <span class="n">primary_key</span><span class="o">=</span><span class="n">primary_key</span><span class="p">,</span>
+            <span class="n">synonyms</span><span class="o">=</span><span class="n">synonyms</span><span class="p">,</span>
+            <span class="n">sql_filters</span><span class="o">=</span><span class="n">sql_filters</span><span class="p">,</span>
+            <span class="n">application_context</span><span class="o">=</span><span class="n">application_context</span><span class="p">,</span>
+            <span class="n">business_context</span><span class="o">=</span><span class="n">business_context</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_column</span><span class="p">(</span><span class="n">clazz</span><span class="p">:</span> <span class="n">Type</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Column</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts semantic metadata and schema info for a specific column.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            clazz: The model class where the column is defined.</span>
+<span class="sd">            column_name: The name of the column attribute.</span>
+<span class="sd">            prop: The SQLAlchemy column metadata or property.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Column: The semantic Column object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sql_column_meta</span> <span class="o">=</span> <span class="n">prop</span>
+
+        <span class="n">data_type</span> <span class="o">=</span> <span class="n">SQLAlchemySemanticBridge</span><span class="o">.</span><span class="n">_map_sql_alchemy_type</span><span class="p">(</span><span class="n">sql_column_meta</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="n">clazz</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">_description&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Column: </span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">privacy_level</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="n">clazz</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">_privacy_level&quot;</span><span class="p">,</span> <span class="n">PrivacyLevel</span><span class="o">.</span><span class="n">PUBLIC</span>
+        <span class="p">)</span>
+        <span class="n">sample_values</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">_sample_values&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">synonyms</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">_synonyms&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">application_rules</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2">_application_rules&quot;</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="c1"># FK</span>
+        <span class="n">foreign_keys</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sql_column_meta</span><span class="o">.</span><span class="n">foreign_keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">references</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">foreign_keys</span><span class="p">:</span>
+            <span class="n">fk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sql_column_meta</span><span class="o">.</span><span class="n">foreign_keys</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">references</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fk</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">fk</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">Column</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+            <span class="n">privacy_level</span><span class="o">=</span><span class="n">privacy_level</span><span class="p">,</span>
+            <span class="n">sample_values</span><span class="o">=</span><span class="n">sample_values</span><span class="p">,</span>
+            <span class="n">synonyms</span><span class="o">=</span><span class="n">synonyms</span><span class="p">,</span>
+            <span class="n">is_foreign_key</span><span class="o">=</span><span class="n">foreign_keys</span><span class="p">,</span>
+            <span class="n">references</span><span class="o">=</span><span class="n">references</span><span class="p">,</span>
+            <span class="n">application_rules</span><span class="o">=</span><span class="n">application_rules</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_relationships</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Relationship</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inspects a SQLAlchemy mapped class and its mapper to extract</span>
+<span class="sd">         semantic relationship metadata.</span>
+
+<span class="sd">        This method iterates through all relationships defined on the SQLAlchemy model,</span>
+<span class="sd">        identifying the target tables, determining the cardinality (One-to-Many vs Many-to-One),</span>
+<span class="sd">        builds the SQL join conditions, and retrieves any custom descriptions defined on the class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            clazz: The SQLAlchemy model class to inspect.</span>
+<span class="sd">            mapper: The SQLAlchemy Mapper object associated with the class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of Relationship objects representing the semantic links to other tables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">relationships</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">relationship_name</span><span class="p">,</span> <span class="n">relationship_meta</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">relationship_meta</span><span class="o">.</span><span class="n">mapper</span>
+            <span class="n">target_table</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">persist_selectable</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">source_table</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">persist_selectable</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="k">if</span> <span class="n">relationship_meta</span><span class="o">.</span><span class="n">uselist</span><span class="p">:</span>
+                <span class="n">relationship_type</span> <span class="o">=</span> <span class="n">RelationshipType</span><span class="o">.</span><span class="n">ONE_TO_MANY</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">relationship_type</span> <span class="o">=</span> <span class="n">RelationshipType</span><span class="o">.</span><span class="n">MANY_TO_ONE</span>
+
+            <span class="n">join_condition</span> <span class="o">=</span> <span class="n">SQLAlchemySemanticBridge</span><span class="o">.</span><span class="n">_build_join_condition</span><span class="p">(</span>
+                <span class="n">relationship_meta</span>
+            <span class="p">)</span>
+
+            <span class="n">description</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+                <span class="n">clazz</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">relationship_name</span><span class="si">}</span><span class="s2">_relationship_description&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Relationship between </span><span class="si">{</span><span class="n">source_table</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">target_table</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">relationships</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Relationship</span><span class="p">(</span>
+                    <span class="n">from_table</span><span class="o">=</span><span class="n">source_table</span><span class="p">,</span>
+                    <span class="n">to_table</span><span class="o">=</span><span class="n">target_table</span><span class="p">,</span>
+                    <span class="n">join_condition</span><span class="o">=</span><span class="n">join_condition</span><span class="p">,</span>
+                    <span class="n">relationship_type</span><span class="o">=</span><span class="n">relationship_type</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">relationships</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_map_sql_alchemy_type</span><span class="p">(</span><span class="n">sql_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maps SQLAlchemy types to Postgres types.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sql_type: The SQLAlchemy type instance</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: A Postgres standardized type name (e.g., &quot;INTEGER&quot;, &quot;VARCHAR&quot;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">type_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">String</span><span class="p">:</span> <span class="s2">&quot;VARCHAR&quot;</span><span class="p">,</span>
+            <span class="n">Text</span><span class="p">:</span> <span class="s2">&quot;TEXT&quot;</span><span class="p">,</span>
+            <span class="n">Integer</span><span class="p">:</span> <span class="s2">&quot;INTEGER&quot;</span><span class="p">,</span>
+            <span class="n">Float</span><span class="p">:</span> <span class="s2">&quot;FLOAT&quot;</span><span class="p">,</span>
+            <span class="n">Numeric</span><span class="p">:</span> <span class="s2">&quot;DECIMAL&quot;</span><span class="p">,</span>
+            <span class="n">Boolean</span><span class="p">:</span> <span class="s2">&quot;BOOLEAN&quot;</span><span class="p">,</span>
+            <span class="n">DateTime</span><span class="p">:</span> <span class="s2">&quot;TIMESTAMP&quot;</span><span class="p">,</span>
+            <span class="n">Date</span><span class="p">:</span> <span class="s2">&quot;DATE&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">sqlalchemy_type</span><span class="p">,</span> <span class="n">pg_type</span> <span class="ow">in</span> <span class="n">type_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sql_type</span><span class="p">,</span> <span class="n">sqlalchemy_type</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">pg_type</span>
+
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">sql_type</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_join_condition</span><span class="p">(</span><span class="n">relationship_meta</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds the join condition string for a given relationship metadata.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            If you have a relationship between a users table and a posts table where</span>
+<span class="sd">            posts.user_id references users.id, the method returns:</span>
+<span class="sd">            &quot;users.id = posts.user_id&quot;</span>
+
+<span class="sd">            If the relationship involves multiple columns (a composite key), the method joins</span>
+<span class="sd">            them with AND. For example, if a sales table joins a products table on both</span>
+<span class="sd">            store_id and product_id the method returns:</span>
+<span class="sd">            &quot;products.store_id = sales.store_id AND products.product_id = sales.product_id&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            relationship_meta (RelationshipMeta):</span>
+<span class="sd">            The relationship metadata given by SQLAlchemy models.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The join condition string for the given relationship metadata.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">local_cols</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">remote_cols</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">local</span><span class="p">,</span> <span class="n">remote</span> <span class="ow">in</span> <span class="n">relationship_meta</span><span class="o">.</span><span class="n">local_remote_pairs</span><span class="p">:</span>
+            <span class="n">local_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">local</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">remote_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">remote</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">remote</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">remote</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">local</span><span class="p">,</span> <span class="n">remote</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">local_cols</span><span class="p">,</span> <span class="n">remote_cols</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="s2">&quot; AND &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="semantido.generators.semantic_bridge.SQLAlchemySemanticBridge.get_semantic_layer" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_semantic_layer</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retrieves the current semantic layer instance.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>SemanticLayer</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="SemanticLayer
+
+
+  
+      dataclass
+   (semantido.generators.semantic_layer.SemanticLayer)" href="#semantido.generators.semantic_layer.SemanticLayer">SemanticLayer</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The object containing extracted table and relationship metadata.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/semantido/generators/semantic_bridge.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_semantic_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SemanticLayer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves the current semantic layer instance.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SemanticLayer: The object containing extracted table and relationship metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="semantido.generators.semantic_bridge.SQLAlchemySemanticBridge.sync_from_models" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">sync_from_models</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Extracts schema and semantic information from all mapped models.</p>
+<p>This method clears any previously cached metadata and performs a full scan
+of the SQLAlchemy registry to rebuild the semantic layer.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>SemanticLayer</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="SemanticLayer
+
+
+  
+      dataclass
+   (semantido.generators.semantic_layer.SemanticLayer)" href="#semantido.generators.semantic_layer.SemanticLayer">SemanticLayer</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The fully populated semantic layer.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/semantido/generators/semantic_bridge.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sync_from_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SemanticLayer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts schema and semantic information from all mapped models.</span>
+
+<span class="sd">    This method clears any previously cached metadata and performs a full scan</span>
+<span class="sd">    of the SQLAlchemy registry to rebuild the semantic layer.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SemanticLayer: The fully populated semantic layer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model_registry</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="c1"># Get all mapped classes</span>
+    <span class="k">for</span> <span class="n">mapper</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">mappers</span><span class="p">:</span>
+        <span class="n">clazz</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">class_</span>
+        <span class="n">table_name</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">persist_selectable</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c1"># Add the current mapped table to the model registry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_registry</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">clazz</span>
+
+        <span class="c1"># Extract table information</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_table</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="c1"># Extract table relationships</span>
+        <span class="n">relationships</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_relationships</span><span class="p">(</span><span class="n">clazz</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="n">relationships</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span><span class="o">.</span><span class="n">add_relationship</span><span class="p">(</span><span class="n">relationship</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">semantic_layer</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="semantido.generators.semantic_layer"></a>
+    <div class="doc doc-contents first">
+
+        <p>Defines the data structures for the semantic representation of the database schema.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.generators.semantic_layer.Column" class="doc doc-heading">
+            <code>Column</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Represents a database column with enriched semantic metadata.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.name">name</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The physical name of the column in the database.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.data_type">data_type</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The normalized data type (e.g., VARCHAR, INTEGER).</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.description">description</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A human-readable explanation of the column's content.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.privacy_level">privacy_level</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="PrivacyLevel (semantido.generators.semantic_layer.PrivacyLevel)" href="#semantido.generators.semantic_layer.PrivacyLevel">PrivacyLevel</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The sensitivity classification of the data.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.sample_values">sample_values</span></code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="list">list</span>[<span title="str">str</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of example data points to help clarify the content.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.synonyms">synonyms</span></code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="list">list</span>[<span title="str">str</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Alternative terms for the column name.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.is_foreign_key">is_foreign_key</span></code></td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Boolean flag indicating if this column links to another table.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.references">references</span></code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The target table and column (format: 'table.column') if a foreign key.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Column.application_rules">application_rules</span></code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="list">list</span>[<span title="str">str</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Specific business logic or constraints applied to this column.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Column</span><span class="p">:</span>
+    <span class="c1"># pylint: disable=R0902</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a database column with enriched semantic metadata.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name: The physical name of the column in the database.</span>
+<span class="sd">        data_type: The normalized data type (e.g., VARCHAR, INTEGER).</span>
+<span class="sd">        description: A human-readable explanation of the column&#39;s content.</span>
+<span class="sd">        privacy_level: The sensitivity classification of the data.</span>
+<span class="sd">        sample_values: A list of example data points to help clarify the content.</span>
+<span class="sd">        synonyms: Alternative terms for the column name.</span>
+<span class="sd">        is_foreign_key: Boolean flag indicating if this column links to another table.</span>
+<span class="sd">        references: The target table and column (format: &#39;table.column&#39;) if a foreign key.</span>
+<span class="sd">        application_rules: Specific business logic or constraints applied to this column.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">privacy_level</span><span class="p">:</span> <span class="n">PrivacyLevel</span>
+    <span class="n">sample_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">synonyms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">is_foreign_key</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">references</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Format: table.column</span>
+    <span class="n">application_rules</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.generators.semantic_layer.PrivacyLevel" class="doc doc-heading">
+            <code>PrivacyLevel</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+
+        <p>Defines the data sensitivity levels for columns.</p>
+<p>Used to inform downstream consumers (like LLMs or BI tools) about
+the accessibility and security requirements of specific data points.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PrivacyLevel</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Defines the data sensitivity levels for columns.</span>
+
+<span class="sd">    Used to inform downstream consumers (like LLMs or BI tools) about</span>
+<span class="sd">    the accessibility and security requirements of specific data points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">PUBLIC</span> <span class="o">=</span> <span class="s2">&quot;public&quot;</span>
+    <span class="n">RESTRICTED</span> <span class="o">=</span> <span class="s2">&quot;restricted&quot;</span>
+    <span class="n">CONFIDENTIAL</span> <span class="o">=</span> <span class="s2">&quot;confidential&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.generators.semantic_layer.Relationship" class="doc doc-heading">
+            <code>Relationship</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Represents a semantic link between two database tables.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Relationship.from_table">from_table</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of the source table.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Relationship.to_table">to_table</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of the target table.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Relationship.join_condition">join_condition</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The SQL fragment defining how the tables link.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Relationship.relationship_type">relationship_type</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="RelationshipType (semantido.generators.semantic_layer.RelationshipType)" href="#semantido.generators.semantic_layer.RelationshipType">RelationshipType</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The cardinality of the link.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Relationship.description">description</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A plain-language explanation of the relationship logic.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Relationship</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a semantic link between two database tables.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        from_table: The name of the source table.</span>
+<span class="sd">        to_table: The name of the target table.</span>
+<span class="sd">        join_condition: The SQL fragment defining how the tables link.</span>
+<span class="sd">        relationship_type: The cardinality of the link.</span>
+<span class="sd">        description: A plain-language explanation of the relationship logic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">from_table</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">to_table</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">join_condition</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">relationship_type</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">RelationshipType</span>  <span class="c1"># Example: &quot;one-to-many&quot;, &quot;many-to-one&quot;, &quot;many-to-many&quot;</span>
+    <span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.generators.semantic_layer.RelationshipType" class="doc doc-heading">
+            <code>RelationshipType</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+
+        <p>Specifies the cardinality of a database relationship.</p>
+<p>Helps in determining how to construct joins and aggregate data.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">RelationshipType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specifies the cardinality of a database relationship.</span>
+
+<span class="sd">    Helps in determining how to construct joins and aggregate data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ONE_TO_MANY</span> <span class="o">=</span> <span class="s2">&quot;one-to-many&quot;</span>
+    <span class="n">MANY_TO_ONE</span> <span class="o">=</span> <span class="s2">&quot;many-to-one&quot;</span>
+    <span class="n">MANY_TO_MANY</span> <span class="o">=</span> <span class="s2">&quot;many-to-many&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.generators.semantic_layer.SemanticLayer" class="doc doc-heading">
+            <code>SemanticLayer</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>The central repository for all semantic metadata extracted from the database.</p>
+<p>This class serves as the final output of the synchronization process,
+containing structured information about tables, their relationships,
+and a global application glossary. It provides methods for serializing
+this metadata to JSON for use by external tools or LLMs.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SemanticLayer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The central repository for all semantic metadata extracted from the database.</span>
+
+<span class="sd">    This class serves as the final output of the synchronization process,</span>
+<span class="sd">    containing structured information about tables, their relationships,</span>
+<span class="sd">    and a global application glossary. It provides methods for serializing</span>
+<span class="sd">    this metadata to JSON for use by external tools or LLMs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Table</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">relationships</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Relationship</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">application_glossary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Registers a new table definition in the semantic layer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            table: The Table object containing columns and semantic metadata.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_relationship</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relationship</span><span class="p">:</span> <span class="n">Relationship</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Registers a relationship between two tables in the semantic layer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            relationship: The Relationship object defining the join logic and cardinality.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">relationship</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts the entire semantic layer into a nested dictionary structure.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary representation suitable for JSON serialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;tables&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                    <span class="s2">&quot;primary_key&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">primary_key</span><span class="p">,</span>
+                    <span class="s2">&quot;synonyms&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">synonyms</span><span class="p">,</span>
+                    <span class="s2">&quot;sql_filters&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">sql_filters</span><span class="p">,</span>
+                    <span class="s2">&quot;application_context&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">application_context</span><span class="p">,</span>
+                    <span class="s2">&quot;business_context&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">business_context</span><span class="p">,</span>
+                    <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
+                            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                            <span class="s2">&quot;privacy_level&quot;</span><span class="p">:</span> <span class="p">(</span>
+                                <span class="n">column</span><span class="o">.</span><span class="n">privacy_level</span><span class="o">.</span><span class="n">value</span>
+                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">privacy_level</span><span class="p">,</span> <span class="n">Enum</span><span class="p">)</span>
+                                <span class="k">else</span> <span class="n">column</span><span class="o">.</span><span class="n">privacy_level</span>
+                            <span class="p">),</span>
+                            <span class="s2">&quot;sample_values&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">sample_values</span><span class="p">,</span>
+                            <span class="s2">&quot;synonyms&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">synonyms</span><span class="p">,</span>
+                            <span class="s2">&quot;is_foreign_key&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">is_foreign_key</span><span class="p">,</span>
+                            <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">references</span><span class="p">,</span>
+                            <span class="s2">&quot;application_rules&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">application_rules</span><span class="p">,</span>
+                        <span class="p">}</span>
+                        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span>
+                    <span class="p">],</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;relationships&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;from_table&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="o">.</span><span class="n">from_table</span><span class="p">,</span>
+                    <span class="s2">&quot;to_table&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="o">.</span><span class="n">to_table</span><span class="p">,</span>
+                    <span class="s2">&quot;join_condition&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="o">.</span><span class="n">join_condition</span><span class="p">,</span>
+                    <span class="s2">&quot;relationship_type&quot;</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="n">relationship</span><span class="o">.</span><span class="n">relationship_type</span><span class="o">.</span><span class="n">value</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">relationship</span><span class="o">.</span><span class="n">relationship_type</span><span class="p">,</span> <span class="n">Enum</span><span class="p">)</span>
+                        <span class="k">else</span> <span class="n">relationship</span><span class="o">.</span><span class="n">relationship_type</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">relationships</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exports the entire semantic layer as a formatted JSON string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Indented JSON string representing the semantic layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serializes and saves the semantic layer to a JSON file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: The filesystem path where the JSON file will be created.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="semantido.generators.semantic_layer.SemanticLayer.add_relationship" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">add_relationship</span><span class="p">(</span><span class="n">relationship</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Registers a relationship between two tables in the semantic layer.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>relationship</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Relationship
+
+
+  
+      dataclass
+   (semantido.generators.semantic_layer.Relationship)" href="#semantido.generators.semantic_layer.Relationship">Relationship</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The Relationship object defining the join logic and cardinality.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_relationship</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relationship</span><span class="p">:</span> <span class="n">Relationship</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registers a relationship between two tables in the semantic layer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        relationship: The Relationship object defining the join logic and cardinality.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">relationship</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="semantido.generators.semantic_layer.SemanticLayer.add_table" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">add_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Registers a new table definition in the semantic layer.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>table</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Table
+
+
+  
+      dataclass
+   (semantido.generators.semantic_layer.Table)" href="#semantido.generators.semantic_layer.Table">Table</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The Table object containing columns and semantic metadata.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registers a new table definition in the semantic layer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table: The Table object containing columns and semantic metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="semantido.generators.semantic_layer.SemanticLayer.save_to_file" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">save_to_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Serializes and saves the semantic layer to a JSON file.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>file_path</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The filesystem path where the JSON file will be created.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serializes and saves the semantic layer to a JSON file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_path: The filesystem path where the JSON file will be created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="semantido.generators.semantic_layer.SemanticLayer.to_dict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_dict</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Converts the entire semantic layer into a nested dictionary structure.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>dict</code></td>            <td>
+                  <code><span title="dict">dict</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A dictionary representation suitable for JSON serialization.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts the entire semantic layer into a nested dictionary structure.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary representation suitable for JSON serialization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;tables&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="s2">&quot;primary_key&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">primary_key</span><span class="p">,</span>
+                <span class="s2">&quot;synonyms&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">synonyms</span><span class="p">,</span>
+                <span class="s2">&quot;sql_filters&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">sql_filters</span><span class="p">,</span>
+                <span class="s2">&quot;application_context&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">application_context</span><span class="p">,</span>
+                <span class="s2">&quot;business_context&quot;</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">business_context</span><span class="p">,</span>
+                <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
+                        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                        <span class="s2">&quot;privacy_level&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="n">column</span><span class="o">.</span><span class="n">privacy_level</span><span class="o">.</span><span class="n">value</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">privacy_level</span><span class="p">,</span> <span class="n">Enum</span><span class="p">)</span>
+                            <span class="k">else</span> <span class="n">column</span><span class="o">.</span><span class="n">privacy_level</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;sample_values&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">sample_values</span><span class="p">,</span>
+                        <span class="s2">&quot;synonyms&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">synonyms</span><span class="p">,</span>
+                        <span class="s2">&quot;is_foreign_key&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">is_foreign_key</span><span class="p">,</span>
+                        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">references</span><span class="p">,</span>
+                        <span class="s2">&quot;application_rules&quot;</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">application_rules</span><span class="p">,</span>
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span>
+                <span class="p">],</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;relationships&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;from_table&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="o">.</span><span class="n">from_table</span><span class="p">,</span>
+                <span class="s2">&quot;to_table&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="o">.</span><span class="n">to_table</span><span class="p">,</span>
+                <span class="s2">&quot;join_condition&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="o">.</span><span class="n">join_condition</span><span class="p">,</span>
+                <span class="s2">&quot;relationship_type&quot;</span><span class="p">:</span> <span class="p">(</span>
+                    <span class="n">relationship</span><span class="o">.</span><span class="n">relationship_type</span><span class="o">.</span><span class="n">value</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">relationship</span><span class="o">.</span><span class="n">relationship_type</span><span class="p">,</span> <span class="n">Enum</span><span class="p">)</span>
+                    <span class="k">else</span> <span class="n">relationship</span><span class="o">.</span><span class="n">relationship_type</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">relationships</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="semantido.generators.semantic_layer.SemanticLayer.to_json" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_json</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Exports the entire semantic layer as a formatted JSON string.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>str</code></td>            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Indented JSON string representing the semantic layer.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exports the entire semantic layer as a formatted JSON string.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Indented JSON string representing the semantic layer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.generators.semantic_layer.Table" class="doc doc-heading">
+            <code>Table</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Represents a database table enriched with semantic and contextual information.</p>
+<p>By capturing application and business contexts, this class helps disambiguate
+entities that might have generic names but specific roles in different domains.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Table.name">name</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The physical name of the table in the database.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Table.description">description</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A human-readable explanation of the table's purpose.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Table.columns">columns</span></code></td>
+            <td>
+                  <code><span title="list">list</span>[<a class="autorefs autorefs-internal" title="Column
+
+
+  
+      dataclass
+   (semantido.generators.semantic_layer.Column)" href="#semantido.generators.semantic_layer.Column">Column</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of Column objects belonging to this table.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Table.primary_key">primary_key</span></code></td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of the primary key column.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Table.synonyms">synonyms</span></code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="list">list</span>[<span title="str">str</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Alternative names for the entity represented by the table.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Table.sql_filters">sql_filters</span></code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="list">list</span>[<span title="str">str</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Default SQL fragments for filtering or security.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Table.application_context">application_context</span></code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The functional area of the application using this table.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="semantido.generators.semantic_layer.Table.business_context">business_context</span></code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The business domain or logic this table serves.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/generators/semantic_layer.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Table</span><span class="p">:</span>
+    <span class="c1"># pylint: disable=R0902</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a database table enriched with semantic and contextual information.</span>
+
+<span class="sd">    By capturing application and business contexts, this class helps disambiguate</span>
+<span class="sd">    entities that might have generic names but specific roles in different domains.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name: The physical name of the table in the database.</span>
+<span class="sd">        description: A human-readable explanation of the table&#39;s purpose.</span>
+<span class="sd">        columns: A list of Column objects belonging to this table.</span>
+<span class="sd">        primary_key: The name of the primary key column.</span>
+<span class="sd">        synonyms: Alternative names for the entity represented by the table.</span>
+<span class="sd">        sql_filters: Default SQL fragments for filtering or security.</span>
+<span class="sd">        application_context: The functional area of the application using this table.</span>
+<span class="sd">        business_context: The business domain or logic this table serves.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Column</span><span class="p">]</span>
+    <span class="n">primary_key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">synonyms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sql_filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">application_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">business_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h2 id="models">Models</h2>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="semantido.models.declarative_base"></a>
+    <div class="doc doc-contents first">
+
+        <p>Defines the standard and semantic-enabled SQLAlchemy declarative base classes.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.models.declarative_base.Base" class="doc doc-heading">
+            <code>Base</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="sqlalchemy.orm.DeclarativeBase">DeclarativeBase</span></code></p>
+
+
+
+        <p>Default SQLAlchemy base class for declarative models.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/models/declarative_base.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="c1"># pylint: disable=R0903</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Default SQLAlchemy base class for declarative models.&quot;&quot;&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="semantido.models.declarative_base.SemanticDeclarativeBase" class="doc doc-heading">
+            <code>SemanticDeclarativeBase</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="semantido.models.semantic_base.SemanticBase">SemanticBase</span></code>, <code><span title="sqlalchemy.orm.DeclarativeBase">DeclarativeBase</span></code></p>
+
+
+
+        <p>Mixin for declarative models with semantic data support.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/semantido/models/declarative_base.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SemanticDeclarativeBase</span><span class="p">(</span><span class="n">SemanticBase</span><span class="p">,</span> <span class="n">DeclarativeBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin for declarative models with semantic data support.&quot;&quot;&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
     </div>
 
 </div>
