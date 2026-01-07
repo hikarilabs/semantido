@@ -1,12 +1,4 @@
-This part of the project documentation focuses on an
-**understanding-oriented** approach. The background of the project,
-as well as reasoning about how it was implemented.
+# Why Semantido
 
-> **Note:** Expand this section by considering the
-> following points:
-
-- Give context and background on your library
-- Explain why you created it
-- Provide examples and approaches of how
-    to work with it
-- Help the reader make connections
+For a deeper dive into the architecture and vision, check out our whitepaper: 
+[Semantido: Semantic Layer for GenAI (PDF)](assets/semantido_semantic_layer_for_GenAI-compressed.pdf)
