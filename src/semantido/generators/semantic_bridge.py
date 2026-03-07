@@ -97,7 +97,7 @@ class SQLAlchemySemanticBridge:
     @staticmethod
     def _extract_table(clazz: Type, mapper) -> Table:
         """
-        Transforms a SQLAlchemy mapped class into a semantic Table definition.
+        Transforms an SQLAlchemy mapped class into a semantic Table definition.
 
         Args:
             clazz: The Python class representing the model.
@@ -182,11 +182,11 @@ class SQLAlchemySemanticBridge:
 
     @staticmethod
     def _extract_relationships(clazz, mapper) -> list[Relationship]:
-        """Inspects a SQLAlchemy mapped class and its mapper to extract
+        """Inspects an SQLAlchemy mapped class and its mapper to extract
          semantic relationship metadata.
 
         This method iterates through all relationships defined on the SQLAlchemy model,
-        identifying the target tables, determining the cardinality (One-to-Many vs Many-to-One),
+        identifying the target tables, determining the cardinality (One-to-Many vs. Many-to-One),
         builds the SQL join conditions, and retrieves any custom descriptions defined on the class.
 
         Args:
@@ -269,7 +269,7 @@ class SQLAlchemySemanticBridge:
 
             If the relationship involves multiple columns (a composite key), the method joins
             them with AND. For example, if a sales table joins a products table on both
-            store_id and product_id the method returns:
+            store_id and product_id, the method returns:
             "products.store_id = sales.store_id AND products.product_id = sales.product_id"
 
         Args:

@@ -16,6 +16,7 @@
 This module provides the core functionality for Semantido, including decorators,
 generators, and base classes for semantic data models.
 """
+
 from semantido.decorators.semantic_table import semantic_table
 from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
 from semantido.generators.semantic_layer import SemanticLayer

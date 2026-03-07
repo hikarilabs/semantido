@@ -11,7 +11,7 @@ def test_semantic_table_decorator_metadata():
         synonyms=["accounts", "clients"],
         application_context="User Management System",
         business_context="Customer Base",
-        sql_filters=["is_active = True"]
+        sql_filters=["is_active = True"],
     )
     class DecoratedModel:
         pass
@@ -29,7 +29,7 @@ def test_semantic_table_integration_with_bridge():
     @semantic_table(
         description="Product inventory",
         synonyms=["stock", "items"],
-        business_context="Supply Chain"
+        business_context="Supply Chain",
     )
     class Product(SemanticDeclarativeBase):
         __tablename__ = "products"

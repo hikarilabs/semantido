@@ -1,6 +1,6 @@
 
 # How to contribute
-Contributions are welcome and encouraged! This project aims to provide a solid foundations for production text-to-SQL systems while staying out of your way.
+Contributions are welcome and encouraged! This project aims to provide a solid foundation for production text-to-SQL systems while staying out of your way.
 
 Guidelines for making `semantido` the coolest semantic wrapper for SQLAlchemy:
 
@@ -12,10 +12,15 @@ Guidelines for making `semantido` the coolest semantic wrapper for SQLAlchemy:
 6. Improve documentation or add examples.
 7. Share your use cases, they help shape the roadmap.
 
-To install the project along with the dev optional dependencies run:
+To install the project along with the dev optional dependencies, run:
 
 ```bash
 $ pip install ".[dev]"
+```
+or if you prefer uv:
+```bash
+$ uv sync
+$ uv sync --extra dev
 ```
 
 Making changes
@@ -44,7 +49,7 @@ $ hatch test
 Coding Style
 -----
 This library is PEP8 & Pylint compliant. Pylint config is defined at ``.pylintrc`` for package code.
-Use default pylint command to check for non-compliant code 
+Use the default pylint command to check for non-compliant code 
 
 ```bash
 $ pylint src/*
@@ -57,13 +62,13 @@ $ black src/
 
 Documentation Coverage and Markdown Documentation
 -----
-If you fix a bug, all documentation which references the change must be updated to reflect the fix, ideally in the same commit.  
+If you fix a bug, all documentation that references the change must be updated to reflect the fix, ideally in the same commit.  
   
 To build the docs: 
 ```bash
 $ hatch run docs:build
 ```
-To view the docs locally run:
+To view the docs locally, run:
 ```bash
 $ hatch run docs:serve
 ```

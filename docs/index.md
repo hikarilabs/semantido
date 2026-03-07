@@ -5,5 +5,5 @@ This site contains the project documentation for the
 
 1. [Why *Semantido*](explanation.md)
 2. [Reference](reference.md)
-3. [Tutorials](tutorials.md)
+3. [Blog](blog/index.md)
 

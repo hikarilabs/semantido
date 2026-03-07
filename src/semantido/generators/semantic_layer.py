@@ -137,9 +137,9 @@ class SemanticLayer:
     this metadata to JSON for use by external tools or LLMs.
     """
 
-    tables: dict[str, Table] = field(default_factory=dict)
-    relationships: list[Relationship] = field(default_factory=list)
-    application_glossary: dict[str, str] = field(default_factory=dict)
+    tables: dict[str, Table] = field(default_factory=dict[str, Table])
+    relationships: list[Relationship] = field(default_factory=list[Relationship])
+    application_glossary: dict[str, str] = field(default_factory=dict[dict, str])
 
     def add_table(self, table: Table):
         """
@@ -222,7 +222,7 @@ class SemanticLayer:
         """
         return json.dumps(self.to_dict(), indent=4)
 
-    def save_to_file(self, file_path: str):
+    def to_file(self, file_path: str):
         """
         Serializes and saves the semantic layer to a JSON file.
 

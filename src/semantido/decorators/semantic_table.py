@@ -41,9 +41,8 @@ def semantic_table(
         ```python
         @semantic_table(
             description="User information and login profile",
-            synonyms=["user profile", "client"],
-            application_context="Registered users on the platform"
-        )
+            synonyms=[" user profile", "client"],
+            application_context="Registered users on the platform")
         class User(Base):
             __tablename__ = "users"
             id = Column(Integer, primary_key=True)

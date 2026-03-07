@@ -4,38 +4,14 @@ from semantido.models.declarative_base import SemanticDeclarativeBase
 from semantido.generators.semantic_layer import PrivacyLevel, RelationshipType
 
 
-def test_semantic_layer_generation_from_sqlalchemy():
+def test_semantic_layer_generation_from_sqlalchemy(models):
     """
     Test that the semantic layer is correctly generated from
     SQLAlchemy models using the SemanticDeclarativeBase.
     """
 
-    # Define models within the test scope to avoid polluting other tests
-    class User(SemanticDeclarativeBase):
-        __tablename__ = "users"
-        __semantic_description__ = "Standard user account table"
-
-        id = Column(Integer, primary_key=True)
-        username = Column(String(50))
-
-        # Custom semantic metadata via class attributes (as expected by bridge)
-        username_description = "The unique login name of the user"
-        username_privacy_level = PrivacyLevel.PUBLIC
-
-        posts = relationship("Post", back_populates="author")
-
-    class Post(SemanticDeclarativeBase):
-        __tablename__ = "posts"
-
-        id = Column(Integer, primary_key=True)
-        title = Column(String(100))
-        user_id = Column(Integer, ForeignKey("users.id"))
-
-        author = relationship("User", back_populates="posts")
-        author_relationship_description = "The user who wrote this post"
-
     # Trigger the sync via the bridge
-    semantic_layer = User.sync_semantic_layer()
+    semantic_layer = models["User"].sync_semantic_layer()
 
     # Verify Tables
     assert "users" in semantic_layer.tables
@@ -56,7 +32,8 @@ def test_semantic_layer_generation_from_sqlalchemy():
 
     # Find the relationship from posts to users
     post_to_user = next(
-        r for r in semantic_layer.relationships
+        r
+        for r in semantic_layer.relationships
         if r.from_table == "posts" and r.to_table == "users"
     )
     assert post_to_user.relationship_type == RelationshipType.MANY_TO_ONE

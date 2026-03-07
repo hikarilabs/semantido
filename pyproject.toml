@@ -29,13 +29,14 @@ dependencies = [
 dev = [
     "pytest==9.0.2",
     "pytest-cov==7.0.0",
-    "pylint==4.0.4",
-    "black==25.12.0"
+    "pylint==4.0.5",
+    "black==26.3.0",
+    "mypy==1.18.1"
 ]
 
 [project.urls]
 Homepage = "https://github.com/hikarilabs/semantido"
-Documentation = "https://hikarilabs.github.io/semantido/"
+Documentation = "https://semantido.ai"
 Issues = "https://github.com/hikarilabs/semantido/issues"
 
 [tool.hatch.version]
@@ -45,7 +46,8 @@ path = "src/semantido/__version__.py"
 exclude = [
     "/.github",
     "/docs",
-    "/tests"
+    "/tests",
+    "/examples"
 ]
 
 [tool.hatch.build.targets.wheel]

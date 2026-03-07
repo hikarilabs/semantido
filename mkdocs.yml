@@ -1,4 +1,6 @@
-site_name: Sematido Docs
+site_name: Sematido
+site_url: https://hikarilabs.github.io/semantido/
+copyright: Copyright &copy; 2026 Dragos Crintea
 
 theme:
   name: material
@@ -8,10 +10,18 @@ plugins:
       handlers:
         python:
           paths: [ src ]
+          options:
+            allow_inspection: true
   - search
+  - blog:
+      blog_dir: blog
+      post_date_format: yyyy/MM/dd
+      post_url_format: "{date}/slug"
+      authors_file: "{blog}/.authors.yml"
+
 
 nav:
   - Index: index.md
   - Why Semantido: explanation.md
   - Code Reference: reference.md
-  - Tutorials: tutorials.md
+  - Tutorials: blog/index.md

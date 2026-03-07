@@ -14,7 +14,7 @@
 
 """Provides the base mixin for integrating SQLAlchemy models with the semantic layer."""
 
-from semantido.generators.semantic_layer import SemanticLayer
+from semantido import SemanticLayer, SQLAlchemySemanticBridge
 
 
 class SemanticBase:
@@ -36,7 +36,7 @@ class SemanticBase:
     """
 
     @classmethod
-    def get_semantic_bridge(cls):
+    def get_semantic_bridge(cls) -> SQLAlchemySemanticBridge:
         # pylint: disable=C0415
         """
         Retrieves or initializes the `SQLAlchemySemanticBridge` for this base class.
@@ -47,18 +47,20 @@ class SemanticBase:
         Returns:
             SQLAlchemySemanticBridge: The bridge instance associated with this model hierarchy.
         """
-        from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
 
-        if not hasattr(cls, "_semantic_bridge"):
-            for base in cls.__mro__:
-                if hasattr(base, "registry"):
-                    cls._semantic_bridge = SQLAlchemySemanticBridge(base)
-                    break
+        if hasattr(cls, "_semantic_bridge"):
+            return cls._semantic_bridge
 
-        return cls._semantic_bridge
+        for base in cls.__mro__:
+            if hasattr(base, "registry"):
+                cls._semantic_bridge = SQLAlchemySemanticBridge(base)
+                return cls._semantic_bridge
+
+        raise RuntimeError("SemanticBase requires a SQLAlchemy declarative base registry")
+
 
     @classmethod
-    def sync_semantic_layer(cls) -> "SemanticLayer":
+    def sync_semantic_layer(cls) -> SemanticLayer:
         """
         Synchronizes the semantic layer with the current state of all mapped models.
 
@@ -69,4 +71,6 @@ class SemanticBase:
             SemanticLayer: The updated semantic layer containing the synchronized metadata.
         """
         bridge = cls.get_semantic_bridge()
-        return bridge.sync_from_models()
+        semantic_layer = bridge.sync_from_models()
+
+        return semantic_layer
