@@ -159,14 +159,46 @@ class SemanticLayer:
         """
         self.relationships.append(relationship)
 
-    def to_dict(self) -> dict:
+    @staticmethod
+    def _remove_empty_values(obj):
+        """
+        Recursively removes keys with None, empty lists, or empty dicts from a dictionary.
+
+        This helps produce cleaner JSON output by eliminating null and empty collection values.
+
+        Args:
+            obj: A dictionary, list, or primitive value to clean.
+
+        Returns:
+            The cleaned object with empty values removed.
+        """
+        if isinstance(obj, dict):
+            return {
+                k: SemanticLayer._remove_empty_values(v)
+                for k, v in obj.items()
+                if v is not None and v != [] and v != {}
+            }
+        elif isinstance(obj, list):
+            return [
+                SemanticLayer._remove_empty_values(item)
+                for item in obj
+                if item is not None and item != [] and item != {}
+            ]
+        else:
+            return obj
+
+    def to_dict(self, include_empty: bool = False) -> dict:
         """
         Converts the entire semantic layer into a nested dictionary structure.
+
+        Args:
+            include_empty: If False (default), removes null and empty collection values.
+                          If True, includes all values as-is.
 
         Returns:
             dict: A dictionary representation suitable for JSON serialization.
         """
-        return {
+        raw_dict = {
             "tables": {
                 name: {
                     "name": table.name,
@@ -213,21 +245,29 @@ class SemanticLayer:
             ],
         }
 
-    def to_json(self) -> str:
+        return raw_dict if include_empty else self._remove_empty_values(raw_dict)
+
+    def to_json(self, include_empty: bool = False) -> str:
         """
         Exports the entire semantic layer as a formatted JSON string.
+
+        Args:
+            include_empty: If False (default), removes null and empty collection values.
+                          If True, includes all values as-is.
 
         Returns:
             str: Indented JSON string representing the semantic layer.
         """
-        return json.dumps(self.to_dict(), indent=4)
+        return json.dumps(self.to_dict(include_empty=include_empty), indent=4)
 
-    def to_file(self, file_path: str):
+    def to_file(self, file_path: str, include_empty: bool = False):
         """
         Serializes and saves the semantic layer to a JSON file.
 
         Args:
             file_path: The filesystem path where the JSON file will be created.
+            include_empty: If False (default), removes null and empty collection values.
+                          If True, includes all values as-is.
         """
         with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(self.to_dict(), f, indent=4)
+            json.dump(self.to_dict(include_empty=include_empty), f, indent=4)

@@ -12,5 +12,3 @@ def test_semantic_base(models):
 
     assert "users" in semantic_layer.tables
     assert "posts" in semantic_layer.tables
-
-

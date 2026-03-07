@@ -56,8 +56,9 @@ class SemanticBase:
                 cls._semantic_bridge = SQLAlchemySemanticBridge(base)
                 return cls._semantic_bridge
 
-        raise RuntimeError("SemanticBase requires a SQLAlchemy declarative base registry")
-
+        raise RuntimeError(
+            "SemanticBase requires a SQLAlchemy declarative base registry"
+        )
 
     @classmethod
     def sync_semantic_layer(cls) -> SemanticLayer:
