@@ -33,6 +33,9 @@ dev = [
     "black==26.3.0",
     "mypy==1.19.1"
 ]
+publish = [
+    "twine==6.2.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/hikarilabs/semantido"
