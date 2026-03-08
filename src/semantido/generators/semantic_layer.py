@@ -88,6 +88,7 @@ class Table:
         description: A human-readable explanation of the table's purpose.
         columns: A list of Column objects belonging to this table.
         primary_key: The name of the primary key column.
+        schema: The database schema to which the table belongs.
         synonyms: Alternative names for the entity represented by the table.
         sql_filters: Default SQL fragments for filtering or security.
         application_context: The functional area of the application using this table.
@@ -98,6 +99,7 @@ class Table:
     description: str
     columns: list[Column]
     primary_key: str
+    schema: Optional[str] = None
     synonyms: Optional[list[str]] = None
     sql_filters: Optional[list[str]] = None
     application_context: Optional[str] = None
@@ -204,6 +206,7 @@ class SemanticLayer:
                     "name": table.name,
                     "description": table.description,
                     "primary_key": table.primary_key,
+                    "schema": table.schema,
                     "synonyms": table.synonyms,
                     "sql_filters": table.sql_filters,
                     "application_context": table.application_context,

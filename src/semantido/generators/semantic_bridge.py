@@ -108,6 +108,7 @@ class SQLAlchemySemanticBridge:
         """
 
         table_name = mapper.persist_selectable.name
+        schema = mapper.persist_selectable.schema
 
         description = getattr(clazz, "__semantic_description__", f"Table: {table_name}")
         synonyms = getattr(clazz, "__semantic_synonyms__", [])
@@ -129,6 +130,7 @@ class SQLAlchemySemanticBridge:
             description=description,
             columns=columns,
             primary_key=primary_key,
+            schema=schema,
             synonyms=synonyms,
             sql_filters=sql_filters,
             application_context=application_context,
@@ -166,7 +168,13 @@ class SQLAlchemySemanticBridge:
         references = None
         if foreign_keys:
             fk = list(sql_column_meta.foreign_keys)[0]
-            references = f"{fk.column.table.name}.{fk.column.name}"
+            # Build schema-qualified reference if schema is present
+            table_ref = (
+                f"{fk.column.table.schema}.{fk.column.table.name}"
+                if fk.column.table.schema
+                else fk.column.table.name
+            )
+            references = f"{table_ref}.{fk.column.name}"
 
         return Column(
             name=column_name,
@@ -267,6 +275,10 @@ class SQLAlchemySemanticBridge:
             posts.user_id references users.id, the method returns:
             "users.id = posts.user_id"
 
+            If tables belong to different schemas (e.g., public.users and blog.posts),
+            the method returns schema-qualified names:
+            "public.users.id = blog.posts.user_id"
+
             If the relationship involves multiple columns (a composite key), the method joins
             them with AND. For example, if a sales table joins a products table on both
             store_id and product_id, the method returns:
@@ -284,8 +296,20 @@ class SQLAlchemySemanticBridge:
         remote_cols = []
 
         for local, remote in relationship_meta.local_remote_pairs:
-            local_cols.append(f"{local.table.name}.{local.name}")
-            remote_cols.append(f"{remote.table.name}.{remote.name}")
+            # Build schema-qualified table names if schema is present
+            local_table = (
+                f"{local.table.schema}.{local.table.name}"
+                if local.table.schema
+                else local.table.name
+            )
+            remote_table = (
+                f"{remote.table.schema}.{remote.table.name}"
+                if remote.table.schema
+                else remote.table.name
+            )
+
+            local_cols.append(f"{local_table}.{local.name}")
+            remote_cols.append(f"{remote_table}.{remote.name}")
 
         conditions = [
             f"{local} = {remote}" for local, remote in zip(local_cols, remote_cols)
