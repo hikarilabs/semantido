@@ -48,8 +48,15 @@ class TimeGrain(Enum):
     YEAR = "year"
 
     def __lt__(self, other: "TimeGrain") -> bool:
+        if not isinstance(other, TimeGrain):
+            raise TypeError("Cannot compare TimeGrain with non-TimeGrain object")
         order = list(type(self))
         return order.index(self) < order.index(other)
+
+    def __le__(self, other: "TimeGrain") -> bool:
+        if not isinstance(other, TimeGrain):
+            raise TypeError("Cannot compare TimeGrain with non-TimeGrain object")
+        return self == other or self < other
 
 
 class RelationshipType(Enum):
@@ -129,6 +136,9 @@ class Table:
     application_context: Optional[str] = None
     business_context: Optional[str] = None
 
+    # OSI Extended Field
+    time_dimension: Optional[str] = None
+
 
 @dataclass
 class Relationship:
@@ -189,7 +199,6 @@ class SemanticLayer:
     def _remove_empty_values(obj):
         """
         Recursively removes keys with None, empty lists, or empty dicts from a dictionary.
-
         This helps produce cleaner JSON output by eliminating null and empty collection values.
 
         Args:
@@ -236,6 +245,7 @@ class SemanticLayer:
                     "sql_filters": table.sql_filters,
                     "application_context": table.application_context,
                     "business_context": table.business_context,
+                    "time_dimension": table.time_dimension,
                     "columns": [
                         {
                             "name": column.name,
@@ -251,6 +261,12 @@ class SemanticLayer:
                             "is_foreign_key": column.is_foreign_key,
                             "references": column.references,
                             "application_rules": column.application_rules,
+                            "is_time_dimension": column.is_time_dimension or None,
+                            "time_grain": (
+                                column.time_grain.value
+                                if isinstance(column.time_grain, Enum)
+                                else column.time_grain
+                            ),
                         }
                         for column in table.columns
                     ],

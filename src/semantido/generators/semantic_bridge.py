@@ -17,14 +17,8 @@
 from typing import Type
 
 from sqlalchemy import (
-    String,
-    Integer,
-    Float,
-    Boolean,
     DateTime,
     Date,
-    Text,
-    Numeric,
 )
 
 from semantido.generators.semantic_layer import (
@@ -32,8 +26,16 @@ from semantido.generators.semantic_layer import (
     Column,
     Table,
     Relationship,
-    PrivacyLevel,
     RelationshipType,
+)
+from semantido.generators.utils import check_grain_supported_by_type
+
+from semantido.generators.utils.sqlalchemy_mapping import (
+    map_sqlalchemy_type,
+    build_join_condition,
+    extract_column_metadata,
+    resolve_foreign_key,
+    extract_table_metadata,
 )
 
 
@@ -102,31 +104,6 @@ class SQLAlchemySemanticBridge:
         return self.semantic_layer
 
     @staticmethod
-    def _extract_table_metadata(clazz: Type, table_name: str) -> dict:
-        """
-        Reads semantic metadata attributes from a mapped class.
-
-        Args:
-            clazz: The Python class representing the model.
-            table_name: The physical table name, used as a fallback description.
-
-        Returns:
-            dict: A dictionary of semantic metadata fields.
-        """
-        return {
-            "description": getattr(
-                clazz, "__semantic_description__", f"Table: {table_name}"
-            ),
-            "synonyms": getattr(clazz, "__semantic_synonyms__", None) or [],
-            "sql_filters": getattr(clazz, "__semantic_sql_filters__", None) or [],
-            "application_context": getattr(
-                clazz, "__semantic_application_context__", None
-            ),
-            "business_context": getattr(clazz, "__semantic_business_context__", None),
-            "time_dimension": getattr(clazz, "__semantic_time_dimension__", None),
-        }
-
-    @staticmethod
     def _extract_table(clazz: Type, mapper) -> Table:
         """
         Transforms an SQLAlchemy mapped class into a semantic Table definition.
@@ -140,7 +117,7 @@ class SQLAlchemySemanticBridge:
         """
         table_name = mapper.persist_selectable.name
         schema = mapper.persist_selectable.schema
-        meta = SQLAlchemySemanticBridge._extract_table_metadata(clazz, table_name)
+        meta = extract_table_metadata(clazz, table_name)
 
         # time dimension must be of a Date or DateTime type, fail if not
         if not isinstance(
@@ -153,10 +130,15 @@ class SQLAlchemySemanticBridge:
 
         primary_keys = [key.name for key in mapper.primary_key]
         primary_key = primary_keys[0] if primary_keys else None
-        columns = [
-            SQLAlchemySemanticBridge._extract_column(clazz, name, prop)
-            for name, prop in mapper.columns.items()
-        ]
+
+        columns = []
+
+        for name, prop in mapper.columns.items():
+            name = str(name)
+            column = SQLAlchemySemanticBridge._extract_column(clazz, name, prop)
+            if name == meta["time_dimension"]:
+                column.is_time_dimension = True
+            columns.append(column)
 
         return Table(
             name=table_name,
@@ -168,12 +150,20 @@ class SQLAlchemySemanticBridge:
             sql_filters=meta["sql_filters"],
             application_context=meta["application_context"],
             business_context=meta["business_context"],
+            time_dimension=meta["time_dimension"],
         )
 
     @staticmethod
     def _extract_column(clazz: Type, column_name: str, prop) -> Column:
         """
         Extracts semantic metadata and schema info for a specific column.
+
+        Time metadata contract:
+            <col>._is_time_dimension: bool marks a (secondary) business time axis
+            The table PRIMARY axis is declared once on the table decorator, and it's
+            applied by _extract_table
+            <col>_time_grain accepts a TimeGrain enum, and declaring a grain lower than
+            the table e.g., HOUR on a DATE column will emit a UserWarning
 
         Args:
             clazz: The model class where the column is defined.
@@ -183,42 +173,28 @@ class SQLAlchemySemanticBridge:
         Returns:
             Column: The semantic Column object.
         """
-        sql_column_meta = prop
+        meta = extract_column_metadata(clazz, column_name)
+        data_type = map_sqlalchemy_type(prop.type)
+        is_fk, references = resolve_foreign_key(prop)
 
-        data_type = SQLAlchemySemanticBridge._map_sql_alchemy_type(sql_column_meta.type)
-        description = getattr(
-            clazz, f"{column_name}_description", f"Column: {column_name}"
-        )
-        privacy_level = getattr(
-            clazz, f"{column_name}_privacy_level", PrivacyLevel.PUBLIC
-        )
-        sample_values = getattr(clazz, f"{column_name}_sample_values", None)
-        synonyms = getattr(clazz, f"{column_name}_synonyms", [])
-        application_rules = getattr(clazz, f"{column_name}_application_rules", [])
-
-        # FK
-        foreign_keys = len(sql_column_meta.foreign_keys) > 0
-        references = None
-        if foreign_keys:
-            fk = list(sql_column_meta.foreign_keys)[0]
-            # Build schema-qualified reference if schema is present
-            table_ref = (
-                f"{fk.column.table.schema}.{fk.column.table.name}"
-                if fk.column.table.schema
-                else fk.column.table.name
+        # value check for time grain for durration inconsistencies
+        if meta["time_grain"] is not None:
+            check_grain_supported_by_type(
+                clazz, column_name, meta["time_grain"], prop.type
             )
-            references = f"{table_ref}.{fk.column.name}"
 
         return Column(
             name=column_name,
             data_type=data_type,
-            description=description,
-            privacy_level=privacy_level,
-            sample_values=sample_values,
-            synonyms=synonyms,
-            is_foreign_key=foreign_keys,
+            description=meta["description"],
+            privacy_level=meta["privacy_level"],
+            sample_values=meta["sample_values"],
+            synonyms=meta["synonyms"],
+            is_foreign_key=is_fk,
             references=references,
-            application_rules=application_rules,
+            application_rules=meta["application_rules"],
+            is_time_dimension=meta["is_time_dimension"],
+            time_grain=meta["time_grain"],
         )
 
     @staticmethod
@@ -238,20 +214,29 @@ class SQLAlchemySemanticBridge:
             list: A list of Relationship objects representing the semantic links to other tables.
         """
 
+        _direction_map = {
+            "ONETOMANY": RelationshipType.ONE_TO_MANY,
+            "MANYTOONE": RelationshipType.MANY_TO_ONE,
+            "ONETOONE": RelationshipType.ONE_TO_ONE,
+            "MANYTOMANY": RelationshipType.MANY_TO_MANY,
+        }
+
         relationships = []
         for relationship_name, relationship_meta in mapper.relationships.items():
             target = relationship_meta.mapper
             target_table = target.persist_selectable.name
             source_table = mapper.persist_selectable.name
 
-            if relationship_meta.uselist:
-                relationship_type = RelationshipType.ONE_TO_MANY
-            else:
-                relationship_type = RelationshipType.MANY_TO_ONE
+            direction_name = relationship_meta.direction.name
 
-            join_condition = SQLAlchemySemanticBridge._build_join_condition(
-                relationship_meta
-            )
+            relationship_type = _direction_map.get(relationship_meta.direction.name)
+            if relationship_type is None:
+                raise ValueError(
+                    f"Unknown relationship direction '{direction_name}' "
+                    f"for relationship '{relationship_name}' on '{source_table}'"
+                )
+
+            join_condition = build_join_condition(relationship_meta)
 
             description = getattr(
                 clazz,
@@ -270,89 +255,3 @@ class SQLAlchemySemanticBridge:
             )
 
         return relationships
-
-    @staticmethod
-    def _map_sql_alchemy_type(sql_type) -> str:
-        """
-        Maps SQLAlchemy types to Postgres types.
-
-        Args:
-            sql_type: The SQLAlchemy type instance
-
-        Returns:
-            str: A Postgres standardized type name (e.g., "INTEGER", "VARCHAR").
-        """
-        type_mapping = {
-            Text: "TEXT",
-            String: "VARCHAR",
-            Integer: "INTEGER",
-            Float: "FLOAT",
-            Numeric: "DECIMAL",
-            Boolean: "BOOLEAN",
-            DateTime: "TIMESTAMP",
-            Date: "DATE",
-        }
-
-        for sqlalchemy_type, pg_type in type_mapping.items():
-            if isinstance(sql_type, sqlalchemy_type):
-                return pg_type
-
-        return str(sql_type)
-
-    @staticmethod
-    def _build_join_condition(relationship_meta) -> str:
-        """Builds the join condition string for a given relationship metadata.
-
-        Examples:
-            If you have a relationship between a user table and a posts table where
-            posts.user_id references users.id, the method returns:
-            "users.id = posts.user_id"
-
-            If tables belong to different schemas (e.g., public.users and blog.posts),
-            the method returns schema-qualified names:
-            "public.users.id = blog.posts.user_id"
-
-            If the relationship involves multiple columns (a composite key), the method joins
-            them with AND. For example, if a sales table joins a products table on both
-            store_id and product_id, the method returns:
-            "products.store_id = sales.store_id AND products.product_id = sales.product_id"
-
-        Args:
-            relationship_meta (RelationshipMeta):
-            The relationship metadata given by SQLAlchemy models.
-
-        Returns:
-            str: The join condition string for the given relationship metadata.
-
-        """
-        local_cols = []
-        remote_cols = []
-
-        for local, remote in relationship_meta.local_remote_pairs:
-            # Build schema-qualified table names if schema is present
-            local_table = (
-                f"{local.table.schema}.{local.table.name}"
-                if local.table.schema
-                else local.table.name
-            )
-            remote_table = (
-                f"{remote.table.schema}.{remote.table.name}"
-                if remote.table.schema
-                else remote.table.name
-            )
-
-            local_cols.append(f"{local_table}.{local.name}")
-            remote_cols.append(f"{remote_table}.{remote.name}")
-
-        conditions = [
-            f"{local} = {remote}" for local, remote in zip(local_cols, remote_cols)
-        ]
-
-        if not conditions:
-            raise ValueError(
-                f"Could not determine join condition for relationship "
-                f"'{relationship_meta.key}': no local/remote column pairs found. "
-                "Check if the relationship uses a secondary table or a custom primary join."
-            )
-
-        return " AND ".join(conditions)

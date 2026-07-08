@@ -22,7 +22,8 @@ classifiers = [
 ]
 license-files = ["LICEN[CS]E*"]
 dependencies = [
-    "sqlalchemy"
+    "sqlalchemy",
+    "PyYAML==6.0.3"
 ]
 
 [project.optional-dependencies]
