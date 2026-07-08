@@ -14,7 +14,8 @@
 
 """Provides the base mixin for integrating SQLAlchemy models with the semantic layer."""
 
-from semantido import SemanticLayer, SQLAlchemySemanticBridge
+from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
+from semantido.generators.semantic_layer import SemanticLayer
 
 
 class SemanticBase:

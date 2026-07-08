@@ -54,15 +54,33 @@ Use the default pylint command to check for non-compliant code
 ```bash
 $ pylint src/*
 ```
-Run black for code formatting with:
+Run black for code formatting with ruff:
 
 ```bash
-$ black src/
+$ uv run ruff format .
 ```
 
 Documentation Coverage and Markdown Documentation
 -----
-If you fix a bug, all documentation that references the change must be updated to reflect the fix, ideally in the same commit.  
+If you fix a bug, all documentation that references the change must be updated to reflect the fix, ideally in the same commit.
+semantido uses hatch for managing all things docs
+
+1. Install hatch
+```bash
+$ pip install hatch
+or
+$ uv tool install hatch
+```
+
+2. Verify that hatch is available:
+```bash
+$ hatch --version
+```
+
+3. Create the 'docs' environment:
+```bash
+$ hatch env create docs
+```
   
 To build the docs: 
 ```bash

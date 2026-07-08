@@ -83,16 +83,48 @@ class SQLAlchemySemanticBridge:
             # Add the current mapped table to the model registry
             self._model_registry[table_name] = clazz
 
-            # Extract table information
-            table = self._extract_table(clazz, mapper)
-            self.semantic_layer.add_table(table)
+            try:
+                # Extract table information
+                table = self._extract_table(clazz, mapper)
+                self.semantic_layer.add_table(table)
 
-            # Extract table relationships
-            relationships = self._extract_relationships(clazz, mapper)
-            for relationship in relationships:
-                self.semantic_layer.add_relationship(relationship)
+                # Extract table relationships
+                relationships = self._extract_relationships(clazz, mapper)
+                for relationship in relationships:
+                    self.semantic_layer.add_relationship(relationship)
+
+            except Exception as exc:
+                raise RuntimeError(
+                    f"Failed to extract semantic metadata for model "
+                    f"'{clazz.__name__}' (table: '{table_name}')"
+                ) from exc
 
         return self.semantic_layer
+
+    @staticmethod
+    def _extract_table_metadata(clazz: Type, table_name: str) -> dict:
+        """
+        Reads semantic metadata attributes from a mapped class.
+
+        Args:
+            clazz: The Python class representing the model.
+            table_name: The physical table name, used as a fallback description.
+
+        Returns:
+            dict: A dictionary of semantic metadata fields.
+        """
+        return {
+            "description": getattr(
+                clazz, "__semantic_description__", f"Table: {table_name}"
+            ),
+            "synonyms": getattr(clazz, "__semantic_synonyms__", None) or [],
+            "sql_filters": getattr(clazz, "__semantic_sql_filters__", None) or [],
+            "application_context": getattr(
+                clazz, "__semantic_application_context__", None
+            ),
+            "business_context": getattr(clazz, "__semantic_business_context__", None),
+            "time_dimension": getattr(clazz, "__semantic_time_dimension__", None),
+        }
 
     @staticmethod
     def _extract_table(clazz: Type, mapper) -> Table:
@@ -106,35 +138,36 @@ class SQLAlchemySemanticBridge:
         Returns:
             Table: A semantic representation of the table and its metadata.
         """
-
         table_name = mapper.persist_selectable.name
         schema = mapper.persist_selectable.schema
+        meta = SQLAlchemySemanticBridge._extract_table_metadata(clazz, table_name)
 
-        description = getattr(clazz, "__semantic_description__", f"Table: {table_name}")
-        synonyms = getattr(clazz, "__semantic_synonyms__", [])
-        sql_filters = getattr(clazz, "__semantic_sql_filters__", [])
-        application_context = getattr(clazz, "__semantic_application_context__", None)
-        business_context = getattr(clazz, "__semantic_business_context__", None)
+        # time dimension must be of a Date or DateTime type, fail if not
+        if not isinstance(
+            mapper.columns[meta["time_dimension"]].type, (Date, DateTime)
+        ):
+            raise ValueError(
+                f"{clazz.__name__} time dimension: {meta['time_dimension']} "
+                f"must be of a Date or DateTime type"
+            )
 
         primary_keys = [key.name for key in mapper.primary_key]
         primary_key = primary_keys[0] if primary_keys else None
-
-        columns = []
-
-        for name, prop in mapper.columns.items():
-            column = SQLAlchemySemanticBridge._extract_column(clazz, name, prop)
-            columns.append(column)
+        columns = [
+            SQLAlchemySemanticBridge._extract_column(clazz, name, prop)
+            for name, prop in mapper.columns.items()
+        ]
 
         return Table(
             name=table_name,
-            description=description,
+            description=meta["description"],
             columns=columns,
             primary_key=primary_key,
             schema=schema,
-            synonyms=synonyms,
-            sql_filters=sql_filters,
-            application_context=application_context,
-            business_context=business_context,
+            synonyms=meta["synonyms"],
+            sql_filters=meta["sql_filters"],
+            application_context=meta["application_context"],
+            business_context=meta["business_context"],
         )
 
     @staticmethod
@@ -250,8 +283,8 @@ class SQLAlchemySemanticBridge:
             str: A Postgres standardized type name (e.g., "INTEGER", "VARCHAR").
         """
         type_mapping = {
-            String: "VARCHAR",
             Text: "TEXT",
+            String: "VARCHAR",
             Integer: "INTEGER",
             Float: "FLOAT",
             Numeric: "DECIMAL",
@@ -271,7 +304,7 @@ class SQLAlchemySemanticBridge:
         """Builds the join condition string for a given relationship metadata.
 
         Examples:
-            If you have a relationship between a users table and a posts table where
+            If you have a relationship between a user table and a posts table where
             posts.user_id references users.id, the method returns:
             "users.id = posts.user_id"
 
@@ -314,5 +347,12 @@ class SQLAlchemySemanticBridge:
         conditions = [
             f"{local} = {remote}" for local, remote in zip(local_cols, remote_cols)
         ]
+
+        if not conditions:
+            raise ValueError(
+                f"Could not determine join condition for relationship "
+                f"'{relationship_meta.key}': no local/remote column pairs found. "
+                "Check if the relationship uses a secondary table or a custom primary join."
+            )
 
         return " AND ".join(conditions)

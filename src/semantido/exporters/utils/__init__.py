@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Version module for semantido specifying the last version of the library"""
-
-__version__ = "0.3.0"
+"""
+This module provides the core functionality for Semantido, including decorators,
+generators, and base classes for semantic data models.
+"""

@@ -16,8 +16,9 @@
 
 import json
 from enum import Enum
-from typing import Optional
+from typing import Optional, Any
 from dataclasses import dataclass, field
+from typing_extensions import deprecated
 
 
 class PrivacyLevel(Enum):
@@ -29,8 +30,26 @@ class PrivacyLevel(Enum):
     """
 
     PUBLIC = "public"
+    INTERNAL = "internal"
     RESTRICTED = "restricted"
     CONFIDENTIAL = "confidential"
+
+
+class TimeGrain(Enum):
+    """Native resolution of a time dimension — the floor for GROUP BY."""
+
+    SECOND = "second"
+    MINUTE = "minute"
+    HOUR = "hour"
+    DAY = "day"
+    WEEK = "week"
+    MONTH = "month"
+    QUARTER = "quarter"
+    YEAR = "year"
+
+    def __lt__(self, other: "TimeGrain") -> bool:
+        order = list(type(self))
+        return order.index(self) < order.index(other)
 
 
 class RelationshipType(Enum):
@@ -40,6 +59,7 @@ class RelationshipType(Enum):
     Helps in determining how to construct joins and aggregate data.
     """
 
+    ONE_TO_ONE = "one-to-one"
     ONE_TO_MANY = "one-to-many"
     MANY_TO_ONE = "many-to-one"
     MANY_TO_MANY = "many-to-many"
@@ -60,7 +80,7 @@ class Column:
         synonyms: Alternative terms for the column name.
         is_foreign_key: Boolean flag indicating if this column links to another table.
         references: The target table and column (format: 'table.column') if a foreign key.
-        application_rules: Specific business logic or constraints applied to this column.
+        application_rules: Specific business logic or constraints are applied to this column.
     """
 
     name: str
@@ -72,6 +92,10 @@ class Column:
     is_foreign_key: bool = False
     references: Optional[str] = None  # Format: table.column
     application_rules: Optional[list[str]] = None
+
+    # OSI Extended Field
+    is_time_dimension: Optional[bool] = False
+    time_grain: Optional[TimeGrain] = None
 
 
 @dataclass
@@ -98,7 +122,7 @@ class Table:
     name: str
     description: str
     columns: list[Column]
-    primary_key: str
+    primary_key: Optional[str]
     schema: Optional[str] = None
     synonyms: Optional[list[str]] = None
     sql_filters: Optional[list[str]] = None
@@ -172,7 +196,7 @@ class SemanticLayer:
             obj: A dictionary, list, or primitive value to clean.
 
         Returns:
-            The cleaned object with empty values removed.
+            The cleaned object where an empty value is removed.
         """
         if isinstance(obj, dict):
             return {
@@ -180,16 +204,17 @@ class SemanticLayer:
                 for k, v in obj.items()
                 if v is not None and v != [] and v != {}
             }
-        elif isinstance(obj, list):
+
+        if isinstance(obj, list):
             return [
                 SemanticLayer._remove_empty_values(item)
                 for item in obj
                 if item is not None and item != [] and item != {}
             ]
-        else:
-            return obj
 
-    def to_dict(self, include_empty: bool = False) -> dict:
+        return obj
+
+    def to_dict(self, include_empty: bool = False) -> dict[str, Any]:
         """
         Converts the entire semantic layer into a nested dictionary structure.
 
@@ -248,8 +273,14 @@ class SemanticLayer:
             ],
         }
 
-        return raw_dict if include_empty else self._remove_empty_values(raw_dict)
+        if include_empty:
+            return raw_dict
 
+        return self._remove_empty_values(raw_dict)
+
+    @deprecated(
+        "Use to_json() from semantido.exporters. Will be removed in future versions."
+    )
     def to_json(self, include_empty: bool = False) -> str:
         """
         Exports the entire semantic layer as a formatted JSON string.
@@ -263,6 +294,9 @@ class SemanticLayer:
         """
         return json.dumps(self.to_dict(include_empty=include_empty), indent=4)
 
+    @deprecated(
+        "Use to_file() from semantido.exporters. Will be removed in future versions."
+    )
     def to_file(self, file_path: str, include_empty: bool = False):
         """
         Serializes and saves the semantic layer to a JSON file.
