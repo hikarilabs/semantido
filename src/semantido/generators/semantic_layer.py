@@ -299,7 +299,6 @@ class SemanticLayer:
 
         return cleaned
 
-
     @deprecated(
         "Use to_json() from semantido.exporters. Will be removed in future versions."
     )

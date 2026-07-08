@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  base-install:
+    # Verifies the base installation works without PyYAML: core imports and
+    # to_osi_dict must succeed, and yaml must NOT be importable. This is
+    # the job that catches a hard yaml import creeping into the module path.
+    name: Base install (no extras)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - name: Install core only
+        run: |
+          uv venv
+          uv pip install .
+      - name: Import smoke test (yaml-free)
+        run: |
+          uv run python -c "
+          import importlib.util
+          import semantido
+          from semantido.exporters import to_json, to_markdown, to_osi_dict
+          assert importlib.util.find_spec('yaml') is None, \
+              'PyYAML must not be present in a base install'
+          print('base install OK — yaml-free')
+          "
+
+  test:
+    name: Tests (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install with dev extra (includes PyYAML)
+        run: |
+          uv venv
+          uv pip install -e ".[dev]"
+      - name: Ruff
+        run: uv run ruff check src tests
+      - name: Mypy
+        run: uv run mypy src/semantido
+      - name: Pytest
+        run: uv run pytest tests -q --cov=semantido

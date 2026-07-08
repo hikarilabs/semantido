@@ -14,6 +14,8 @@
 
 """Provides the base mixin for integrating SQLAlchemy models with the semantic layer."""
 
+from typing import ClassVar
+
 from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
 from semantido.generators.semantic_layer import SemanticLayer
 
@@ -35,6 +37,8 @@ class SemanticBase:
             pass
         ```
     """
+
+    _semantic_bridge: ClassVar[SQLAlchemySemanticBridge]
 
     @classmethod
     def get_semantic_bridge(cls) -> SQLAlchemySemanticBridge:

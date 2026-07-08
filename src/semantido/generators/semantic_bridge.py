@@ -117,7 +117,9 @@ class SQLAlchemySemanticBridge:
         """
         table_name = str(mapper.persist_selectable.name)
         schema = (
-            str(mapper.persist_selectable.schema) if mapper.persist_selectable.schema else None
+            str(mapper.persist_selectable.schema)
+            if mapper.persist_selectable.schema
+            else None
         )
         meta = extract_table_metadata(clazz, table_name)
 
@@ -130,13 +132,11 @@ class SQLAlchemySemanticBridge:
                     f"must be a column in the table"
                 )
 
-        if not isinstance(
-            mapper.columns[time_dimension].type, (Date, DateTime)
-        ):
-            raise ValueError(
-                f"{clazz.__name__} time dimension: {meta['time_dimension']} "
-                f"must be of a Date or DateTime type"
-            )
+            if not isinstance(mapper.columns[time_dimension].type, (Date, DateTime)):
+                raise ValueError(
+                    f"{clazz.__name__} time dimension: {time_dimension} "
+                    f"must be of a Date or DateTime type"
+                )
 
         primary_keys = [key.name for key in mapper.primary_key]
         primary_key = primary_keys[0] if primary_keys else None
@@ -234,8 +234,8 @@ class SQLAlchemySemanticBridge:
         relationships = []
         for relationship_name, relationship_meta in mapper.relationships.items():
             target = relationship_meta.mapper
-            target_table = target.persist_selectable.name
-            source_table = mapper.persist_selectable.name
+            target_table = str(target.persist_selectable.name)
+            source_table = str(mapper.persist_selectable.name)
 
             direction_name = relationship_meta.direction.name
 
