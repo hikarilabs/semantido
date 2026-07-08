@@ -36,13 +36,14 @@ uv add "semantido[osi]"
 semantido extends your existing SQLAlchemy DeclarativeBase with SemanticDeclarativeBase. All models that inherit from it are automatically registered in the semantic layer.
 
 Use the @semantic_table decorator to attach human-readable metadata, and class-level attributes to annotate individual columns:
+```python
 from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 
 from semantido import semantic_table, SemanticDeclarativeBase
 from semantido.generators.semantic_layer import PrivacyLevel, TimeGrain
 
-```python
+
 @semantic_table(
     description="EMIR trade reports — one row per UTI, latest reported state.",
     synonyms=["trades", "derivative trades", "EMIR reports"],

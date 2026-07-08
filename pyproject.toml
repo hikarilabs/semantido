@@ -77,5 +77,9 @@ dependencies = [
 build = "mkdocs build --clean --strict"
 serve = "mkdocs serve --dev-addr localhost:8000"
 
+[tool.ruff.lint.per-file-ignores]
+# Example scripts import models for their registration side effect
+"examples/**" = ["F401"]
+
 [tool.black]
 target-version = ["py311", "py312", "py313"]

@@ -77,8 +77,14 @@ class SQLAlchemySemanticBridge:
         self.semantic_layer.relationships.clear()
         self._model_registry.clear()
 
-        # Get all mapped classes
-        for mapper in self.base.registry.mappers:
+        # Get all mapped classes. registry.mappers is a frozenset, so its
+        # iteration order varies across processes (hash randomization);
+        # sort by table name so exports are deterministic and diffable.
+        mappers = sorted(
+            self.base.registry.mappers,
+            key=lambda mapper: str(mapper.persist_selectable.name),
+        )
+        for mapper in mappers:
             clazz = mapper.class_
             table_name = str(mapper.persist_selectable.name)
 

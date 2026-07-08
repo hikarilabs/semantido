@@ -12,71 +12,6 @@ semantic_model:
     exporter: semantido.exporters.osi
     osi_spec_version: 0.2.0
   datasets:
-  - name: instruments
-    source: instruments
-    primary_key:
-    - instrument_id
-    description: Financial instruments referenced by trades. One row per ISIN (or internal
-      identifier for OTC products without an ISIN).
-    ai_context:
-      instructions: asset_class follows the EMIR taxonomy (IR, CR, EQ, FX, CO). cfi_code is
-        the ISO 10962 classification used for MiFIR field 43.
-      synonyms:
-      - product
-      - security
-      - derivative contract
-    fields:
-    - name: instrument_id
-      expression:
-        dialects:
-        - dialect: ANSI_SQL
-          expression: instrument_id
-      description: 'Column: instrument_id'
-    - name: isin
-      expression:
-        dialects:
-        - dialect: ANSI_SQL
-          expression: isin
-      description: ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; such products
-        are identified by instrument_id only.
-      custom_extensions:
-      - vendor_name: SEMANTIDO
-        sample_values:
-        - EZ9VVV8CQC69
-        - DE000C6900B7
-    - name: asset_class
-      expression:
-        dialects:
-        - dialect: ANSI_SQL
-          expression: asset_class
-      description: 'EMIR asset class: IR, CR, EQ, FX or CO.'
-      ai_context:
-        synonyms:
-        - product class
-      custom_extensions:
-      - vendor_name: SEMANTIDO
-        sample_values:
-        - IR
-        - FX
-        - CR
-    - name: cfi_code
-      expression:
-        dialects:
-        - dialect: ANSI_SQL
-          expression: cfi_code
-      description: ISO 10962 CFI classification code.
-    - name: notional_currency
-      expression:
-        dialects:
-        - dialect: ANSI_SQL
-          expression: notional_currency
-      description: ISO 4217 currency of the notional amount.
-      custom_extensions:
-      - vendor_name: SEMANTIDO
-        sample_values:
-        - EUR
-        - USD
-        - GBP
   - name: counterparties
     source: counterparties
     primary_key:
@@ -159,54 +94,71 @@ semantic_model:
         - dialect: ANSI_SQL
           expression: is_ccp
       description: True when the entity is a central counterparty (clearing house).
-  - name: trade_parties
-    source: trade_parties
+  - name: instruments
+    source: instruments
     primary_key:
-    - trade_party_id
-    description: Bridge table assigning counterparties to trades in specific roles. A trade
-      has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER
-      rows.
+    - instrument_id
+    description: Financial instruments referenced by trades. One row per ISIN (or internal
+      identifier for OTC products without an ISIN).
     ai_context:
-      instructions: 'This is a fan-out bridge: joining trade_reports to trade_parties multiplies
-        trade rows by the number of roles. Aggregations over trade amounts MUST filter on
-        a single role (usually ''REPORTING'').'
+      instructions: asset_class follows the EMIR taxonomy (IR, CR, EQ, FX, CO). cfi_code is
+        the ISO 10962 classification used for MiFIR field 43.
       synonyms:
-      - trade counterparty roles
-      - party roles
+      - product
+      - security
+      - derivative contract
     fields:
-    - name: trade_party_id
+    - name: instrument_id
       expression:
         dialects:
         - dialect: ANSI_SQL
-          expression: trade_party_id
-      description: 'Column: trade_party_id'
-    - name: trade_id
+          expression: instrument_id
+      description: 'Column: instrument_id'
+    - name: isin
       expression:
         dialects:
         - dialect: ANSI_SQL
-          expression: trade_id
-      description: 'Column: trade_id'
-    - name: counterparty_id
-      expression:
-        dialects:
-        - dialect: ANSI_SQL
-          expression: counterparty_id
-      description: 'Column: counterparty_id'
-    - name: role
-      expression:
-        dialects:
-        - dialect: ANSI_SQL
-          expression: role
-      description: 'Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or
-        CLEARING_MEMBER.'
-      ai_context:
-        instructions: Always filter to one role before aggregating trade amounts.
+          expression: isin
+      description: ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; such products
+        are identified by instrument_id only.
       custom_extensions:
       - vendor_name: SEMANTIDO
         sample_values:
-        - REPORTING
-        - OTHER
-        - CCP
+        - EZ9VVV8CQC69
+        - DE000C6900B7
+    - name: asset_class
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: asset_class
+      description: 'EMIR asset class: IR, CR, EQ, FX or CO.'
+      ai_context:
+        synonyms:
+        - product class
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - IR
+        - FX
+        - CR
+    - name: cfi_code
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: cfi_code
+      description: ISO 10962 CFI classification code.
+    - name: notional_currency
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: notional_currency
+      description: ISO 4217 currency of the notional amount.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - EUR
+        - USD
+        - GBP
   - name: mifir_transactions
     source: mifir_transactions
     primary_key:
@@ -303,6 +255,54 @@ semantic_model:
         sample_values:
         - ACPT
         - RJCT
+  - name: trade_parties
+    source: trade_parties
+    primary_key:
+    - trade_party_id
+    description: Bridge table assigning counterparties to trades in specific roles. A trade
+      has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER
+      rows.
+    ai_context:
+      instructions: 'This is a fan-out bridge: joining trade_reports to trade_parties multiplies
+        trade rows by the number of roles. Aggregations over trade amounts MUST filter on
+        a single role (usually ''REPORTING'').'
+      synonyms:
+      - trade counterparty roles
+      - party roles
+    fields:
+    - name: trade_party_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: trade_party_id
+      description: 'Column: trade_party_id'
+    - name: trade_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: trade_id
+      description: 'Column: trade_id'
+    - name: counterparty_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: counterparty_id
+      description: 'Column: counterparty_id'
+    - name: role
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: role
+      description: 'Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or
+        CLEARING_MEMBER.'
+      ai_context:
+        instructions: Always filter to one role before aggregating trade amounts.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - REPORTING
+        - OTHER
+        - CCP
   - name: trade_reports
     source: trade_reports
     primary_key:
@@ -535,19 +535,6 @@ semantic_model:
         instructions: Operational audit timestamp — do not use as a time axis for business
           questions.
   relationships:
-  - name: instruments_to_trade_reports
-    from:
-      dataset: instruments
-      columns:
-      - instrument_id
-    to:
-      dataset: trade_reports
-      columns:
-      - instrument_id
-    description: Relationship between instruments and trade_reports
-    custom_extensions:
-    - vendor_name: SEMANTIDO
-      relationship_type: one-to-many
   - name: counterparties_to_trade_parties
     from:
       dataset: counterparties
@@ -561,19 +548,19 @@ semantic_model:
     custom_extensions:
     - vendor_name: SEMANTIDO
       relationship_type: one-to-many
-  - name: trade_parties_to_trade_reports
+  - name: instruments_to_trade_reports
     from:
-      dataset: trade_parties
+      dataset: instruments
       columns:
-      - trade_id
+      - instrument_id
     to:
       dataset: trade_reports
       columns:
-      - trade_id
-    description: Relationship between trade_parties and trade_reports
+      - instrument_id
+    description: Relationship between instruments and trade_reports
     custom_extensions:
     - vendor_name: SEMANTIDO
-      relationship_type: many-to-one
+      relationship_type: one-to-many
   - name: mifir_transactions_to_counterparties
     from:
       dataset: mifir_transactions
@@ -597,6 +584,19 @@ semantic_model:
       columns:
       - counterparty_id
     description: The selling counterparty (LEI reference)
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      relationship_type: many-to-one
+  - name: trade_parties_to_trade_reports
+    from:
+      dataset: trade_parties
+      columns:
+      - trade_id
+    to:
+      dataset: trade_reports
+      columns:
+      - trade_id
+    description: Relationship between trade_parties and trade_reports
     custom_extensions:
     - vendor_name: SEMANTIDO
       relationship_type: many-to-one

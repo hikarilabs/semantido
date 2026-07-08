@@ -13,7 +13,7 @@ from models.trade_reporting import (
     TradeParty,
     TradeValuation,
     MifirTransaction,
-)  # noqa: F401— registers the mapped classes
+)  # importing registers the mapped classes
 
 OUT = Path(__file__).parent
 

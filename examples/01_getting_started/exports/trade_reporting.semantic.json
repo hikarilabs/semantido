@@ -1,65 +1,5 @@
 {
     "tables": {
-        "instruments": {
-            "name": "instruments",
-            "description": "Financial instruments referenced by trades. One row per ISIN (or internal identifier for OTC products without an ISIN).",
-            "primary_key": "instrument_id",
-            "synonyms": [
-                "product",
-                "security",
-                "derivative contract"
-            ],
-            "business_context": "asset_class follows the EMIR taxonomy (IR, CR, EQ, FX, CO). cfi_code is the ISO 10962 classification used for MiFIR field 43.",
-            "columns": [
-                {
-                    "name": "instrument_id",
-                    "data_type": "INTEGER",
-                    "description": "Column: instrument_id",
-                    "is_foreign_key": false
-                },
-                {
-                    "name": "isin",
-                    "data_type": "VARCHAR",
-                    "description": "ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; such products are identified by instrument_id only.",
-                    "sample_values": [
-                        "EZ9VVV8CQC69",
-                        "DE000C6900B7"
-                    ],
-                    "is_foreign_key": false
-                },
-                {
-                    "name": "asset_class",
-                    "data_type": "VARCHAR",
-                    "description": "EMIR asset class: IR, CR, EQ, FX or CO.",
-                    "sample_values": [
-                        "IR",
-                        "FX",
-                        "CR"
-                    ],
-                    "synonyms": [
-                        "product class"
-                    ],
-                    "is_foreign_key": false
-                },
-                {
-                    "name": "cfi_code",
-                    "data_type": "VARCHAR",
-                    "description": "ISO 10962 CFI classification code.",
-                    "is_foreign_key": false
-                },
-                {
-                    "name": "notional_currency",
-                    "data_type": "VARCHAR",
-                    "description": "ISO 4217 currency of the notional amount.",
-                    "sample_values": [
-                        "EUR",
-                        "USD",
-                        "GBP"
-                    ],
-                    "is_foreign_key": false
-                }
-            ]
-        },
         "counterparties": {
             "name": "counterparties",
             "description": "Legal entities that are party to reportable derivative trades. One row per LEI. Includes both reporting counterparties and their trade counterparties (clients, CCPs, brokers).",
@@ -135,49 +75,63 @@
                 }
             ]
         },
-        "trade_parties": {
-            "name": "trade_parties",
-            "description": "Bridge table assigning counterparties to trades in specific roles. A trade has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER rows.",
-            "primary_key": "trade_party_id",
+        "instruments": {
+            "name": "instruments",
+            "description": "Financial instruments referenced by trades. One row per ISIN (or internal identifier for OTC products without an ISIN).",
+            "primary_key": "instrument_id",
             "synonyms": [
-                "trade counterparty roles",
-                "party roles"
+                "product",
+                "security",
+                "derivative contract"
             ],
-            "business_context": "This is a fan-out bridge: joining trade_reports to trade_parties multiplies trade rows by the number of roles. Aggregations over trade amounts MUST filter on a single role (usually 'REPORTING').",
+            "business_context": "asset_class follows the EMIR taxonomy (IR, CR, EQ, FX, CO). cfi_code is the ISO 10962 classification used for MiFIR field 43.",
             "columns": [
                 {
-                    "name": "trade_party_id",
+                    "name": "instrument_id",
                     "data_type": "INTEGER",
-                    "description": "Column: trade_party_id",
+                    "description": "Column: instrument_id",
                     "is_foreign_key": false
                 },
                 {
-                    "name": "trade_id",
-                    "data_type": "INTEGER",
-                    "description": "Column: trade_id",
-                    "is_foreign_key": true,
-                    "references": "trade_reports.trade_id"
-                },
-                {
-                    "name": "counterparty_id",
-                    "data_type": "INTEGER",
-                    "description": "Column: counterparty_id",
-                    "is_foreign_key": true,
-                    "references": "counterparties.counterparty_id"
-                },
-                {
-                    "name": "role",
+                    "name": "isin",
                     "data_type": "VARCHAR",
-                    "description": "Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or CLEARING_MEMBER.",
+                    "description": "ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; such products are identified by instrument_id only.",
                     "sample_values": [
-                        "REPORTING",
-                        "OTHER",
-                        "CCP"
+                        "EZ9VVV8CQC69",
+                        "DE000C6900B7"
                     ],
-                    "is_foreign_key": false,
-                    "application_rules": [
-                        "Always filter to one role before aggregating trade amounts."
-                    ]
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "asset_class",
+                    "data_type": "VARCHAR",
+                    "description": "EMIR asset class: IR, CR, EQ, FX or CO.",
+                    "sample_values": [
+                        "IR",
+                        "FX",
+                        "CR"
+                    ],
+                    "synonyms": [
+                        "product class"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "cfi_code",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 10962 CFI classification code.",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "notional_currency",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 4217 currency of the notional amount.",
+                    "sample_values": [
+                        "EUR",
+                        "USD",
+                        "GBP"
+                    ],
+                    "is_foreign_key": false
                 }
             ]
         },
@@ -267,6 +221,52 @@
                         "RJCT"
                     ],
                     "is_foreign_key": false
+                }
+            ]
+        },
+        "trade_parties": {
+            "name": "trade_parties",
+            "description": "Bridge table assigning counterparties to trades in specific roles. A trade has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER rows.",
+            "primary_key": "trade_party_id",
+            "synonyms": [
+                "trade counterparty roles",
+                "party roles"
+            ],
+            "business_context": "This is a fan-out bridge: joining trade_reports to trade_parties multiplies trade rows by the number of roles. Aggregations over trade amounts MUST filter on a single role (usually 'REPORTING').",
+            "columns": [
+                {
+                    "name": "trade_party_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: trade_party_id",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "trade_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: trade_id",
+                    "is_foreign_key": true,
+                    "references": "trade_reports.trade_id"
+                },
+                {
+                    "name": "counterparty_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: counterparty_id",
+                    "is_foreign_key": true,
+                    "references": "counterparties.counterparty_id"
+                },
+                {
+                    "name": "role",
+                    "data_type": "VARCHAR",
+                    "description": "Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or CLEARING_MEMBER.",
+                    "sample_values": [
+                        "REPORTING",
+                        "OTHER",
+                        "CCP"
+                    ],
+                    "is_foreign_key": false,
+                    "application_rules": [
+                        "Always filter to one role before aggregating trade amounts."
+                    ]
                 }
             ]
         },
@@ -472,13 +472,6 @@
     },
     "relationships": [
         {
-            "from_table": "instruments",
-            "to_table": "trade_reports",
-            "join_condition": "instruments.instrument_id = trade_reports.instrument_id",
-            "relationship_type": "one-to-many",
-            "description": "Relationship between instruments and trade_reports"
-        },
-        {
             "from_table": "counterparties",
             "to_table": "trade_parties",
             "join_condition": "counterparties.counterparty_id = trade_parties.counterparty_id",
@@ -486,18 +479,11 @@
             "description": "Relationship between counterparties and trade_parties"
         },
         {
-            "from_table": "trade_parties",
+            "from_table": "instruments",
             "to_table": "trade_reports",
-            "join_condition": "trade_parties.trade_id = trade_reports.trade_id",
-            "relationship_type": "many-to-one",
-            "description": "Relationship between trade_parties and trade_reports"
-        },
-        {
-            "from_table": "trade_parties",
-            "to_table": "counterparties",
-            "join_condition": "trade_parties.counterparty_id = counterparties.counterparty_id",
-            "relationship_type": "many-to-one",
-            "description": "Relationship between trade_parties and counterparties"
+            "join_condition": "instruments.instrument_id = trade_reports.instrument_id",
+            "relationship_type": "one-to-many",
+            "description": "Relationship between instruments and trade_reports"
         },
         {
             "from_table": "mifir_transactions",
@@ -512,6 +498,20 @@
             "join_condition": "mifir_transactions.seller_id = counterparties.counterparty_id",
             "relationship_type": "many-to-one",
             "description": "The selling counterparty (LEI reference)"
+        },
+        {
+            "from_table": "trade_parties",
+            "to_table": "trade_reports",
+            "join_condition": "trade_parties.trade_id = trade_reports.trade_id",
+            "relationship_type": "many-to-one",
+            "description": "Relationship between trade_parties and trade_reports"
+        },
+        {
+            "from_table": "trade_parties",
+            "to_table": "counterparties",
+            "join_condition": "trade_parties.counterparty_id = counterparties.counterparty_id",
+            "relationship_type": "many-to-one",
+            "description": "Relationship between trade_parties and counterparties"
         },
         {
             "from_table": "trade_reports",

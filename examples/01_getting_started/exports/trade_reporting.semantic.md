@@ -4,32 +4,6 @@ Machine-readable database schema for natural language queries
 
 ## Database Entities (6 tables)
 
-### instruments
-**Full Name**: instruments
-**Primary Key**: instrument_id
-**Description**: Financial instruments referenced by trades. One row per ISIN (or internal identifier for OTC products without an ISIN).
-**Synonyms**: product, security, derivative contract
-**Business Context**: asset_class follows the EMIR taxonomy (IR, CR, EQ, FX, CO). cfi_code is the ISO 10962 classification used for MiFIR field 43.
-
-
-#### Columns
-- **instrument_id** (INTEGER)
-  - Column: instrument_id
-- **isin** (VARCHAR)
-  - ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; such products are identified by instrument_id only.
-  - *Examples*: EZ9VVV8CQC69, DE000C6900B7
-- **asset_class** (VARCHAR)
-  - EMIR asset class: IR, CR, EQ, FX or CO.
-  - *Examples*: IR, FX, CR
-  - *Synonyms*: product class
-- **cfi_code** (VARCHAR)
-  - ISO 10962 CFI classification code.
-- **notional_currency** (VARCHAR)
-  - ISO 4217 currency of the notional amount.
-  - *Examples*: EUR, USD, GBP
-
----
-
 ### counterparties
 **Full Name**: counterparties
 **Primary Key**: counterparty_id
@@ -60,24 +34,29 @@ Machine-readable database schema for natural language queries
 
 ---
 
-### trade_parties
-**Full Name**: trade_parties
-**Primary Key**: trade_party_id
-**Description**: Bridge table assigning counterparties to trades in specific roles. A trade has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER rows.
-**Synonyms**: trade counterparty roles, party roles
-**Business Context**: This is a fan-out bridge: joining trade_reports to trade_parties multiplies trade rows by the number of roles. Aggregations over trade amounts MUST filter on a single role (usually 'REPORTING').
+### instruments
+**Full Name**: instruments
+**Primary Key**: instrument_id
+**Description**: Financial instruments referenced by trades. One row per ISIN (or internal identifier for OTC products without an ISIN).
+**Synonyms**: product, security, derivative contract
+**Business Context**: asset_class follows the EMIR taxonomy (IR, CR, EQ, FX, CO). cfi_code is the ISO 10962 classification used for MiFIR field 43.
 
 
 #### Columns
-- **trade_party_id** (INTEGER)
-  - Column: trade_party_id
-- **trade_id** (INTEGER) ForeignKey → trade_reports.trade_id
-  - Column: trade_id
-- **counterparty_id** (INTEGER) ForeignKey → counterparties.counterparty_id
-  - Column: counterparty_id
-- **role** (VARCHAR)
-  - Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or CLEARING_MEMBER.
-  - *Examples*: REPORTING, OTHER, CCP
+- **instrument_id** (INTEGER)
+  - Column: instrument_id
+- **isin** (VARCHAR)
+  - ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; such products are identified by instrument_id only.
+  - *Examples*: EZ9VVV8CQC69, DE000C6900B7
+- **asset_class** (VARCHAR)
+  - EMIR asset class: IR, CR, EQ, FX or CO.
+  - *Examples*: IR, FX, CR
+  - *Synonyms*: product class
+- **cfi_code** (VARCHAR)
+  - ISO 10962 CFI classification code.
+- **notional_currency** (VARCHAR)
+  - ISO 4217 currency of the notional amount.
+  - *Examples*: EUR, USD, GBP
 
 ---
 
@@ -111,6 +90,27 @@ Machine-readable database schema for natural language queries
 - **report_status** (VARCHAR)
   - NCA processing status: ACPT, RJCT or PDNG.
   - *Examples*: ACPT, RJCT
+
+---
+
+### trade_parties
+**Full Name**: trade_parties
+**Primary Key**: trade_party_id
+**Description**: Bridge table assigning counterparties to trades in specific roles. A trade has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER rows.
+**Synonyms**: trade counterparty roles, party roles
+**Business Context**: This is a fan-out bridge: joining trade_reports to trade_parties multiplies trade rows by the number of roles. Aggregations over trade amounts MUST filter on a single role (usually 'REPORTING').
+
+
+#### Columns
+- **trade_party_id** (INTEGER)
+  - Column: trade_party_id
+- **trade_id** (INTEGER) ForeignKey → trade_reports.trade_id
+  - Column: trade_id
+- **counterparty_id** (INTEGER) ForeignKey → counterparties.counterparty_id
+  - Column: counterparty_id
+- **role** (VARCHAR)
+  - Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or CLEARING_MEMBER.
+  - *Examples*: REPORTING, OTHER, CCP
 
 ---
 
@@ -187,25 +187,15 @@ Machine-readable database schema for natural language queries
 
 ## Relationships (10 connections)
 
-### instruments → trade_reports
-- **Type**: one-to-many
-- **Join**: instruments.instrument_id = trade_reports.instrument_id
-- **Description**: Relationship between instruments and trade_reports
-
 ### counterparties → trade_parties
 - **Type**: one-to-many
 - **Join**: counterparties.counterparty_id = trade_parties.counterparty_id
 - **Description**: Relationship between counterparties and trade_parties
 
-### trade_parties → trade_reports
-- **Type**: many-to-one
-- **Join**: trade_parties.trade_id = trade_reports.trade_id
-- **Description**: Relationship between trade_parties and trade_reports
-
-### trade_parties → counterparties
-- **Type**: many-to-one
-- **Join**: trade_parties.counterparty_id = counterparties.counterparty_id
-- **Description**: Relationship between trade_parties and counterparties
+### instruments → trade_reports
+- **Type**: one-to-many
+- **Join**: instruments.instrument_id = trade_reports.instrument_id
+- **Description**: Relationship between instruments and trade_reports
 
 ### mifir_transactions → counterparties
 - **Type**: many-to-one
@@ -216,6 +206,16 @@ Machine-readable database schema for natural language queries
 - **Type**: many-to-one
 - **Join**: mifir_transactions.seller_id = counterparties.counterparty_id
 - **Description**: The selling counterparty (LEI reference)
+
+### trade_parties → trade_reports
+- **Type**: many-to-one
+- **Join**: trade_parties.trade_id = trade_reports.trade_id
+- **Description**: Relationship between trade_parties and trade_reports
+
+### trade_parties → counterparties
+- **Type**: many-to-one
+- **Join**: trade_parties.counterparty_id = counterparties.counterparty_id
+- **Description**: Relationship between trade_parties and counterparties
 
 ### trade_reports → instruments
 - **Type**: many-to-one
