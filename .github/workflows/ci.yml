@@ -19,7 +19,7 @@ jobs:
           python-version: "3.12"
       - name: Install core only
         run: |
-          uv venv
+          uv venv --clear
           uv pip install .
       - name: Import smoke test (yaml-free)
         run: |
@@ -46,7 +46,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install with dev extra (includes PyYAML)
         run: |
-          uv venv
+          uv venv --clear
           uv pip install -e ".[dev]"
       - name: Ruff
         run: uv run ruff check src tests examples

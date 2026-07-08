@@ -9,3 +9,11 @@ dist
 
 # mkdocs local files
 site
+
+# python bytecode
+__pycache__/
+*.pyc
+
+# pytest / coverage
+.pytest_cache/
+.coverage
