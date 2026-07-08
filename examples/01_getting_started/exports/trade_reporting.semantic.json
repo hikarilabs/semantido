@@ -1,0 +1,545 @@
+{
+    "tables": {
+        "instruments": {
+            "name": "instruments",
+            "description": "Financial instruments referenced by trades. One row per ISIN (or internal identifier for OTC products without an ISIN).",
+            "primary_key": "instrument_id",
+            "synonyms": [
+                "product",
+                "security",
+                "derivative contract"
+            ],
+            "business_context": "asset_class follows the EMIR taxonomy (IR, CR, EQ, FX, CO). cfi_code is the ISO 10962 classification used for MiFIR field 43.",
+            "columns": [
+                {
+                    "name": "instrument_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: instrument_id",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "isin",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; such products are identified by instrument_id only.",
+                    "sample_values": [
+                        "EZ9VVV8CQC69",
+                        "DE000C6900B7"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "asset_class",
+                    "data_type": "VARCHAR",
+                    "description": "EMIR asset class: IR, CR, EQ, FX or CO.",
+                    "sample_values": [
+                        "IR",
+                        "FX",
+                        "CR"
+                    ],
+                    "synonyms": [
+                        "product class"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "cfi_code",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 10962 CFI classification code.",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "notional_currency",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 4217 currency of the notional amount.",
+                    "sample_values": [
+                        "EUR",
+                        "USD",
+                        "GBP"
+                    ],
+                    "is_foreign_key": false
+                }
+            ]
+        },
+        "counterparties": {
+            "name": "counterparties",
+            "description": "Legal entities that are party to reportable derivative trades. One row per LEI. Includes both reporting counterparties and their trade counterparties (clients, CCPs, brokers).",
+            "primary_key": "counterparty_id",
+            "synonyms": [
+                "legal entity",
+                "client",
+                "trading party",
+                "LEI record"
+            ],
+            "application_context": "Reference data \u2014 updated via nightly GLEIF sync.",
+            "business_context": "EMIR Art. 9 counterparty classification drives reporting obligations: FC (financial), NFC+ (non-financial above clearing threshold), NFC- (below threshold).",
+            "columns": [
+                {
+                    "name": "counterparty_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: counterparty_id",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "lei",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 17442 Legal Entity Identifier (20 characters).",
+                    "privacy_level": "internal",
+                    "sample_values": [
+                        "529900T8BM49AURSDO55",
+                        "213800MBWEIJDM5CU638"
+                    ],
+                    "synonyms": [
+                        "legal entity identifier"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "legal_name",
+                    "data_type": "VARCHAR",
+                    "description": "Registered legal name of the entity.",
+                    "privacy_level": "confidential",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "emir_classification",
+                    "data_type": "VARCHAR",
+                    "description": "EMIR counterparty classification: FC, NFC+ or NFC-.",
+                    "sample_values": [
+                        "FC",
+                        "NFC+",
+                        "NFC-"
+                    ],
+                    "synonyms": [
+                        "counterparty type",
+                        "EMIR category"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "jurisdiction",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 3166-1 alpha-2 country of incorporation.",
+                    "sample_values": [
+                        "GB",
+                        "DE",
+                        "FR",
+                        "US"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "is_ccp",
+                    "data_type": "BOOLEAN",
+                    "description": "True when the entity is a central counterparty (clearing house).",
+                    "is_foreign_key": false
+                }
+            ]
+        },
+        "trade_parties": {
+            "name": "trade_parties",
+            "description": "Bridge table assigning counterparties to trades in specific roles. A trade has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER rows.",
+            "primary_key": "trade_party_id",
+            "synonyms": [
+                "trade counterparty roles",
+                "party roles"
+            ],
+            "business_context": "This is a fan-out bridge: joining trade_reports to trade_parties multiplies trade rows by the number of roles. Aggregations over trade amounts MUST filter on a single role (usually 'REPORTING').",
+            "columns": [
+                {
+                    "name": "trade_party_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: trade_party_id",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "trade_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: trade_id",
+                    "is_foreign_key": true,
+                    "references": "trade_reports.trade_id"
+                },
+                {
+                    "name": "counterparty_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: counterparty_id",
+                    "is_foreign_key": true,
+                    "references": "counterparties.counterparty_id"
+                },
+                {
+                    "name": "role",
+                    "data_type": "VARCHAR",
+                    "description": "Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or CLEARING_MEMBER.",
+                    "sample_values": [
+                        "REPORTING",
+                        "OTHER",
+                        "CCP"
+                    ],
+                    "is_foreign_key": false,
+                    "application_rules": [
+                        "Always filter to one role before aggregating trade amounts."
+                    ]
+                }
+            ]
+        },
+        "mifir_transactions": {
+            "name": "mifir_transactions",
+            "description": "MiFIR Art. 26 transaction reports. Transaction-level executions reported to the NCA \u2014 related to but distinct from EMIR trade reports (different scope, different lifecycle).",
+            "primary_key": "transaction_id",
+            "synonyms": [
+                "MiFIR reports",
+                "transaction reports",
+                "RTS 22 reports"
+            ],
+            "sql_filters": [
+                "report_status = 'ACPT'  -- accepted reports only"
+            ],
+            "business_context": "quantity and price are per MiFIR RTS 22: price excludes commission and accrued interest. buyer/seller are LEI references, not signed quantities \u2014 do not infer direction from quantity sign.",
+            "time_dimension": "trading_datetime",
+            "columns": [
+                {
+                    "name": "transaction_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: transaction_id",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "transaction_reference",
+                    "data_type": "VARCHAR",
+                    "description": "Firm-assigned transaction reference number (MiFIR field 2).",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "instrument_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: instrument_id",
+                    "is_foreign_key": true,
+                    "references": "instruments.instrument_id"
+                },
+                {
+                    "name": "buyer_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: buyer_id",
+                    "is_foreign_key": true,
+                    "references": "counterparties.counterparty_id"
+                },
+                {
+                    "name": "seller_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: seller_id",
+                    "is_foreign_key": true,
+                    "references": "counterparties.counterparty_id"
+                },
+                {
+                    "name": "trading_datetime",
+                    "data_type": "TIMESTAMP",
+                    "description": "UTC execution timestamp (MiFIR field 28). Primary time axis.",
+                    "is_foreign_key": false,
+                    "is_time_dimension": true,
+                    "time_grain": "second"
+                },
+                {
+                    "name": "price",
+                    "data_type": "DECIMAL",
+                    "description": "Execution price excluding commission and accrued interest (field 33).",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "quantity",
+                    "data_type": "DECIMAL",
+                    "description": "Unsigned quantity (field 30). Direction is buyer_id/seller_id, never quantity sign.",
+                    "is_foreign_key": false,
+                    "application_rules": [
+                        "Always positive; do not infer buy/sell from sign."
+                    ]
+                },
+                {
+                    "name": "venue_mic",
+                    "data_type": "VARCHAR",
+                    "description": "Execution venue MIC (field 36); 'XOFF' for off-venue.",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "report_status",
+                    "data_type": "VARCHAR",
+                    "description": "NCA processing status: ACPT, RJCT or PDNG.",
+                    "sample_values": [
+                        "ACPT",
+                        "RJCT"
+                    ],
+                    "is_foreign_key": false
+                }
+            ]
+        },
+        "trade_reports": {
+            "name": "trade_reports",
+            "description": "EMIR trade reports (trade state view). One row per UTI representing the latest reported state of a derivative trade.",
+            "primary_key": "trade_id",
+            "synonyms": [
+                "trades",
+                "derivative trades",
+                "EMIR reports",
+                "trade state"
+            ],
+            "sql_filters": [
+                "action_type != 'E'  -- exclude error-cancelled reports"
+            ],
+            "application_context": "Sourced from the trade repository submission feed; refreshed T+1.",
+            "business_context": "notional_amount is ALWAYS POSITIVE regardless of direction. The economic side of the reporting counterparty is in `direction` (BYER = buyer/payer, SLLR = seller/receiver). Never infer sign from the amount. To aggregate exposure, join counterparties via trade_parties and filter role = 'REPORTING' to avoid fan-out.",
+            "time_dimension": "execution_timestamp",
+            "columns": [
+                {
+                    "name": "trade_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: trade_id",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "uti",
+                    "data_type": "VARCHAR",
+                    "description": "Unique Trade Identifier (ISO 23897), max 52 chars.",
+                    "privacy_level": "internal",
+                    "synonyms": [
+                        "trade identifier",
+                        "UTI"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "instrument_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: instrument_id",
+                    "is_foreign_key": true,
+                    "references": "instruments.instrument_id"
+                },
+                {
+                    "name": "execution_timestamp",
+                    "data_type": "TIMESTAMP",
+                    "description": "UTC timestamp when the trade was executed. Primary business time axis.",
+                    "synonyms": [
+                        "trade date",
+                        "execution time"
+                    ],
+                    "is_foreign_key": false,
+                    "is_time_dimension": true,
+                    "time_grain": "second"
+                },
+                {
+                    "name": "effective_date",
+                    "data_type": "DATE",
+                    "description": "Date the contract obligations become effective.",
+                    "is_foreign_key": false,
+                    "is_time_dimension": true,
+                    "time_grain": "day"
+                },
+                {
+                    "name": "maturity_date",
+                    "data_type": "DATE",
+                    "description": "Contract maturity/expiry date. NULL for open-ended.",
+                    "is_foreign_key": false,
+                    "time_grain": "day"
+                },
+                {
+                    "name": "notional_amount",
+                    "data_type": "DECIMAL",
+                    "description": "Trade notional in notional_currency. Always positive; direction of risk is given by `direction`, never by sign.",
+                    "synonyms": [
+                        "notional",
+                        "trade size"
+                    ],
+                    "is_foreign_key": false,
+                    "application_rules": [
+                        "Never SUM across both trade_parties roles \u2014 double counts.",
+                        "Sign is always positive; use direction for buy/sell split."
+                    ]
+                },
+                {
+                    "name": "direction",
+                    "data_type": "VARCHAR",
+                    "description": "Side of the reporting counterparty: BYER (buyer/payer leg) or SLLR (seller/receiver leg).",
+                    "sample_values": [
+                        "BYER",
+                        "SLLR"
+                    ],
+                    "synonyms": [
+                        "side",
+                        "buy/sell indicator"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "action_type",
+                    "data_type": "VARCHAR",
+                    "description": "EMIR action type of the latest report: N=New, M=Modify, C=Terminate, E=Error, R=Correction, V=Valuation update.",
+                    "sample_values": [
+                        "N",
+                        "M",
+                        "C"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "cleared",
+                    "data_type": "BOOLEAN",
+                    "description": "True when cleared through a CCP.",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "venue_mic",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 10383 MIC of the execution venue. 'XXXX' or NULL for pure OTC.",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "created_at",
+                    "data_type": "TIMESTAMP",
+                    "description": "Row load timestamp (ETL audit only).",
+                    "is_foreign_key": false
+                }
+            ]
+        },
+        "trade_valuations": {
+            "name": "trade_valuations",
+            "description": "Daily mark-to-market valuations per trade (EMIR Art. 11 / action type V). One row per trade per valuation date.",
+            "primary_key": "valuation_id",
+            "synonyms": [
+                "valuations",
+                "MTM",
+                "mark-to-market"
+            ],
+            "business_context": "valuation_amount is SIGNED from the reporting counterparty's perspective: positive = asset (in the money), negative = liability. This differs from notional_amount on trade_reports, which is unsigned. 'Exposure' questions usually mean valuation, not notional.",
+            "time_dimension": "valuation_date",
+            "columns": [
+                {
+                    "name": "valuation_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: valuation_id",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "trade_id",
+                    "data_type": "INTEGER",
+                    "description": "Column: trade_id",
+                    "is_foreign_key": true,
+                    "references": "trade_reports.trade_id"
+                },
+                {
+                    "name": "valuation_date",
+                    "data_type": "DATE",
+                    "description": "Business date of the valuation.",
+                    "is_foreign_key": false,
+                    "is_time_dimension": true,
+                    "time_grain": "day"
+                },
+                {
+                    "name": "valuation_amount",
+                    "data_type": "DECIMAL",
+                    "description": "Signed mark-to-market value from the reporting counterparty's view. Positive = in the money; negative = out of the money.",
+                    "synonyms": [
+                        "MTM value",
+                        "mark to market",
+                        "exposure"
+                    ],
+                    "is_foreign_key": false,
+                    "application_rules": [
+                        "Signed \u2014 do not take ABS() unless the question asks for gross MTM.",
+                        "For 'current exposure' use the latest valuation_date per trade."
+                    ]
+                },
+                {
+                    "name": "valuation_currency",
+                    "data_type": "VARCHAR",
+                    "description": "ISO 4217 currency of valuation_amount.",
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "valuation_type",
+                    "data_type": "VARCHAR",
+                    "description": "MTMV = mark-to-market, MTMO = mark-to-model.",
+                    "sample_values": [
+                        "MTMV",
+                        "MTMO"
+                    ],
+                    "is_foreign_key": false
+                },
+                {
+                    "name": "updated_at",
+                    "data_type": "TIMESTAMP",
+                    "description": "Row update timestamp (ETL audit only).",
+                    "is_foreign_key": false
+                }
+            ]
+        }
+    },
+    "relationships": [
+        {
+            "from_table": "instruments",
+            "to_table": "trade_reports",
+            "join_condition": "instruments.instrument_id = trade_reports.instrument_id",
+            "relationship_type": "one-to-many",
+            "description": "Relationship between instruments and trade_reports"
+        },
+        {
+            "from_table": "counterparties",
+            "to_table": "trade_parties",
+            "join_condition": "counterparties.counterparty_id = trade_parties.counterparty_id",
+            "relationship_type": "one-to-many",
+            "description": "Relationship between counterparties and trade_parties"
+        },
+        {
+            "from_table": "trade_parties",
+            "to_table": "trade_reports",
+            "join_condition": "trade_parties.trade_id = trade_reports.trade_id",
+            "relationship_type": "many-to-one",
+            "description": "Relationship between trade_parties and trade_reports"
+        },
+        {
+            "from_table": "trade_parties",
+            "to_table": "counterparties",
+            "join_condition": "trade_parties.counterparty_id = counterparties.counterparty_id",
+            "relationship_type": "many-to-one",
+            "description": "Relationship between trade_parties and counterparties"
+        },
+        {
+            "from_table": "mifir_transactions",
+            "to_table": "counterparties",
+            "join_condition": "mifir_transactions.buyer_id = counterparties.counterparty_id",
+            "relationship_type": "many-to-one",
+            "description": "The buying counterparty (LEI reference)"
+        },
+        {
+            "from_table": "mifir_transactions",
+            "to_table": "counterparties",
+            "join_condition": "mifir_transactions.seller_id = counterparties.counterparty_id",
+            "relationship_type": "many-to-one",
+            "description": "The selling counterparty (LEI reference)"
+        },
+        {
+            "from_table": "trade_reports",
+            "to_table": "instruments",
+            "join_condition": "trade_reports.instrument_id = instruments.instrument_id",
+            "relationship_type": "many-to-one",
+            "description": "The financial instrument underlying this trade report"
+        },
+        {
+            "from_table": "trade_reports",
+            "to_table": "trade_parties",
+            "join_condition": "trade_reports.trade_id = trade_parties.trade_id",
+            "relationship_type": "one-to-many",
+            "description": "Relationship between trade_reports and trade_parties"
+        },
+        {
+            "from_table": "trade_reports",
+            "to_table": "trade_valuations",
+            "join_condition": "trade_reports.trade_id = trade_valuations.trade_id",
+            "relationship_type": "one-to-many",
+            "description": "Daily mark-to-market valuation history for this trade"
+        },
+        {
+            "from_table": "trade_valuations",
+            "to_table": "trade_reports",
+            "join_condition": "trade_valuations.trade_id = trade_reports.trade_id",
+            "relationship_type": "many-to-one",
+            "description": "Relationship between trade_valuations and trade_reports"
+        }
+    ]
+}

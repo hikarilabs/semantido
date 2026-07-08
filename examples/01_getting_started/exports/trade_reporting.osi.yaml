@@ -1,0 +1,615 @@
+semantic_model:
+- name: emir_mifir_trade_reporting
+  description: Synthetic EMIR/MiFIR regulatory reporting schema used in the Hikari Labs semantic
+    layer benchmark.
+  ai_context:
+    instructions: 'Amounts are unsigned unless stated otherwise; direction always comes from
+      a code column, never from an amount sign. Glossary — UTI: Unique Trade Identifier per
+      ISO 23897; notional: unsigned contract size — not exposure; exposure: signed mark-to-market
+      valuation (trade_valuations); NFC+: non-financial counterparty above the clearing threshold'
+  custom_extensions:
+  - vendor_name: SEMANTIDO
+    exporter: semantido.exporters.osi
+    osi_spec_version: 0.2.0
+  datasets:
+  - name: instruments
+    source: instruments
+    primary_key:
+    - instrument_id
+    description: Financial instruments referenced by trades. One row per ISIN (or internal
+      identifier for OTC products without an ISIN).
+    ai_context:
+      instructions: asset_class follows the EMIR taxonomy (IR, CR, EQ, FX, CO). cfi_code is
+        the ISO 10962 classification used for MiFIR field 43.
+      synonyms:
+      - product
+      - security
+      - derivative contract
+    fields:
+    - name: instrument_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: instrument_id
+      description: 'Column: instrument_id'
+    - name: isin
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: isin
+      description: ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; such products
+        are identified by instrument_id only.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - EZ9VVV8CQC69
+        - DE000C6900B7
+    - name: asset_class
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: asset_class
+      description: 'EMIR asset class: IR, CR, EQ, FX or CO.'
+      ai_context:
+        synonyms:
+        - product class
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - IR
+        - FX
+        - CR
+    - name: cfi_code
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: cfi_code
+      description: ISO 10962 CFI classification code.
+    - name: notional_currency
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: notional_currency
+      description: ISO 4217 currency of the notional amount.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - EUR
+        - USD
+        - GBP
+  - name: counterparties
+    source: counterparties
+    primary_key:
+    - counterparty_id
+    description: Legal entities that are party to reportable derivative trades. One row per
+      LEI. Includes both reporting counterparties and their trade counterparties (clients,
+      CCPs, brokers).
+    ai_context:
+      instructions: 'Reference data — updated via nightly GLEIF sync. EMIR Art. 9 counterparty
+        classification drives reporting obligations: FC (financial), NFC+ (non-financial above
+        clearing threshold), NFC- (below threshold).'
+      synonyms:
+      - legal entity
+      - client
+      - trading party
+      - LEI record
+    fields:
+    - name: counterparty_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: counterparty_id
+      description: 'Column: counterparty_id'
+    - name: lei
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: lei
+      description: ISO 17442 Legal Entity Identifier (20 characters).
+      ai_context:
+        synonyms:
+        - legal entity identifier
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        privacy_level: internal
+        sample_values:
+        - 529900T8BM49AURSDO55
+        - 213800MBWEIJDM5CU638
+    - name: legal_name
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: legal_name
+      description: Registered legal name of the entity.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        privacy_level: confidential
+    - name: emir_classification
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: emir_classification
+      description: 'EMIR counterparty classification: FC, NFC+ or NFC-.'
+      ai_context:
+        synonyms:
+        - counterparty type
+        - EMIR category
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - FC
+        - NFC+
+        - NFC-
+    - name: jurisdiction
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: jurisdiction
+      description: ISO 3166-1 alpha-2 country of incorporation.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - GB
+        - DE
+        - FR
+        - US
+    - name: is_ccp
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: is_ccp
+      description: True when the entity is a central counterparty (clearing house).
+  - name: trade_parties
+    source: trade_parties
+    primary_key:
+    - trade_party_id
+    description: Bridge table assigning counterparties to trades in specific roles. A trade
+      has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER
+      rows.
+    ai_context:
+      instructions: 'This is a fan-out bridge: joining trade_reports to trade_parties multiplies
+        trade rows by the number of roles. Aggregations over trade amounts MUST filter on
+        a single role (usually ''REPORTING'').'
+      synonyms:
+      - trade counterparty roles
+      - party roles
+    fields:
+    - name: trade_party_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: trade_party_id
+      description: 'Column: trade_party_id'
+    - name: trade_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: trade_id
+      description: 'Column: trade_id'
+    - name: counterparty_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: counterparty_id
+      description: 'Column: counterparty_id'
+    - name: role
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: role
+      description: 'Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or
+        CLEARING_MEMBER.'
+      ai_context:
+        instructions: Always filter to one role before aggregating trade amounts.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - REPORTING
+        - OTHER
+        - CCP
+  - name: mifir_transactions
+    source: mifir_transactions
+    primary_key:
+    - transaction_id
+    description: MiFIR Art. 26 transaction reports. Transaction-level executions reported
+      to the NCA — related to but distinct from EMIR trade reports (different scope, different
+      lifecycle).
+    ai_context:
+      instructions: 'quantity and price are per MiFIR RTS 22: price excludes commission and
+        accrued interest. buyer/seller are LEI references, not signed quantities — do not
+        infer direction from quantity sign.'
+      synonyms:
+      - MiFIR reports
+      - transaction reports
+      - RTS 22 reports
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      sql_filters:
+      - report_status = 'ACPT'  -- accepted reports only
+    fields:
+    - name: transaction_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: transaction_id
+      description: 'Column: transaction_id'
+    - name: transaction_reference
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: transaction_reference
+      description: Firm-assigned transaction reference number (MiFIR field 2).
+    - name: instrument_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: instrument_id
+      description: 'Column: instrument_id'
+    - name: buyer_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: buyer_id
+      description: 'Column: buyer_id'
+    - name: seller_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: seller_id
+      description: 'Column: seller_id'
+    - name: trading_datetime
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: trading_datetime
+      description: UTC execution timestamp (MiFIR field 28). Primary time axis.
+      dimension:
+        is_time: true
+      ai_context:
+        instructions: 'PRIMARY time dimension for this dataset. Native grain: second.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        is_primary_time_dimension: true
+        time_grain: second
+    - name: price
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: price
+      description: Execution price excluding commission and accrued interest (field 33).
+    - name: quantity
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: quantity
+      description: Unsigned quantity (field 30). Direction is buyer_id/seller_id, never quantity
+        sign.
+      ai_context:
+        instructions: Always positive; do not infer buy/sell from sign.
+    - name: venue_mic
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: venue_mic
+      description: Execution venue MIC (field 36); 'XOFF' for off-venue.
+    - name: report_status
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: report_status
+      description: 'NCA processing status: ACPT, RJCT or PDNG.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - ACPT
+        - RJCT
+  - name: trade_reports
+    source: trade_reports
+    primary_key:
+    - trade_id
+    description: EMIR trade reports (trade state view). One row per UTI representing the latest
+      reported state of a derivative trade.
+    ai_context:
+      instructions: Sourced from the trade repository submission feed; refreshed T+1. notional_amount
+        is ALWAYS POSITIVE regardless of direction. The economic side of the reporting counterparty
+        is in `direction` (BYER = buyer/payer, SLLR = seller/receiver). Never infer sign from
+        the amount. To aggregate exposure, join counterparties via trade_parties and filter
+        role = 'REPORTING' to avoid fan-out.
+      synonyms:
+      - trades
+      - derivative trades
+      - EMIR reports
+      - trade state
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      sql_filters:
+      - action_type != 'E'  -- exclude error-cancelled reports
+    fields:
+    - name: trade_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: trade_id
+      description: 'Column: trade_id'
+    - name: uti
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: uti
+      description: Unique Trade Identifier (ISO 23897), max 52 chars.
+      ai_context:
+        synonyms:
+        - trade identifier
+        - UTI
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        privacy_level: internal
+    - name: instrument_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: instrument_id
+      description: 'Column: instrument_id'
+    - name: execution_timestamp
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: execution_timestamp
+      description: UTC timestamp when the trade was executed. Primary business time axis.
+      dimension:
+        is_time: true
+      ai_context:
+        synonyms:
+        - trade date
+        - execution time
+        instructions: 'PRIMARY time dimension for this dataset. Native grain: second.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        is_primary_time_dimension: true
+        time_grain: second
+    - name: effective_date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: effective_date
+      description: Date the contract obligations become effective.
+      dimension:
+        is_time: true
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        time_grain: day
+    - name: maturity_date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: maturity_date
+      description: Contract maturity/expiry date. NULL for open-ended.
+      dimension:
+        is_time: true
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        time_grain: day
+    - name: notional_amount
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: notional_amount
+      description: Trade notional in notional_currency. Always positive; direction of risk
+        is given by `direction`, never by sign.
+      ai_context:
+        synonyms:
+        - notional
+        - trade size
+        instructions: Never SUM across both trade_parties roles — double counts. Sign is always
+          positive; use direction for buy/sell split.
+    - name: direction
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: direction
+      description: 'Side of the reporting counterparty: BYER (buyer/payer leg) or SLLR (seller/receiver
+        leg).'
+      ai_context:
+        synonyms:
+        - side
+        - buy/sell indicator
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - BYER
+        - SLLR
+    - name: action_type
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: action_type
+      description: 'EMIR action type of the latest report: N=New, M=Modify, C=Terminate, E=Error,
+        R=Correction, V=Valuation update.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - N
+        - M
+        - C
+    - name: cleared
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: cleared
+      description: True when cleared through a CCP.
+    - name: venue_mic
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: venue_mic
+      description: ISO 10383 MIC of the execution venue. 'XXXX' or NULL for pure OTC.
+    - name: created_at
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: created_at
+      description: Row load timestamp (ETL audit only).
+      ai_context:
+        instructions: Operational audit timestamp — do not use as a time axis for business
+          questions.
+  - name: trade_valuations
+    source: trade_valuations
+    primary_key:
+    - valuation_id
+    description: Daily mark-to-market valuations per trade (EMIR Art. 11 / action type V).
+      One row per trade per valuation date.
+    ai_context:
+      instructions: 'valuation_amount is SIGNED from the reporting counterparty''s perspective:
+        positive = asset (in the money), negative = liability. This differs from notional_amount
+        on trade_reports, which is unsigned. ''Exposure'' questions usually mean valuation,
+        not notional.'
+      synonyms:
+      - valuations
+      - MTM
+      - mark-to-market
+    fields:
+    - name: valuation_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: valuation_id
+      description: 'Column: valuation_id'
+    - name: trade_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: trade_id
+      description: 'Column: trade_id'
+    - name: valuation_date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: valuation_date
+      description: Business date of the valuation.
+      dimension:
+        is_time: true
+      ai_context:
+        instructions: 'PRIMARY time dimension for this dataset. Native grain: day.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        is_primary_time_dimension: true
+        time_grain: day
+    - name: valuation_amount
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: valuation_amount
+      description: Signed mark-to-market value from the reporting counterparty's view. Positive
+        = in the money; negative = out of the money.
+      ai_context:
+        synonyms:
+        - MTM value
+        - mark to market
+        - exposure
+        instructions: Signed — do not take ABS() unless the question asks for gross MTM. For
+          'current exposure' use the latest valuation_date per trade.
+    - name: valuation_currency
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: valuation_currency
+      description: ISO 4217 currency of valuation_amount.
+    - name: valuation_type
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: valuation_type
+      description: MTMV = mark-to-market, MTMO = mark-to-model.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - MTMV
+        - MTMO
+    - name: updated_at
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: updated_at
+      description: Row update timestamp (ETL audit only).
+      ai_context:
+        instructions: Operational audit timestamp — do not use as a time axis for business
+          questions.
+  relationships:
+  - name: instruments_to_trade_reports
+    from:
+      dataset: instruments
+      columns:
+      - instrument_id
+    to:
+      dataset: trade_reports
+      columns:
+      - instrument_id
+    description: Relationship between instruments and trade_reports
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      relationship_type: one-to-many
+  - name: counterparties_to_trade_parties
+    from:
+      dataset: counterparties
+      columns:
+      - counterparty_id
+    to:
+      dataset: trade_parties
+      columns:
+      - counterparty_id
+    description: Relationship between counterparties and trade_parties
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      relationship_type: one-to-many
+  - name: trade_parties_to_trade_reports
+    from:
+      dataset: trade_parties
+      columns:
+      - trade_id
+    to:
+      dataset: trade_reports
+      columns:
+      - trade_id
+    description: Relationship between trade_parties and trade_reports
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      relationship_type: many-to-one
+  - name: mifir_transactions_to_counterparties
+    from:
+      dataset: mifir_transactions
+      columns:
+      - buyer_id
+    to:
+      dataset: counterparties
+      columns:
+      - counterparty_id
+    description: The buying counterparty (LEI reference)
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      relationship_type: many-to-one
+  - name: mifir_transactions_to_counterparties
+    from:
+      dataset: mifir_transactions
+      columns:
+      - seller_id
+    to:
+      dataset: counterparties
+      columns:
+      - counterparty_id
+    description: The selling counterparty (LEI reference)
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      relationship_type: many-to-one
+  - name: trade_reports_to_trade_valuations
+    from:
+      dataset: trade_reports
+      columns:
+      - trade_id
+    to:
+      dataset: trade_valuations
+      columns:
+      - trade_id
+    description: Daily mark-to-market valuation history for this trade
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      relationship_type: one-to-many

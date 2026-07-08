@@ -23,5 +23,7 @@ plugins:
 nav:
   - Index: index.md
   - Why Semantido: explanation.md
+  - Examples:
+    - 01 - Getting Started: examples/01_getting_started.md
   - Code Reference: reference.md
   - Tutorials: blog/index.md
