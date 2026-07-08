@@ -1,0 +1,17 @@
+STRUCTURAL COMPARISON — signal presence per context
+============================================================
+signal                                           md          osi  md_enriched
+data types (INTEGER/DATE/...)                     Y            -            Y
+primary time axis (structured)                    -            Y            Y
+time grain                                        -            Y            Y
+audit demotion warning                            -            Y            Y
+default sql filters                               -            Y            Y
+privacy levels                                    Y            Y            Y
+sample values                                     Y            Y            Y
+glossary                                          -            Y            Y
+join conditions                                   Y            Y            Y
+cardinality                                       Y            Y            Y
+
+md          :  3129 chars (~782 tokens)
+osi         :  6877 chars (~1719 tokens)
+md_enriched :  4170 chars (~1042 tokens)

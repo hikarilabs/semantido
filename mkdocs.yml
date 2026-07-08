@@ -25,5 +25,6 @@ nav:
   - Why Semantido: explanation.md
   - Examples:
     - 01 - Getting Started: examples/01_getting_started.md
+    - 02 - OSI Time Dimension: examples/02_osi_time_dimension.md
   - Code Reference: reference.md
   - Tutorials: blog/index.md

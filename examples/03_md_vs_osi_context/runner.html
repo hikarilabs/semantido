@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MD vs OSI — context experiment</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F9FB; --grid:#E4EAF0; --ink:#16233A; --ink-soft:#5A6B82;
+  --md:#C07A1B; --osi:#0E7C86; --enr:#5B5BD6;
+  --pass:#2E8B57; --fail:#C0392B; --card:#FFFFFF; --line:#D7DFE8;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px; color:var(--ink);
+  font-family:Inter,system-ui,sans-serif; padding:32px 24px 64px;
+}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(24px,4vw,34px);letter-spacing:-.02em}
+.sub{color:var(--ink-soft);margin:6px 0 24px;max-width:70ch;font-size:14.5px;line-height:1.55}
+.bench{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:18px}
+.controls{display:flex;gap:14px;align-items:end;flex-wrap:wrap}
+label{font-size:12px;color:var(--ink-soft);display:block;margin-bottom:4px;font-weight:500}
+select,input[type=password]{font:600 14px 'IBM Plex Mono',monospace;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+input[type=password]{width:190px}
+label small{font-weight:400;color:var(--ink-soft)}
+button{font:600 14px 'Space Grotesk',sans-serif;letter-spacing:.02em;border:none;border-radius:6px;padding:11px 22px;cursor:pointer;background:var(--ink);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--enr);outline-offset:2px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-left:auto}
+.leg{display:flex;align-items:center;gap:7px;font:600 12.5px 'IBM Plex Mono',monospace}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.leg small{color:var(--ink-soft);font-weight:400}
+.matrix{margin-top:6px}
+.qrow{display:grid;grid-template-columns:190px 1fr;gap:14px;align-items:center;padding:11px 0;border-top:1px dashed var(--line)}
+.qrow:first-child{border-top:none}
+.qname{font:600 13px 'IBM Plex Mono',monospace}
+.qname small{display:block;color:var(--ink-soft);font-weight:400;font-size:11px;margin-top:2px}
+.dots{display:flex;gap:16px;flex-wrap:wrap}
+.dotgroup{display:flex;gap:5px;padding:5px 7px;border-radius:6px;border:1px solid var(--line);background:var(--paper)}
+.dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--line);background:transparent;transition:transform .18s,background .18s;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.dot{transition:none}}
+.dot.pass{background:var(--pass);border-color:var(--pass)}
+.dot.fail{background:var(--fail);border-color:var(--fail)}
+.dot.pending{border-style:dashed}
+.dot.pop{transform:scale(1.35)}
+.bars{margin-top:8px}
+.bar-row{display:grid;grid-template-columns:130px 1fr 90px;gap:12px;align-items:center;margin:10px 0}
+.bar-name{font:600 13px 'IBM Plex Mono',monospace}
+.bar-track{height:22px;background:var(--paper);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.bar-fill{height:100%;width:0%;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.bar-val{font:600 14px 'IBM Plex Mono',monospace;text-align:right}
+.note{font-size:12.5px;color:var(--ink-soft);margin-top:14px;line-height:1.5}
+.log{margin-top:10px;max-height:280px;overflow:auto;background:#101826;color:#D7E3F4;border-radius:8px;padding:14px;font:12px/1.6 'IBM Plex Mono',monospace;display:none;white-space:pre-wrap}
+h2{font-family:'Space Grotesk',sans-serif;font-size:17px;margin-bottom:8px}
+.tokrow{font:12.5px 'IBM Plex Mono',monospace;color:var(--ink-soft);margin-top:6px}
+.status{font:600 13px 'IBM Plex Mono',monospace;color:var(--ink-soft);min-height:18px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Markdown vs OSI YAML as text-to-SQL context</h1>
+  <p class="sub">One semantido semantic layer, three serializations, six probe questions, deterministic scoring.
+  <b>md</b> is the Markdown export as shipped; <b>osi</b> is the OSI YAML export; <b>md_enriched</b> is Markdown plus the
+  structured signals it does not yet emit (primary axis, grains, audit warnings, filters, glossary) — the control that
+  separates content effect from format effect. Each dot is one trial. Outside a Claude artifact, paste an Anthropic API key — it is sent only to api.anthropic.com and never stored.</p>
+
+  <div class="bench">
+    <div class="controls">
+      <div><label for="model">model</label>
+        <select id="model"><option>claude-sonnet-4-6</option><option>claude-haiku-4-5-20251001</option><option>claude-opus-4-8</option></select></div>
+      <div><label for="trials">trials / cell</label>
+        <select id="trials"><option>1</option><option selected>3</option><option>5</option></select></div>
+      <div><label for="apikey">API key <small>(blank inside Claude)</small></label>
+        <input id="apikey" type="password" placeholder="sk-ant-..." autocomplete="off"></div>
+      <button id="run">Run experiment</button>
+      <div class="legend">
+        <span class="leg"><i style="background:var(--md)"></i>md <small id="tk-md"></small></span>
+        <span class="leg"><i style="background:var(--osi)"></i>osi <small id="tk-osi"></small></span>
+        <span class="leg"><i style="background:var(--enr)"></i>md_enriched <small id="tk-md_enriched"></small></span>
+      </div>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="matrix" id="matrix"></div>
+  </div>
+
+  <div class="bench">
+    <h2>Pass rate by condition</h2>
+    <div class="bars" id="bars"></div>
+    <p class="note">Click any dot to inspect the generated SQL and the check that decided it.</p>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script id="ctx" type="application/json">{"md": "# Semantic Layer\n\nMachine-readable database schema for natural language queries\n\n## Database Entities (2 tables)\n\n### account_info\n- **Full Name**: account_info\n- **Primary Key**: account_id\n- **Description**: Master record for customer deposit and current accounts. One row per account.\n- **Synonyms**: accounts, customer accounts, deposit accounts\n- **Application Context**: Default scope is ACTIVE accounts unless the user explicitly asks for closed or dormant accounts.\n- **Business Context**: Core banking \u2014 account master.\n\n#### Columns\n- **account_id** (INTEGER, restricted)\n  - Column: account_id\n- **account_status** (VARCHAR)\n  - Lifecycle status: ACTIVE, DORMANT, CLOSED, FROZEN. Business questions default to ACTIVE.\n  - *Examples*: ACTIVE, CLOSED\n- **currency_code** (VARCHAR)\n  - ISO 4217 currency of the account.\n  - *Examples*: EUR, USD, GBP\n- **available_balance** (DECIMAL, confidential)\n  - Funds the customer can draw on now: ledger balance minus holds plus overdraft headroom. Prefer this for 'how much money' questions.\n- **opened_date** (DATE)\n  - Date the account was opened. Business date.\n- **created_at** (TIMESTAMP)\n  - Row creation timestamp (ETL audit column).\n- **updated_at** (TIMESTAMP)\n  - Row last-update timestamp (ETL audit column).\n\n---\n\n### transaction_info\n- **Full Name**: transaction_info\n- **Primary Key**: transaction_id\n- **Description**: Posted account transactions, one row per movement. The business time axis is booking_date: use it for any per-day/month/quarter aggregation unless the user explicitly asks about value or settlement dating.\n- **Synonyms**: transactions, postings, account movements\n- **Application Context**: Amounts are signed: negative = debit, positive = credit. Sum of amount over a period is net flow, not turnover.\n- **Business Context**: Core banking \u2014 transaction ledger.\n\n#### Columns\n- **transaction_id** (INTEGER, restricted)\n  - Column: transaction_id\n- **account_id** (INTEGER) ForeignKey \u2192 account_info.account_id\n  - Owning account.\n- **amount** (DECIMAL, confidential)\n  - Signed transaction amount in the account currency. Negative = debit.\n- **booking_date** (DATE)\n  - Date the transaction was booked to the account. THE business time axis for time-series questions.\n- **value_date** (DATE)\n  - Date the amount becomes interest-effective. Only relevant for interest and value-dating questions.\n- **settlement_date** (DATE)\n  - Date funds actually settled. Only relevant for settlement/ops questions.\n- **created_at** (TIMESTAMP)\n  - Row creation timestamp (ETL audit column).\n- **updated_at** (TIMESTAMP)\n  - Row last-update timestamp (ETL audit column).\n\n---\n\n## Relationships (2 connections)\n\n### account_info \u2192 transaction_info\n- **Type**: one-to-many\n- **Join**: account_info.account_id = transaction_info.account_id\n- **Description**: Movements posted to this account.\n\n### transaction_info \u2192 account_info\n- **Type**: many-to-one\n- **Join**: transaction_info.account_id = account_info.account_id\n- **Description**: The account this movement belongs to.\n\n## Summary\n- **Total Tables**: 2\n- **Total Columns**: 15\n- **Total Relationships**: 2", "osi": "semantic_model:\n- name: core_banking_analytics\n  ai_context:\n    instructions: 'Wholesale/retail core banking model. Respect each dataset''s application\n      context and default filters. Glossary \u2014 booking date: date a movement is booked to the\n      account (the axis); value date: date a movement becomes interest-effective; net flow:\n      signed sum of amounts over a period (not turnover)'\n  custom_extensions:\n  - vendor_name: SEMANTIDO\n    exporter: semantido.exporters.osi\n    osi_spec_version: 0.2.0\n  datasets:\n  - name: account_info\n    source: account_info\n    primary_key:\n    - account_id\n    description: Master record for customer deposit and current accounts. One row per account.\n    ai_context:\n      instructions: Default scope is ACTIVE accounts unless the user explicitly asks for closed\n        or dormant accounts. Core banking \u2014 account master.\n      synonyms:\n      - accounts\n      - customer accounts\n      - deposit accounts\n    custom_extensions:\n    - vendor_name: SEMANTIDO\n      sql_filters:\n      - account_status = 'ACTIVE'\n    fields:\n    - name: account_id\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: account_id\n      description: 'Column: account_id'\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        privacy_level: restricted\n    - name: account_status\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: account_status\n      description: 'Lifecycle status: ACTIVE, DORMANT, CLOSED, FROZEN. Business questions\n        default to ACTIVE.'\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        sample_values:\n        - ACTIVE\n        - CLOSED\n    - name: currency_code\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: currency_code\n      description: ISO 4217 currency of the account.\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        sample_values:\n        - EUR\n        - USD\n        - GBP\n    - name: available_balance\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: available_balance\n      description: 'Funds the customer can draw on now: ledger balance minus holds plus overdraft\n        headroom. Prefer this for ''how much money'' questions.'\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        privacy_level: confidential\n    - name: opened_date\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: opened_date\n      description: Date the account was opened. Business date.\n      dimension:\n        is_time: true\n      ai_context:\n        instructions: 'PRIMARY time dimension for this dataset. Native grain: day.'\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        is_primary_time_dimension: true\n        time_grain: day\n    - name: created_at\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: created_at\n      description: Row creation timestamp (ETL audit column).\n      ai_context:\n        instructions: Operational audit timestamp \u2014 do not use as a time axis for business\n          questions.\n    - name: updated_at\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: updated_at\n      description: Row last-update timestamp (ETL audit column).\n      ai_context:\n        instructions: Operational audit timestamp \u2014 do not use as a time axis for business\n          questions.\n  - name: transaction_info\n    source: transaction_info\n    primary_key:\n    - transaction_id\n    description: 'Posted account transactions, one row per movement. The business time axis\n      is booking_date: use it for any per-day/month/quarter aggregation unless the user explicitly\n      asks about value or settlement dating.'\n    ai_context:\n      instructions: 'Amounts are signed: negative = debit, positive = credit. Sum of amount\n        over a period is net flow, not turnover. Core banking \u2014 transaction ledger.'\n      synonyms:\n      - transactions\n      - postings\n      - account movements\n    fields:\n    - name: transaction_id\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: transaction_id\n      description: 'Column: transaction_id'\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        privacy_level: restricted\n    - name: account_id\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: account_id\n      description: Owning account.\n    - name: amount\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: amount\n      description: Signed transaction amount in the account currency. Negative = debit.\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        privacy_level: confidential\n    - name: booking_date\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: booking_date\n      description: Date the transaction was booked to the account. THE business time axis\n        for time-series questions.\n      dimension:\n        is_time: true\n      ai_context:\n        instructions: 'PRIMARY time dimension for this dataset. Native grain: day.'\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        is_primary_time_dimension: true\n        time_grain: day\n    - name: value_date\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: value_date\n      description: Date the amount becomes interest-effective. Only relevant for interest\n        and value-dating questions.\n      dimension:\n        is_time: true\n      custom_extensions:\n      - vendor_name: SEMANTIDO\n        time_grain: day\n    - name: settlement_date\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: settlement_date\n      description: Date funds actually settled. Only relevant for settlement/ops questions.\n      dimension:\n        is_time: true\n    - name: created_at\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: created_at\n      description: Row creation timestamp (ETL audit column).\n      ai_context:\n        instructions: Operational audit timestamp \u2014 do not use as a time axis for business\n          questions.\n    - name: updated_at\n      expression:\n        dialects:\n        - dialect: ANSI_SQL\n          expression: updated_at\n      description: Row last-update timestamp (ETL audit column).\n      ai_context:\n        instructions: Operational audit timestamp \u2014 do not use as a time axis for business\n          questions.\n  relationships:\n  - name: account_info_to_transaction_info\n    from:\n      dataset: account_info\n      columns:\n      - account_id\n    to:\n      dataset: transaction_info\n      columns:\n      - account_id\n    description: Movements posted to this account.\n    custom_extensions:\n    - vendor_name: SEMANTIDO\n      relationship_type: one-to-many\n", "md_enriched": "# Semantic Layer\n\nMachine-readable database schema for natural language queries\n\n## Database Entities (2 tables)\n\n### account_info\n- **Full Name**: account_info\n- **Primary Key**: account_id\n- **Description**: Master record for customer deposit and current accounts. One row per account.\n- **Synonyms**: accounts, customer accounts, deposit accounts\n- **Application Context**: Default scope is ACTIVE accounts unless the user explicitly asks for closed or dormant accounts.\n- **Business Context**: Core banking \u2014 account master.\n\n#### Columns\n- **account_id** (INTEGER, restricted)\n  - Column: account_id\n- **account_status** (VARCHAR)\n  - Lifecycle status: ACTIVE, DORMANT, CLOSED, FROZEN. Business questions default to ACTIVE.\n  - *Examples*: ACTIVE, CLOSED\n- **currency_code** (VARCHAR)\n  - ISO 4217 currency of the account.\n  - *Examples*: EUR, USD, GBP\n- **available_balance** (DECIMAL, confidential)\n  - Funds the customer can draw on now: ledger balance minus holds plus overdraft headroom. Prefer this for 'how much money' questions.\n- **opened_date** (DATE)\n  - Date the account was opened. Business date.\n- **created_at** (TIMESTAMP)\n  - Row creation timestamp (ETL audit column).\n- **updated_at** (TIMESTAMP)\n  - Row last-update timestamp (ETL audit column).\n\n---\n\n### transaction_info\n- **Full Name**: transaction_info\n- **Primary Key**: transaction_id\n- **Description**: Posted account transactions, one row per movement. The business time axis is booking_date: use it for any per-day/month/quarter aggregation unless the user explicitly asks about value or settlement dating.\n- **Synonyms**: transactions, postings, account movements\n- **Application Context**: Amounts are signed: negative = debit, positive = credit. Sum of amount over a period is net flow, not turnover.\n- **Business Context**: Core banking \u2014 transaction ledger.\n\n#### Columns\n- **transaction_id** (INTEGER, restricted)\n  - Column: transaction_id\n- **account_id** (INTEGER) ForeignKey \u2192 account_info.account_id\n  - Owning account.\n- **amount** (DECIMAL, confidential)\n  - Signed transaction amount in the account currency. Negative = debit.\n- **booking_date** (DATE)\n  - Date the transaction was booked to the account. THE business time axis for time-series questions.\n- **value_date** (DATE)\n  - Date the amount becomes interest-effective. Only relevant for interest and value-dating questions.\n- **settlement_date** (DATE)\n  - Date funds actually settled. Only relevant for settlement/ops questions.\n- **created_at** (TIMESTAMP)\n  - Row creation timestamp (ETL audit column).\n- **updated_at** (TIMESTAMP)\n  - Row last-update timestamp (ETL audit column).\n\n---\n\n## Relationships (2 connections)\n\n### account_info \u2192 transaction_info\n- **Type**: one-to-many\n- **Join**: account_info.account_id = transaction_info.account_id\n- **Description**: Movements posted to this account.\n\n### transaction_info \u2192 account_info\n- **Type**: many-to-one\n- **Join**: transaction_info.account_id = account_info.account_id\n- **Description**: The account this movement belongs to.\n\n## Summary\n- **Total Tables**: 2\n- **Total Columns**: 15\n- **Total Relationships**: 2\n## Time semantics and defaults\n\n- account_info: PRIMARY time dimension = opened_date (use for any per-day/month/quarter aggregation)\n- account_info.opened_date: native grain day\n- account_info.created_at: operational audit timestamp \u2014 do not use as a time axis\n- account_info.updated_at: operational audit timestamp \u2014 do not use as a time axis\n- account_info: default filter -> account_status = 'ACTIVE'\n- transaction_info: PRIMARY time dimension = booking_date (use for any per-day/month/quarter aggregation)\n- transaction_info.booking_date: native grain day\n- transaction_info.value_date: native grain day\n- transaction_info.value_date: secondary time dimension\n- transaction_info.created_at: operational audit timestamp \u2014 do not use as a time axis\n- transaction_info.updated_at: operational audit timestamp \u2014 do not use as a time axis\n\n## Glossary\n\n- booking date: date a movement is booked to the account (the axis)\n- value date: date a movement becomes interest-effective\n- net flow: signed sum of amounts over a period (not turnover)\n"}</script>
+<script id="qs" type="application/json">[{"id": "monthly_volume", "signal": "primary time axis", "question": "How many transactions were posted each month in 2025? Return the month and the count.", "requires": ["booking_date"], "forbids": ["created_at", "updated_at", "value_date", "settlement_date"]}, {"id": "daily_audit_trap", "signal": "audit demotion", "question": "Show the number of transactions per day for the last 30 days.", "requires": ["booking_date"], "forbids": ["created_at", "updated_at"]}, {"id": "default_filter", "signal": "default sql filter", "question": "How many accounts do we have per currency?", "requires": ["account_status\\s*=\\s*'active'"], "forbids": []}, {"id": "value_dating", "signal": "secondary axis routing", "question": "What is the total amount becoming interest-effective per account in March 2026?", "requires": ["value_date"], "forbids": ["booking_date", "settlement_date", "created_at"]}, {"id": "debit_sign", "signal": "sign convention", "question": "How much money was debited in total across all accounts in January 2026?", "requires": ["booking_date", "(amount\\s*<\\s*0|abs\\s*\\(|-\\s*sum|sum\\s*\\(\\s*case)"], "forbids": ["created_at", "updated_at"]}, {"id": "net_flow_join", "signal": "join + axis + glossary", "question": "What is the net flow per currency for 2025?", "requires": ["booking_date", "sum\\s*\\(", "currency_code"], "forbids": ["created_at", "updated_at"]}]</script>
+<script>
+const CONTEXTS = JSON.parse(document.getElementById('ctx').textContent);
+const QUESTIONS = JSON.parse(document.getElementById('qs').textContent);
+const CONDS = ['md','osi','md_enriched'];
+const COLOR = {md:'var(--md)', osi:'var(--osi)', md_enriched:'var(--enr)'};
+const results = {}; // key cond|qid|trial -> {passed, sql, why}
+
+for (const c of CONDS) {
+  document.getElementById('tk-'+c).textContent = '~'+Math.round(CONTEXTS[c].length/4)+' tok';
+}
+
+const matrix = document.getElementById('matrix');
+function buildMatrix(trials){
+  matrix.innerHTML='';
+  for (const q of QUESTIONS){
+    const row=document.createElement('div'); row.className='qrow';
+    const name=document.createElement('div'); name.className='qname';
+    name.innerHTML=q.id+'<small>'+q.signal+'</small>'; row.appendChild(name);
+    const dots=document.createElement('div'); dots.className='dots';
+    for (const c of CONDS){
+      const g=document.createElement('div'); g.className='dotgroup'; g.style.borderColor='color-mix(in srgb, '+COLOR[c]+' 45%, var(--line))';
+      for(let t=0;t<trials;t++){
+        const d=document.createElement('button'); d.className='dot pending'; d.title=c+' · '+q.id+' · trial '+(t+1);
+        d.id='dot-'+c+'-'+q.id+'-'+t; d.setAttribute('aria-label',d.title);
+        d.onclick=()=>showLog(c,q.id,t);
+        g.appendChild(d);
+      }
+      dots.appendChild(g);
+    }
+    row.appendChild(dots); matrix.appendChild(row);
+  }
+}
+
+const bars=document.getElementById('bars');
+function buildBars(){
+  bars.innerHTML='';
+  for(const c of CONDS){
+    bars.insertAdjacentHTML('beforeend',
+      '<div class="bar-row"><span class="bar-name">'+c+'</span>'+
+      '<div class="bar-track"><div class="bar-fill" id="bar-'+c+'" style="background:'+COLOR[c]+'"></div></div>'+
+      '<span class="bar-val" id="val-'+c+'">—</span></div>');
+  }
+}
+
+function score(sql,q){
+  const s=sql.toLowerCase();
+  for(const f of q.forbids){ if(new RegExp(f,'i').test(s)) return {passed:false, why:'forbidden pattern matched: '+f}; }
+  for(const r of q.requires){ if(!new RegExp(r,'i').test(s)) return {passed:false, why:'required pattern missing: '+r}; }
+  return {passed:true, why:'all required patterns present, no forbidden patterns'};
+}
+
+async function ask(model, context, question){
+  const key=document.getElementById('apikey').value.trim();
+  const headers={'Content-Type':'application/json'};
+  if(key){ headers['x-api-key']=key; headers['anthropic-version']='2023-06-01';
+           headers['anthropic-dangerous-direct-browser-access']='true'; }
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST', headers,
+    body:JSON.stringify({model, max_tokens:600,
+      system:'You are a text-to-SQL engine. Using ONLY the schema context provided, translate the question into a single ANSI SQL query. Output the SQL and nothing else — no explanation, no markdown fences.',
+      messages:[{role:'user',content:'Schema context:\n\n'+context+'\n\nQuestion: '+question}]})});
+  const data=await res.json();
+  if(data.error) throw new Error(data.error.message||'API error');
+  return (data.content||[]).map(b=>b.text||'').join('').trim();
+}
+
+function refreshBars(){
+  for(const c of CONDS){
+    const cells=Object.entries(results).filter(([k])=>k.startsWith(c+'|'));
+    if(!cells.length) continue;
+    const passed=cells.filter(([,v])=>v.passed).length;
+    const pct=Math.round(100*passed/cells.length);
+    document.getElementById('bar-'+c).style.width=pct+'%';
+    document.getElementById('val-'+c).textContent=pct+'% ('+passed+'/'+cells.length+')';
+  }
+}
+
+function showLog(c,qid,t){
+  const r=results[c+'|'+qid+'|'+t]; if(!r) return;
+  const log=document.getElementById('log'); log.style.display='block';
+  log.textContent='['+c+' · '+qid+' · trial '+(t+1)+'] '+(r.passed?'PASS':'FAIL')+'\n'+r.why+'\n\n'+r.sql;
+  log.scrollTop=0;
+}
+
+async function run(){
+  const btn=document.getElementById('run'); btn.disabled=true;
+  const model=document.getElementById('model').value;
+  const trials=parseInt(document.getElementById('trials').value,10);
+  const status=document.getElementById('status');
+  for(const k of Object.keys(results)) delete results[k];
+  buildMatrix(trials); buildBars();
+
+  const jobs=[];
+  for(const c of CONDS) for(const q of QUESTIONS) for(let t=0;t<trials;t++) jobs.push({c,q,t});
+  let done=0;
+  const worker=async()=>{
+    while(jobs.length){
+      const {c,q,t}=jobs.shift();
+      const dot=document.getElementById('dot-'+c+'-'+q.id+'-'+t);
+      try{
+        const sql=await ask(model, CONTEXTS[c], q.question);
+        const verdict=score(sql,q);
+        results[c+'|'+q.id+'|'+t]={...verdict,sql};
+        dot.classList.remove('pending'); dot.classList.add(verdict.passed?'pass':'fail','pop');
+        setTimeout(()=>dot.classList.remove('pop'),200);
+      }catch(e){
+        results[c+'|'+q.id+'|'+t]={passed:false,sql:'',why:'API error: '+e.message};
+        dot.classList.remove('pending'); dot.classList.add('fail');
+      }
+      done++; status.textContent=done+' / '+(CONDS.length*QUESTIONS.length*trials)+' trials complete';
+      refreshBars();
+    }
+  };
+  await Promise.all([worker(),worker(),worker()]);
+  status.textContent+=' — done.';
+  btn.disabled=false;
+}
+document.getElementById('run').onclick=run;
+buildMatrix(parseInt(document.getElementById('trials').value,10)); buildBars();
+</script>
+</body>
+</html>

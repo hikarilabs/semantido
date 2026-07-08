@@ -1,0 +1,211 @@
+semantic_model:
+- name: core_banking_analytics
+  description: Core banking accounts and transactions, exported from semantido.
+  ai_context:
+    instructions: 'Wholesale/retail core banking model. Respect each dataset''s application
+      context and default filters. Glossary — booking date: date a movement is booked to the
+      account (the axis); value date: date a movement becomes interest-effective; net flow:
+      signed sum of amounts over a period (not turnover)'
+  custom_extensions:
+  - vendor_name: SEMANTIDO
+    exporter: semantido.exporters.osi
+    osi_spec_version: 0.2.0
+  datasets:
+  - name: account_info
+    source: account_info
+    primary_key:
+    - account_id
+    description: Master record for customer deposit and current accounts. One row per account.
+    ai_context:
+      instructions: Default scope is ACTIVE accounts unless the user explicitly asks for closed
+        or dormant accounts. Core banking — account master.
+      synonyms:
+      - accounts
+      - customer accounts
+      - deposit accounts
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      sql_filters:
+      - account_status = 'ACTIVE'
+    fields:
+    - name: account_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: account_id
+      description: 'Column: account_id'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        privacy_level: restricted
+    - name: account_status
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: account_status
+      description: 'Lifecycle status: ACTIVE, DORMANT, CLOSED, FROZEN. Business questions
+        default to ACTIVE.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - ACTIVE
+        - CLOSED
+    - name: currency_code
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: currency_code
+      description: ISO 4217 currency of the account.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        sample_values:
+        - EUR
+        - USD
+        - GBP
+    - name: available_balance
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: available_balance
+      description: 'Funds the customer can draw on now: ledger balance minus holds plus overdraft
+        headroom. Prefer this for ''how much money'' questions.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        privacy_level: confidential
+    - name: opened_date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: opened_date
+      description: Date the account was opened. Business date.
+      dimension:
+        is_time: true
+      ai_context:
+        instructions: 'PRIMARY time dimension for this dataset. Native grain: day.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        is_primary_time_dimension: true
+        time_grain: day
+    - name: created_at
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: created_at
+      description: Row creation timestamp (ETL audit column).
+      ai_context:
+        instructions: Operational audit timestamp — do not use as a time axis for business
+          questions.
+    - name: updated_at
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: updated_at
+      description: Row last-update timestamp (ETL audit column).
+      ai_context:
+        instructions: Operational audit timestamp — do not use as a time axis for business
+          questions.
+  - name: transaction_info
+    source: transaction_info
+    primary_key:
+    - transaction_id
+    description: 'Posted account transactions, one row per movement. The business time axis
+      is booking_date: use it for any per-day/month/quarter aggregation unless the user explicitly
+      asks about value or settlement dating.'
+    ai_context:
+      instructions: 'Amounts are signed: negative = debit, positive = credit. Sum of amount
+        over a period is net flow, not turnover. Core banking — transaction ledger.'
+      synonyms:
+      - transactions
+      - postings
+      - account movements
+    fields:
+    - name: transaction_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: transaction_id
+      description: 'Column: transaction_id'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        privacy_level: restricted
+    - name: account_id
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: account_id
+      description: Owning account.
+    - name: amount
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: amount
+      description: Signed transaction amount in the account currency. Negative = debit.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        privacy_level: confidential
+    - name: booking_date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: booking_date
+      description: Date the transaction was booked to the account. THE business time axis
+        for time-series questions.
+      dimension:
+        is_time: true
+      ai_context:
+        instructions: 'PRIMARY time dimension for this dataset. Native grain: day.'
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        is_primary_time_dimension: true
+        time_grain: day
+    - name: value_date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: value_date
+      description: Date the amount becomes interest-effective. Only relevant for interest
+        and value-dating questions.
+      dimension:
+        is_time: true
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        time_grain: day
+    - name: settlement_date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: settlement_date
+      description: Date funds actually settled. Only relevant for settlement/ops questions.
+      dimension:
+        is_time: true
+    - name: created_at
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: created_at
+      description: Row creation timestamp (ETL audit column).
+      ai_context:
+        instructions: Operational audit timestamp — do not use as a time axis for business
+          questions.
+    - name: updated_at
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: updated_at
+      description: Row last-update timestamp (ETL audit column).
+      ai_context:
+        instructions: Operational audit timestamp — do not use as a time axis for business
+          questions.
+  relationships:
+  - name: account_info_to_transaction_info
+    from:
+      dataset: account_info
+      columns:
+      - account_id
+    to:
+      dataset: transaction_info
+      columns:
+      - account_id
+    description: Movements posted to this account.
+    custom_extensions:
+    - vendor_name: SEMANTIDO
+      relationship_type: one-to-many
