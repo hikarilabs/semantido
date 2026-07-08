@@ -44,7 +44,8 @@ from semantido import semantic_table, SemanticDeclarativeBase
 from semantido.generators.semantic_layer import PrivacyLevel, TimeGrain
 
 
-@semantic_table(
+@semantic_table(  # time_dimension marks the primary time axis
+
     description="EMIR trade reports — one row per UTI, latest reported state.",
     synonyms=["trades", "derivative trades", "EMIR reports"],
     sql_filters=["action_type != 'E'  -- exclude error-cancelled reports"],
@@ -55,7 +56,6 @@ from semantido.generators.semantic_layer import PrivacyLevel, TimeGrain
 )
 class TradeReport(SemanticDeclarativeBase):
     __tablename__ = "trade_reports"
-    __semantic_time_dimension__ = "execution_timestamp"  # primary time axis
 
     trade_id = Column(Integer, primary_key=True)
     uti = Column(String(52), nullable=False, unique=True)

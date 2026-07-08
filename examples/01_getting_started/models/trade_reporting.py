@@ -134,12 +134,12 @@ class Instrument(SemanticDeclarativeBase):
     application_context=(
         "Sourced from the trade repository submission feed; refreshed T+1."
     ),
+    time_dimension="execution_timestamp",
 )
 class TradeReport(SemanticDeclarativeBase):
     """Latest state of an EMIR-reportable derivative trade."""
 
     __tablename__ = "trade_reports"
-    __semantic_time_dimension__ = "execution_timestamp"
 
     trade_id = Column(Integer, primary_key=True)
     uti = Column(String(52), nullable=False, unique=True)
@@ -263,12 +263,12 @@ class TradeParty(SemanticDeclarativeBase):
         "This differs from notional_amount on trade_reports, which is "
         "unsigned. 'Exposure' questions usually mean valuation, not notional."
     ),
+    time_dimension="valuation_date",
 )
 class TradeValuation(SemanticDeclarativeBase):
     """Signed daily MTM valuation of a trade."""
 
     __tablename__ = "trade_valuations"
-    __semantic_time_dimension__ = "valuation_date"
 
     valuation_id = Column(Integer, primary_key=True)
     trade_id = Column(Integer, ForeignKey("trade_reports.trade_id"), nullable=False)
@@ -312,12 +312,12 @@ class TradeValuation(SemanticDeclarativeBase):
         "and accrued interest. buyer/seller are LEI references, not signed "
         "quantities — do not infer direction from quantity sign."
     ),
+    time_dimension="trading_datetime",
 )
 class MifirTransaction(SemanticDeclarativeBase):
     """A MiFIR RTS 22 transaction report."""
 
     __tablename__ = "mifir_transactions"
-    __semantic_time_dimension__ = "trading_datetime"
 
     transaction_id = Column(Integer, primary_key=True)
     transaction_reference = Column(String(52), nullable=False, unique=True)

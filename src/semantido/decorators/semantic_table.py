@@ -23,6 +23,7 @@ def semantic_table(
     sql_filters: Optional[list[str]] = None,
     application_context: Optional[str] = None,
     business_context: Optional[str] = None,
+    time_dimension: Optional[str] = None,
 ):
     """A class decorator to enrich SQLAlchemy models with semantic metadata.
 
@@ -36,20 +37,38 @@ def semantic_table(
         sql_filters: A list of SQL fragments used for default filtering or row-level security.
         application_context: The technical or functional scope within the app.
         business_context: The business domain or logic this table belongs to.
+        time_dimension: Name of the column that is the table's primary
+            business time axis. Equivalent to setting
+            ``__semantic_time_dimension__`` on the class body; passing both
+            with different values raises ``ValueError``.
 
     Examples:
         ```python
         @semantic_table(
             description="User information and login profile",
-            synonyms=[" user profile", "client"],
-            application_context="Registered users on the platform")
+            synonyms=["user profile", "client"],
+            application_context="Registered users on the platform",
+            time_dimension="created_at")
         class User(Base):
             __tablename__ = "users"
             id = Column(Integer, primary_key=True)
+            created_at = Column(DateTime)
         ```
     """
 
     def decorator(cls):
+        if time_dimension is not None:
+            # Only a dunder set directly on this class body conflicts;
+            # values inherited from a mixin or base are overridable.
+            own = cls.__dict__.get("__semantic_time_dimension__")
+            if own is not None and own != time_dimension:
+                raise ValueError(
+                    f"{cls.__name__}: time_dimension={time_dimension!r} on "
+                    f"@semantic_table conflicts with "
+                    f"__semantic_time_dimension__ = {own!r} on the class body"
+                )
+            cls.__semantic_time_dimension__ = time_dimension
+
         cls.__semantic_description__ = description
         cls.__semantic_synonyms__ = synonyms
         cls.__semantic_sql_filters__ = sql_filters

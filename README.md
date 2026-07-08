@@ -76,10 +76,10 @@ from semantido.generators.semantic_layer import PrivacyLevel, TimeGrain
     description="Customer orders — one row per order.",
     synonyms=["orders", "purchases"],
     business_context="total_amount is gross, including tax and shipping.",
+    time_dimension="ordered_at",
 )
 class Order(SemanticDeclarativeBase):
     __tablename__ = "orders"
-    __semantic_time_dimension__ = "ordered_at"
 
     order_id = Column(Integer, primary_key=True)
     customer_id = Column(Integer, ForeignKey("customers.customer_id"))
@@ -132,7 +132,7 @@ What gets captured
 | Column meaning, synonyms, sample values | `<column>_description`, `<column>_synonyms`, `<column>_sample_values` |
 | Business rules an agent must respect | `<column>_application_rules` |
 | Data sensitivity | `<column>_privacy_level` (`PUBLIC` … `CONFIDENTIAL`) |
-| Primary business time axis | `__semantic_time_dimension__` on the table |
+| Primary business time axis | `time_dimension=` in the decorator (or `__semantic_time_dimension__` on the class) |
 | Secondary time axes & native grain | `<column>_is_time_dimension`, `<column>_time_grain` (`TimeGrain` or `"day"`) |
 | Default filters / row-level security fragments | `sql_filters` on the table |
 | Relationship semantics | `<relationship>_relationship_description` |
