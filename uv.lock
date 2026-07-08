@@ -1014,7 +1014,6 @@ wheels = [
 name = "semantido"
 source = { editable = "." }
 dependencies = [
-    { name = "pyyaml" },
     { name = "sqlalchemy" },
 ]
 
@@ -1024,8 +1023,12 @@ dev = [
     { name = "pylint" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pyyaml" },
     { name = "ruff" },
     { name = "typing-extensions" },
+]
+osi = [
+    { name = "pyyaml" },
 ]
 publish = [
     { name = "twine" },
@@ -1037,13 +1040,14 @@ requires-dist = [
     { name = "pylint", marker = "extra == 'dev'", specifier = "==4.0.6" },
     { name = "pytest", marker = "extra == 'dev'", specifier = "==9.1.1" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = "==7.1.0" },
-    { name = "pyyaml", specifier = "==6.0.3" },
+    { name = "pyyaml", marker = "extra == 'dev'", specifier = "==6.0.3" },
+    { name = "pyyaml", marker = "extra == 'osi'", specifier = "==6.0.3" },
     { name = "ruff", marker = "extra == 'dev'", specifier = "==0.15.20" },
     { name = "sqlalchemy" },
     { name = "twine", marker = "extra == 'publish'", specifier = "==6.2.0" },
     { name = "typing-extensions", marker = "extra == 'dev'", specifier = "==4.16.0" },
 ]
-provides-extras = ["dev", "publish"]
+provides-extras = ["dev", "osi", "publish"]
 
 [[package]]
 name = "sqlalchemy"

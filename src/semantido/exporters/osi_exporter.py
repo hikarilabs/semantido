@@ -264,7 +264,7 @@ def _build_time_field(
         if is_primary:
             ai_bits.append("PRIMARY time dimension for this dataset.")
             if column.time_grain:
-                ai_bits.append(f"Native grain: {column.time_grain}.")
+                ai_bits.append(f"Native grain: {column.time_grain.value}.")
     elif is_audit:
         ai_bits.append(
             "Operational audit timestamp — do not use as a time axis for "
@@ -283,7 +283,7 @@ def _build_field_extension(column: Column, is_primary: bool) -> dict[str, Any]:
     if is_primary:
         extension["is_primary_time_dimension"] = True
     if column.time_grain:
-        extension["time_grain"] = column.time_grain
+        extension["time_grain"] = column.time_grain.value
     return extension
 
 

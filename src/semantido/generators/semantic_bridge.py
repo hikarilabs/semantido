@@ -80,7 +80,7 @@ class SQLAlchemySemanticBridge:
         # Get all mapped classes
         for mapper in self.base.registry.mappers:
             clazz = mapper.class_
-            table_name = mapper.persist_selectable.name
+            table_name = str(mapper.persist_selectable.name)
 
             # Add the current mapped table to the model registry
             self._model_registry[table_name] = clazz
@@ -115,13 +115,23 @@ class SQLAlchemySemanticBridge:
         Returns:
             Table: A semantic representation of the table and its metadata.
         """
-        table_name = mapper.persist_selectable.name
-        schema = mapper.persist_selectable.schema
+        table_name = str(mapper.persist_selectable.name)
+        schema = (
+            str(mapper.persist_selectable.schema) if mapper.persist_selectable.schema else None
+        )
         meta = extract_table_metadata(clazz, table_name)
 
-        # time dimension must be of a Date or DateTime type, fail if not
+        # time dimension if declared must be of a Date or DateTime type
+        time_dimension = meta["time_dimension"]
+        if time_dimension is not None:
+            if time_dimension not in mapper.columns:
+                raise ValueError(
+                    f"{clazz.__name__} time dimension: {time_dimension} "
+                    f"must be a column in the table"
+                )
+
         if not isinstance(
-            mapper.columns[meta["time_dimension"]].type, (Date, DateTime)
+            mapper.columns[time_dimension].type, (Date, DateTime)
         ):
             raise ValueError(
                 f"{clazz.__name__} time dimension: {meta['time_dimension']} "

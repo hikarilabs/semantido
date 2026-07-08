@@ -48,7 +48,7 @@ def normalize_time_grain(
     if isinstance(raw_grain, TimeGrain):
         return raw_grain
     try:
-        return TimeGrain(str(raw_grain).upper())
+        return TimeGrain(str(raw_grain).lower())
     except ValueError as exc:
         valid = ", ".join(grain.value for grain in TimeGrain)
         raise ValueError(

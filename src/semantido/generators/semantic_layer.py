@@ -292,7 +292,13 @@ class SemanticLayer:
         if include_empty:
             return raw_dict
 
-        return self._remove_empty_values(raw_dict)
+        cleaned = self._remove_empty_values(raw_dict)
+
+        cleaned.setdefault("tables", {})
+        cleaned.setdefault("relationships", [])
+
+        return cleaned
+
 
     @deprecated(
         "Use to_json() from semantido.exporters. Will be removed in future versions."

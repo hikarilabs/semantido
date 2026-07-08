@@ -22,18 +22,21 @@ classifiers = [
 ]
 license-files = ["LICEN[CS]E*"]
 dependencies = [
-    "sqlalchemy",
-    "PyYAML==6.0.3"
+    "sqlalchemy"
 ]
 
 [project.optional-dependencies]
+osi = [
+    "PyYAML==6.0.3"
+]
 dev = [
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
     "pylint==4.0.6",
     "mypy==2.2.0",
     "ruff==0.15.20",
-    "typing-extensions==4.16.0"
+    "typing-extensions==4.16.0",
+    "PyYAML==6.0.3"
 ]
 publish = [
     "twine==6.2.0",
