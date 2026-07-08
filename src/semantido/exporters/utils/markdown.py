@@ -47,24 +47,26 @@ def render_table(table: dict) -> list[str]:
     schema = table.get("schema", "")
     full_name = f"{schema}.{table_name}" if schema else table_name
 
+    # Each field is a list item: single plain-text newlines are soft
+    # breaks in Markdown and render as one run-together paragraph.
     lines.append(f"### {table_name}")
-    lines.append(f"**Full Name**: {full_name}")
+    lines.append(f"- **Full Name**: {full_name}")
 
     if primary_key := table.get("primary_key"):
-        lines.append(f"**Primary Key**: {primary_key}")
+        lines.append(f"- **Primary Key**: {primary_key}")
 
     lines.append(
-        f"**Description**: {table.get('description', 'No description available')}"
+        f"- **Description**: {table.get('description', 'No description available')}"
     )
 
     if synonyms := table.get("synonyms", []):
-        lines.append(f"**Synonyms**: {', '.join(synonyms)}")
+        lines.append(f"- **Synonyms**: {', '.join(synonyms)}")
     if app_context := table.get("application_context"):
-        lines.append(f"**Application Context**: {app_context}")
+        lines.append(f"- **Application Context**: {app_context}")
     if business_context := table.get("business_context"):
-        lines.append(f"**Business Context**: {business_context.strip()}")
+        lines.append(f"- **Business Context**: {business_context.strip()}")
 
-    lines.append("\n")
+    lines.append("")
 
     if columns := table.get("columns", []):
         lines.append("#### Columns")
