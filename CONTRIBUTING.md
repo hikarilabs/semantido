@@ -26,7 +26,7 @@ $ uv sync --extra dev
 Making changes
 -----
 Some notes on making changes to ``semantido``.
-- If you've added a new feature or modified an existing feature, make sure to  add or update any applicable documentation in docstrings and in the
+- If you've added a new feature or modified an existing feature, make sure to add or update any applicable documentation in docstrings and in the
 documentation (in ``docs/``). The reference documentation can be re-generated with:
 ```bash
 mkdocs build
@@ -63,23 +63,26 @@ $ uv run ruff format .
 Documentation Coverage and Markdown Documentation
 -----
 If you fix a bug, all documentation that references the change must be updated to reflect the fix, ideally in the same commit.
-semantido uses hatch for managing all things docs
+semantido uses hatch for managing all things docs.
 
 1. Install hatch
-```bash
-$ pip install hatch
-or
-$ uv tool install hatch
-```
+
+    ```bash
+    $ pip install hatch
+    or
+    $ uv tool install hatch
+    ```
 
 2. Verify that hatch is available:
-```bash
-$ hatch --version
-```
+
+    ```bash
+    $ hatch --version
+    ```
 
 3. Create the 'docs' environment:
-```bash
-$ hatch env create docs
+
+    ```bash
+    $ hatch env create docs
 ```
   
 To build the docs: 
