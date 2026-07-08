@@ -22,7 +22,7 @@ classifiers = [
 ]
 license-files = ["LICEN[CS]E*"]
 dependencies = [
-    "sqlalchemy",
+    "sqlalchemy>=2.0",
     "typing-extensions>=4.5"
 ]
 
