@@ -38,7 +38,7 @@ Mapping summary::
     application_rules        field ai_context.instructions
     application_glossary     model ai_context.instructions
 
-Time-dimension policy (the reason ``is_time`` is curated, not inferred):
+Time-dimension policy
 
 * The table's declared ``time_dimension`` column is flagged
   ``dimension.is_time: true`` and marked as the PRIMARY time axis in
@@ -62,6 +62,7 @@ PyYAML is an optional dependency (``pip install semantido[osi]``);
 ``to_osi_dict`` works without it.
 """
 
+import json
 import re
 from typing import Any, Optional
 
@@ -73,7 +74,9 @@ from semantido.generators.semantic_layer import (
     Table,
 )
 
-OSI_SPEC_VERSION = "0.2.0"
+# Must match the `const` in osi-schema.json exactly; the schema pins the
+# full version string including pre-release tags.
+OSI_SPEC_VERSION = "0.2.0.dev0"
 DEFAULT_DIALECT = "ANSI_SQL"
 VENDOR = "SEMANTIDO"
 
@@ -87,6 +90,19 @@ DEFAULT_AUDIT_PATTERN = re.compile(
     r"processed|sync(ed)?|etl)(_at|_on|_ts|_time|_timestamp|_date)?$",
     re.IGNORECASE,
 )
+
+
+def _vendor_extension(payload: dict[str, Any]) -> dict[str, str]:
+    """Wraps semantido metadata as a spec-conformant custom extension.
+
+    The OSI schema requires custom extensions to be exactly
+    ``{vendor_name: str, data: str}`` where ``data`` is a serialized JSON
+    string; flattened keys fail schema validation.
+    """
+    return {
+        "vendor_name": VENDOR,
+        "data": json.dumps(payload, sort_keys=True, default=str),
+    }
 
 
 def to_osi_dict(
@@ -127,11 +143,7 @@ def to_osi_dict(
         model["ai_context"] = ai_context
 
     model["custom_extensions"] = [
-        {
-            "vendor_name": VENDOR,
-            "exporter": "semantido.exporters.osi",
-            "osi_spec_version": OSI_SPEC_VERSION,
-        }
+        _vendor_extension({"exporter": "semantido.exporters.osi"})
     ]
 
     model["datasets"] = [
@@ -143,7 +155,7 @@ def to_osi_dict(
     if relationships:
         model["relationships"] = relationships
 
-    return {"semantic_model": [model]}
+    return {"version": OSI_SPEC_VERSION, "semantic_model": [model]}
 
 
 def to_osi_yaml(
@@ -207,7 +219,7 @@ def _table_to_dataset(table: Table, audit_pattern: re.Pattern) -> dict:
 
     if table.sql_filters:
         dataset["custom_extensions"] = [
-            {"vendor_name": VENDOR, "sql_filters": table.sql_filters}
+            _vendor_extension({"sql_filters": table.sql_filters})
         ]
 
     dataset["fields"] = [
@@ -245,7 +257,7 @@ def _column_to_field(column: Column, table: Table, audit_pattern: re.Pattern) ->
 
     extension = _build_field_extension(column, is_primary)
     if extension:
-        field["custom_extensions"] = [{"vendor_name": VENDOR, **extension}]
+        field["custom_extensions"] = [_vendor_extension(extension)]
 
     return field
 
@@ -317,17 +329,18 @@ def _relationships_to_osi(relationships: list[Relationship]) -> list[dict]:
 
         entry: dict[str, Any] = {
             "name": f"{rel.from_table}_to_{rel.to_table}",
-            "from": {"dataset": rel.from_table, "columns": from_columns},
-            "to": {"dataset": rel.to_table, "columns": to_columns},
+            "from": rel.from_table,
+            "to": rel.to_table,
+            "from_columns": from_columns,
+            "to_columns": to_columns,
         }
         if rel.description:
-            entry["description"] = rel.description
+            # The schema has no `description` on relationships; ai_context
+            # is the conformant home for join semantics prose.
+            entry["ai_context"] = {"instructions": rel.description}
         if rel.relationship_type:
             entry["custom_extensions"] = [
-                {
-                    "vendor_name": VENDOR,
-                    "relationship_type": rel.relationship_type.value,
-                }
+                _vendor_extension({"relationship_type": rel.relationship_type.value})
             ]
         result.append(entry)
     return result

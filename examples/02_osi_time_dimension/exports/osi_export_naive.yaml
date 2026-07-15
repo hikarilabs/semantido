@@ -1,3 +1,4 @@
+version: 0.2.0.dev0
 semantic_model:
 - name: core_banking_analytics
   description: Core banking accounts and transactions, exported from semantido.
@@ -8,8 +9,7 @@ semantic_model:
       signed sum of amounts over a period (not turnover)'
   custom_extensions:
   - vendor_name: SEMANTIDO
-    exporter: semantido.exporters.osi
-    osi_spec_version: 0.2.0
+    data: '{"exporter": "semantido.exporters.osi"}'
   datasets:
   - name: account_info
     source: account_info
@@ -25,8 +25,7 @@ semantic_model:
       - deposit accounts
     custom_extensions:
     - vendor_name: SEMANTIDO
-      sql_filters:
-      - account_status = 'ACTIVE'
+      data: '{"sql_filters": ["account_status = ''ACTIVE''"]}'
     fields:
     - name: account_id
       expression:
@@ -36,7 +35,7 @@ semantic_model:
       description: 'Column: account_id'
       custom_extensions:
       - vendor_name: SEMANTIDO
-        privacy_level: restricted
+        data: '{"privacy_level": "restricted"}'
     - name: account_status
       expression:
         dialects:
@@ -46,9 +45,7 @@ semantic_model:
         default to ACTIVE.'
       custom_extensions:
       - vendor_name: SEMANTIDO
-        sample_values:
-        - ACTIVE
-        - CLOSED
+        data: '{"sample_values": ["ACTIVE", "CLOSED"]}'
     - name: currency_code
       expression:
         dialects:
@@ -57,10 +54,7 @@ semantic_model:
       description: ISO 4217 currency of the account.
       custom_extensions:
       - vendor_name: SEMANTIDO
-        sample_values:
-        - EUR
-        - USD
-        - GBP
+        data: '{"sample_values": ["EUR", "USD", "GBP"]}'
     - name: available_balance
       expression:
         dialects:
@@ -70,7 +64,7 @@ semantic_model:
         headroom. Prefer this for ''how much money'' questions.'
       custom_extensions:
       - vendor_name: SEMANTIDO
-        privacy_level: confidential
+        data: '{"privacy_level": "confidential"}'
     - name: opened_date
       expression:
         dialects:
@@ -118,7 +112,7 @@ semantic_model:
       description: 'Column: transaction_id'
       custom_extensions:
       - vendor_name: SEMANTIDO
-        privacy_level: restricted
+        data: '{"privacy_level": "restricted"}'
     - name: account_id
       expression:
         dialects:
@@ -133,7 +127,7 @@ semantic_model:
       description: Signed transaction amount in the account currency. Negative = debit.
       custom_extensions:
       - vendor_name: SEMANTIDO
-        privacy_level: confidential
+        data: '{"privacy_level": "confidential"}'
     - name: booking_date
       expression:
         dialects:
@@ -178,15 +172,14 @@ semantic_model:
         is_time: true
   relationships:
   - name: account_info_to_transaction_info
-    from:
-      dataset: account_info
-      columns:
-      - account_id
-    to:
-      dataset: transaction_info
-      columns:
-      - account_id
-    description: Movements posted to this account.
+    from: account_info
+    to: transaction_info
+    from_columns:
+    - account_id
+    to_columns:
+    - account_id
+    ai_context:
+      instructions: Movements posted to this account.
     custom_extensions:
     - vendor_name: SEMANTIDO
-      relationship_type: one-to-many
+      data: '{"relationship_type": "one-to-many"}'

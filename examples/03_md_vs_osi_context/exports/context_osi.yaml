@@ -1,7 +1,6 @@
 version: 0.2.0.dev0
 semantic_model:
 - name: core_banking_analytics
-  description: Core banking accounts and transactions, exported from semantido.
   ai_context:
     instructions: 'Wholesale/retail core banking model. Respect each dataset''s application
       context and default filters. Glossary — booking date: date a movement is booked to the

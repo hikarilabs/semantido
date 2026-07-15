@@ -17,3 +17,6 @@ __pycache__/
 # pytest / coverage
 .pytest_cache/
 .coverage
+
+.env
+

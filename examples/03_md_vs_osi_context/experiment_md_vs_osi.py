@@ -44,6 +44,10 @@ from pathlib import Path
 from semantido import SemanticDeclarativeBase
 from semantido.exporters import to_markdown, to_osi_yaml
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # Models live in example 02 — single source of truth, no duplication.
 sys.path.insert(0, str(Path(__file__).parent.parent / "02_osi_time_dimension"))
 import models.core_banking  # noqa: E402,F401 (registers the mapped classes)

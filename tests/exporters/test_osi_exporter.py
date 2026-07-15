@@ -60,6 +60,16 @@ def layer_fixture():
     return layer
 
 
+def _ext_data(entity):
+    """Decodes the SEMANTIDO custom extension payload (spec: JSON string in `data`)."""
+    import json
+
+    ext = entity["custom_extensions"][0]
+    assert ext["vendor_name"] == "SEMANTIDO"
+    assert set(ext) == {"vendor_name", "data"}, "extensions must be {vendor_name, data}"
+    return json.loads(ext["data"])
+
+
 def test_to_osi_dict_structure(layer):
     doc = to_osi_dict(layer, model_name="test_model")
     model = doc["semantic_model"][0]
@@ -67,7 +77,8 @@ def test_to_osi_dict_structure(layer):
     assert model["name"] == "test_model"
     assert {ds["name"] for ds in model["datasets"]} == {"trades", "books"}
     assert "Glossary" in model["ai_context"]["instructions"]
-    assert model["custom_extensions"][0]["vendor_name"] == "SEMANTIDO"
+    assert doc["version"] == "0.2.0.dev0"
+    assert _ext_data(model)["exporter"] == "semantido.exporters.osi"
 
 
 def test_to_osi_dict_time_dimension_policy(layer):
@@ -82,7 +93,7 @@ def test_to_osi_dict_time_dimension_policy(layer):
     assert (
         "PRIMARY time dimension" in fields["executed_at"]["ai_context"]["instructions"]
     )
-    ext = fields["executed_at"]["custom_extensions"][0]
+    ext = _ext_data(fields["executed_at"])
     assert ext["time_grain"] == "second"
     assert ext["is_primary_time_dimension"] is True
 
@@ -94,7 +105,7 @@ def test_to_osi_dict_time_dimension_policy(layer):
     )
 
     # Privacy level travels via vendor extension
-    assert fields["notional"]["custom_extensions"][0]["privacy_level"] == "restricted"
+    assert _ext_data(fields["notional"])["privacy_level"] == "restricted"
 
 
 def test_to_osi_dict_relationship_dedup(layer):
@@ -104,7 +115,8 @@ def test_to_osi_dict_relationship_dedup(layer):
     # trades<->books is bidirectional in the ORM but exported once
     assert len(rels) == 1
     rel = rels[0]
-    assert {rel["from"]["dataset"], rel["to"]["dataset"]} == {"trades", "books"}
+    assert {rel["from"], rel["to"]} == {"trades", "books"}
+    assert rel["from_columns"] and rel["to_columns"]
 
 
 def test_to_osi_dict_is_yaml_safe(layer):
