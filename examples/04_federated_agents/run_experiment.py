@@ -45,15 +45,15 @@ sys.stdout = _Tee(sys.__stdout__, _REPORT)
 
 import bank_a  # noqa: E402
 import bank_b  # noqa: E402
-from agents import (
+from agents import (  # noqa: E402
     Agent,
     ConceptResolver,
     Institution,
     LexicalResolver,
     Request,
     SemanticResolver,
-) # noqa: E402
-from alignment import align # noqa: E402
+)
+from alignment import align  # noqa: E402
 
 # ------------------------------------------------------------------ #
 # Setup                                                              #
