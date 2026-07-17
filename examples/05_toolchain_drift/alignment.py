@@ -92,11 +92,7 @@ def align(
                     # sibling objection is *semantic* and survives any
                     # re-pinning, so it must not be shadowed by the
                     # (weaker, operational) pin objection.
-                    if (
-                        map_a.relation
-                        is map_b.relation
-                        is MappingRelation.NARROWER
-                    ):
+                    if map_a.relation is map_b.relation is MappingRelation.NARROWER:
                         verdict = Verdict.RELATED_NOT_SUBSTITUTABLE
                         reasons.append(
                             f"{anchor}: both narrower than the anchor — "

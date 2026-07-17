@@ -1,0 +1,30 @@
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1.2rem;
+}
+.page-actions__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.64rem;
+  font-family: var(--md-text-font-family);
+  color: var(--md-default-fg-color--light);
+  background: var(--md-code-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.4rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 125ms, border-color 125ms;
+}
+.page-actions__btn:hover {
+  color: var(--md-accent-fg-color);
+  border-color: var(--md-accent-fg-color);
+  text-decoration: none;
+}
+.page-actions__btn:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}

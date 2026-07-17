@@ -1,30 +1,131 @@
-site_name: Sematido
-site_url: https://hikarilabs.github.io/semantido/
-copyright: Copyright &copy; 2026 Dragos Crintea
+site_name: semantido
+site_description: >-
+  Code-native semantic layer authoring for SQLAlchemy — annotate your models
+  where they live, export LLM-ready context wherever your stack needs it.
+site_url: https://semantido.ai
+repo_url: https://github.com/hikarilabs/semantido
+repo_name: hikarilabs/semantido
+edit_uri: edit/main/docs/
 
 theme:
   name: material
+  custom_dir: overrides
+  language: en
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    # Wren-style layout grammar
+    - navigation.sections        # sidebar groups rendered as sections, not accordions
+    - navigation.expand          # sections open by default, like Wren's sidebar
+    - navigation.top             # back-to-top button
+    - navigation.footer          # prev/next pagination at the bottom
+    - navigation.tracking        # URL follows the active anchor
+    - toc.follow                 # right-hand TOC follows scroll
+    - search.suggest
+    - search.highlight
+    - content.code.copy          # copy button on code blocks
+    - content.code.annotate
+    - content.action.edit        # "edit this page" -> GitHub
+    - content.tabs.link
+
+markdown_extensions:
+  - admonition                   # !!! warning / tip / danger / note
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: Direct link to this section
+  - pymdownx.details             # collapsible admonitions
+  - pymdownx.superfences         # nested code blocks, diagrams
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 plugins:
-  - mkdocstrings:
-      handlers:
-        python:
-          paths: [ src ]
-          options:
-            allow_inspection: true
   - search
-  - blog:
-      blog_dir: blog
-      post_date_format: yyyy/MM/dd
-      post_url_format: "{date}/slug"
-      authors_file: "{blog}/.authors.yml"
 
+extra_css:
+  - assets/css/page-actions.css
+
+extra_javascript:
+  - assets/js/page-actions.js
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/hikarilabs/semantido
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/semantido/
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/dragoscrintea/
+
+copyright: >-
+  Copyright &copy; 2026 Dragos Crintea — HikariLabs Ltd ·
+  Apache-2.0
 
 nav:
-  - Index: index.md
-  - Why Semantido: explanation.md
-  - Examples:
-    - 01 - Getting Started: examples/01_getting_started.md
-    - 02 - OSI Time Dimension: examples/02_osi_time_dimension.md
-  - Code Reference: reference.md
-  - Tutorials: blog/index.md
+  - Overview: index.md
+  - Why semantido?: concepts/why-semantido.md
+  - Open source & services: support.md
+
+  - Get started:
+      - Installation: get-started/installation.md
+      - Quickstart: get-started/quickstart.md
+      - Quickstart with your agent: get-started/quickstart-with-agent.md
+
+  - Concepts:
+      - What is a code-native semantic layer?: concepts/what-is-a-code-native-semantic-layer.md
+      - What do the annotations do?: concepts/what-the-annotations-do.md
+      - How does an agent consume context?: concepts/how-agents-consume-context.md
+      - Why is the output deterministic?: concepts/determinism.md
+      - How does semantido keep agents from hallucinating?: concepts/correctness.md
+      - Where does semantido sit in my stack?: concepts/stack-position.md
+
+  - Guides:
+      - Annotating your models: guides/annotating-models.md
+      - Modelling time: guides/modelling-time.md
+      - Refining context quality: guides/refining-context.md
+      - Privacy and governance: guides/privacy-and-governance.md
+      - OSI (Open Semantic Interchange): guides/osi.md
+      - dbt and warehouse-side layers: guides/dbt-and-warehouse-layers.md
+      - Versioning and CI: guides/versioning-and-ci.md
+
+  - Integrations:
+      - Integrations: integrations/overview.md
+
+  - Reference:
+      - Semantic metadata: reference/semantic-metadata.md
+      - API: reference/api.md
+      - Architecture: reference/architecture.md
+
+hooks:
+  - hooks/raw_docs.py

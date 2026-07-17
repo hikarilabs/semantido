@@ -21,9 +21,7 @@ def build_registry() -> ConceptRegistry:
 
     # Shared anchor, identical pin on both sides -> exact bridge possible
     registry.add_source(
-        OntologySource(
-            name="gleif", namespace="urn:gleif:lei", version="2026-06"
-        )
+        OntologySource(name="gleif", namespace="urn:gleif:lei", version="2026-06")
     )
     # Shared anchor, DIFFERENT pin than Bank B (2025Q3 vs 2026Q1)
     registry.add_source(
@@ -45,9 +43,7 @@ def build_registry() -> ConceptRegistry:
     # Second shared anchor for amounts, SAME pin both sides: one valid
     # rendezvous is enough even while the fibo pins disagree.
     registry.add_source(
-        OntologySource(
-            name="iso20022", namespace="urn:iso:20022", version="2025"
-        )
+        OntologySource(name="iso20022", namespace="urn:iso:20022", version="2025")
     )
 
     legal_entity = registry.concept(

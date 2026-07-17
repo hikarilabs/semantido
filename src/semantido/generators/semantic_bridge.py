@@ -144,7 +144,7 @@ class SQLAlchemySemanticBridge:
             for column in table.columns:
                 if column.concept and column.concept not in registry.concepts:
                     unknown.append(
-                        f"column '{table.name}.{column.name}' " f"-> {column.concept!r}"
+                        f"column '{table.name}.{column.name}' -> {column.concept!r}"
                     )
         if unknown:
             raise ValueError(
@@ -188,9 +188,7 @@ class SQLAlchemySemanticBridge:
                 )
 
         primary_key = [key.name for key in mapper.primary_key] or None
-        unique_keys = SQLAlchemySemanticBridge._extract_unique_keys(
-            mapper, primary_key
-        )
+        unique_keys = SQLAlchemySemanticBridge._extract_unique_keys(mapper, primary_key)
 
         columns = []
 
@@ -215,7 +213,6 @@ class SQLAlchemySemanticBridge:
             time_dimension=meta["time_dimension"],
             concept=meta["concept"],
         )
-
 
     @staticmethod
     def _extract_unique_keys(mapper, primary_key) -> list[list[str]] | None:

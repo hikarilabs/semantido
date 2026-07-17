@@ -23,9 +23,7 @@ def build_registry() -> ConceptRegistry:
 
     # Same anchor and SAME pin as Bank A -> exact bridge
     registry.add_source(
-        OntologySource(
-            name="gleif", namespace="urn:gleif:lei", version="2026-06"
-        )
+        OntologySource(name="gleif", namespace="urn:gleif:lei", version="2026-06")
     )
     # Same anchor, NEWER pin than Bank A (2026Q1 vs 2025Q3)
     registry.add_source(
@@ -44,9 +42,7 @@ def build_registry() -> ConceptRegistry:
         )
     )
     registry.add_source(
-        OntologySource(
-            name="iso20022", namespace="urn:iso:20022", version="2025"
-        )
+        OntologySource(name="iso20022", namespace="urn:iso:20022", version="2025")
     )
 
     party = registry.concept(

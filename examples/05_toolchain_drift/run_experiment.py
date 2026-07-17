@@ -60,7 +60,7 @@ AUTHORED = build_authored_registry()
 def _norm(concept_id: str) -> str:
     for prefix in ("dim_", "m_"):
         if concept_id.startswith(prefix):
-            concept_id = concept_id[len(prefix):]
+            concept_id = concept_id[len(prefix) :]
     return concept_id.replace("_", " ")
 
 
@@ -146,11 +146,11 @@ def condition_c3(generated):
     # distinct_from collision: one generated id bridging two authored
     # concepts that must never be conflated
     bridged_by_gen: dict[str, list[str]] = {}
-    for (a_id, g_id) in table:
+    for a_id, g_id in table:
         bridged_by_gen.setdefault(g_id, []).append(a_id)
     for g_id, a_ids in bridged_by_gen.items():
         for i, first in enumerate(a_ids):
-            for second in a_ids[i + 1:]:
+            for second in a_ids[i + 1 :]:
                 if (
                     ConceptRelation.DISTINCT_FROM,
                     second,
@@ -188,9 +188,7 @@ DETECTION_MARKER = {
 
 
 def main():
-    anchored_terms = [
-        t for t, spec in GLOSSARY["terms"].items() if spec.get("anchors")
-    ]
+    anchored_terms = [t for t, spec in GLOSSARY["terms"].items() if spec.get("anchors")]
 
     print("=" * 74)
     print("EXPERIMENT 05: one glossary, two toolchains (authored vs generated)")
@@ -206,17 +204,17 @@ def main():
         for cond_name, cond in CONDITIONS:
             matches, flags = cond(generated)
             found = sum(1 for t in anchored_terms if t in matches)
-            recall.setdefault(cond_name, {})[run] = (
-                f"{found}/{len(anchored_terms)}"
-            )
+            recall.setdefault(cond_name, {})[run] = f"{found}/{len(anchored_terms)}"
             marker = DETECTION_MARKER.get(run)
             if marker is not None:
                 detected = any(marker in f for f in flags)
                 matrix.setdefault(cond_name, {})[run] = (
                     "DETECTED" if detected else "BLIND"
                 )
-            print(f"  [{cond_name}] identity {found}/{len(anchored_terms)}"
-                  f"  flags: {len(flags)}")
+            print(
+                f"  [{cond_name}] identity {found}/{len(anchored_terms)}"
+                f"  flags: {len(flags)}"
+            )
             for flag in flags[:3]:
                 print(f"      - {flag}")
 
@@ -227,19 +225,13 @@ def main():
     print(f"{'condition':28s}" + "".join(f"{f[:18]:>20s}" for f in faults))
     for cond_name, _ in CONDITIONS:
         row = matrix.get(cond_name, {})
-        print(
-            f"{cond_name:28s}"
-            + "".join(f"{row.get(f, '—'):>20s}" for f in faults)
-        )
+        print(f"{cond_name:28s}" + "".join(f"{row.get(f, '—'):>20s}" for f in faults))
 
     print("\nIDENTITY RECALL (anchored terms recovered as same)")
     print(f"{'condition':28s}" + "".join(f"{m.label()[:18]:>20s}" for m in RUNS[:3]))
     for cond_name, _ in CONDITIONS:
         row = recall[cond_name]
-        print(
-            f"{cond_name:28s}"
-            + "".join(f"{row[m.label()]:>20s}" for m in RUNS[:3])
-        )
+        print(f"{cond_name:28s}" + "".join(f"{row[m.label()]:>20s}" for m in RUNS[:3]))
 
     print(
         "\nReading: C1 survives renames it can guess and nothing it can't;\n"

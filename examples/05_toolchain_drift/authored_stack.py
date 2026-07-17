@@ -29,7 +29,8 @@ def _mapping(anchor: dict) -> ExternalMapping:
     return ExternalMapping(
         target=anchor["target"],
         relation=MappingRelation(
-            anchor["relation"].replace("narrow_match", "narrower")
+            anchor["relation"]
+            .replace("narrow_match", "narrower")
             .replace("broad_match", "broader")
             .replace("related_match", "related")
         ),

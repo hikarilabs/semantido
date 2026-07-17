@@ -35,7 +35,7 @@ dev = [
     "pytest-cov==7.1.0",
     "pylint==4.0.6",
     "mypy==2.3.0",
-    "ruff==0.15.21",
+    "ruff==0.15.22",
     "typing-extensions==4.16.0",
     "PyYAML==6.0.3",
     "types-PyYAML>=6.0",
@@ -84,3 +84,7 @@ serve = "mkdocs serve --dev-addr localhost:8000"
 
 [tool.black]
 target-version = ["py311", "py312", "py313"]
+
+[tool.mypy]
+exclude = ["^examples/"]
+check_untyped_defs = true

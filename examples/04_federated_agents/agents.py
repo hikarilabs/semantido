@@ -61,18 +61,14 @@ class Institution:
     def __init__(self, base, registry: ConceptRegistry, seed_rows, model):
         self.base = base
         self.registry = registry
-        self.layer: SemanticLayer = base.sync_semantic_layer(
-            concept_registry=registry
-        )
+        self.layer: SemanticLayer = base.sync_semantic_layer(concept_registry=registry)
         self.engine = create_engine("sqlite://")
         base.metadata.create_all(self.engine)
         self.model = model
         with self.engine.begin() as conn:
             table = model.__table__
             non_date = [
-                c.name
-                for c in table.columns
-                if "DATE" not in str(c.type).upper()
+                c.name for c in table.columns if "DATE" not in str(c.type).upper()
             ]
             conn.execute(
                 table.insert(),
@@ -126,9 +122,7 @@ class LexicalResolver:
             if hit is None:
                 return None, [f"{role}: no column resembling {term!r}"]
             grounding[role] = hit
-            provenance.append(
-                f"{role}: {term!r} ~ column {hit!r} (name prior)"
-            )
+            provenance.append(f"{role}: {term!r} ~ column {hit!r} (name prior)")
         return grounding, provenance
 
 
@@ -180,9 +174,7 @@ class ConceptResolver:
         for role, foreign_id in request.concepts.items():
             # find local concepts aligned with the asker's concept
             candidates = [
-                a
-                for (local, foreign), a in alignments.items()
-                if foreign == foreign_id
+                a for (local, foreign), a in alignments.items() if foreign == foreign_id
             ]
             if not candidates:
                 return None, [
@@ -257,6 +249,4 @@ class Agent:
         )
         with self.inst.engine.connect() as conn:
             rows = [tuple(r) for r in conn.execute(query)]
-        return Response(
-            ok=True, rows=rows, grounding=grounding, provenance=provenance
-        )
+        return Response(ok=True, rows=rows, grounding=grounding, provenance=provenance)

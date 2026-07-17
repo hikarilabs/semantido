@@ -83,7 +83,7 @@ semantido uses hatch for managing all things docs.
 
     ```bash
     $ hatch env create docs
-```
+    ```
   
 To build the docs: 
 ```bash

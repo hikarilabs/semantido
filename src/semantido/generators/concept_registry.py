@@ -457,8 +457,7 @@ class ConceptRegistry:
             for relation, target_id in concept.relations:
                 if target_id == concept.id:
                     errors.append(
-                        f"{concept.id}: self-relation "
-                        f"{relation.value} -> {target_id}"
+                        f"{concept.id}: self-relation {relation.value} -> {target_id}"
                     )
                 elif target_id not in self.concepts:
                     errors.append(
@@ -709,7 +708,7 @@ def _ref_ids(refs: ConceptRefs) -> list[str]:
     for ref in refs:
         if not isinstance(ref, Concept):
             raise TypeError(
-                "Relation targets must be Concept handles, " f"got {type(ref).__name__}"
+                f"Relation targets must be Concept handles, got {type(ref).__name__}"
             )
         result.append(ref.id)
     return result

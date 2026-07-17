@@ -161,7 +161,10 @@ print("=" * 72)
 print("EXPERIMENT: Bank B's agent queries Bank A's agent")
 print("=" * 72)
 
-tally = {label: {"CORRECT": 0, "SILENT_ERROR": 0, "FALSE_REFUSAL": 0} for _, label in CONDITIONS}
+tally = {
+    label: {"CORRECT": 0, "SILENT_ERROR": 0, "FALSE_REFUSAL": 0}
+    for _, label in CONDITIONS
+}
 
 for request, truth in MESSAGES:
     print(f"\nREQUEST: {request.intent}")

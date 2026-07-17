@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if page.file and page.file.src_uri.endswith(".md") %}
+{% set raw_url = config.site_url ~ "raw-docs/" ~ page.file.src_uri %}
+{% set ask_prompt = "Read " ~ raw_url ~ " so you can answer questions about this semantido documentation page." %}
+<div class="page-actions" data-raw-url="{{ raw_url }}">
+  <button class="page-actions__btn" id="copy-page-btn" title="Copy this page as Markdown">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12z"/></svg>
+    <span>Copy page</span>
+  </button>
+  <a class="page-actions__btn" href="https://claude.ai/new?q={{ ask_prompt | urlencode }}"
+     target="_blank" rel="noopener" title="Ask Claude about this page">
+    <span>Ask Claude</span>
+  </a>
+  <a class="page-actions__btn" href="https://chatgpt.com/?q={{ ask_prompt | urlencode }}"
+     target="_blank" rel="noopener" title="Ask ChatGPT about this page">
+    <span>Ask ChatGPT</span>
+  </a>
+  <a class="page-actions__btn" href="{{ raw_url }}" target="_blank" rel="noopener"
+     title="View this page as raw Markdown">
+    <span>View as Markdown</span>
+  </a>
+</div>
+{% endif %}
+{{ super() }}
+{% endblock %}

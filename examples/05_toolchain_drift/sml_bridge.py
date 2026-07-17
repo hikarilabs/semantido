@@ -57,6 +57,7 @@ PARAPHRASES = {
 
 RENAMES = {"counterparty_emir": "trading_party", "notional": "contract_value"}
 
+
 #: Generated realized_by mapping table (generators emit mapping tables,
 #: not decorators): physical column -> generated concept id.
 def realized_map(mutations: Mutations) -> dict[str, str]:
