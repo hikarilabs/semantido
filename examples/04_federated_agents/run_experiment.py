@@ -43,8 +43,8 @@ _REPORT = open(
 sys.stdout = _Tee(sys.__stdout__, _REPORT)
 
 
-import bank_a
-import bank_b
+import bank_a  # noqa: E402
+import bank_b  # noqa: E402
 from agents import (
     Agent,
     ConceptResolver,
@@ -52,8 +52,8 @@ from agents import (
     LexicalResolver,
     Request,
     SemanticResolver,
-)
-from alignment import align
+) # noqa: E402
+from alignment import align # noqa: E402
 
 # ------------------------------------------------------------------ #
 # Setup                                                              #

@@ -49,10 +49,10 @@ _REPORT = open(
 sys.stdout = _Tee(sys.__stdout__, _REPORT)
 
 
-from alignment import SUBSTITUTABLE, Verdict, align  # reused from ex. 04
-from authored_stack import GLOSSARY, build_authored_registry
-from sml_bridge import Mutations, build_generated_registry
-from semantido.concepts import ConceptRelation
+from alignment import SUBSTITUTABLE, Verdict, align  # noqa: E402  # reused from ex. 04
+from authored_stack import GLOSSARY, build_authored_registry  # noqa: E402
+from sml_bridge import Mutations, build_generated_registry  # noqa: E402
+from semantido.concepts import ConceptRelation  # noqa: E402
 
 AUTHORED = build_authored_registry()
 
