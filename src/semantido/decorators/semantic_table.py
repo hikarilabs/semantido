@@ -24,6 +24,7 @@ def semantic_table(
     application_context: Optional[str] = None,
     business_context: Optional[str] = None,
     time_dimension: Optional[str] = None,
+    concept: Optional[str] = None,
 ):
     """A class decorator to enrich SQLAlchemy models with semantic metadata.
 
@@ -41,6 +42,9 @@ def semantic_table(
             business time axis. Equivalent to setting
             ``__semantic_time_dimension__`` on the class body; passing both
             with different values raises ``ValueError``.
+        concept: Identifier of a registered business concept this table
+            realizes. Resolved against the ``ConceptRegistry`` passed to
+            ``sync_semantic_layer`` — sync fails if the id is unknown.
 
     Examples:
         ```python
@@ -68,6 +72,16 @@ def semantic_table(
                     f"__semantic_time_dimension__ = {own!r} on the class body"
                 )
             cls.__semantic_time_dimension__ = time_dimension
+
+        if concept is not None:
+            own_concept = cls.__dict__.get("__semantic_concept__")
+            if own_concept is not None and own_concept != concept:
+                raise ValueError(
+                    f"{cls.__name__}: concept={concept!r} on "
+                    f"@semantic_table conflicts with "
+                    f"__semantic_concept__ = {own_concept!r} on the class body"
+                )
+            cls.__semantic_concept__ = concept
 
         cls.__semantic_description__ = description
         cls.__semantic_synonyms__ = synonyms

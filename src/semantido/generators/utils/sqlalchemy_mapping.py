@@ -43,6 +43,7 @@ def extract_table_metadata(clazz: Type, table_name: str) -> dict:
         "application_context": getattr(clazz, "__semantic_application_context__", None),
         "business_context": getattr(clazz, "__semantic_business_context__", None),
         "time_dimension": getattr(clazz, "__semantic_time_dimension__", None),
+        "concept": getattr(clazz, "__semantic_concept__", None),
     }
 
 
@@ -74,6 +75,7 @@ def extract_column_metadata(clazz: Type, column_name: str) -> dict:
         "time_grain": normalize_time_grain(
             clazz, column_name, getattr(clazz, f"{column_name}_time_grain", None)
         ),
+        "concept": getattr(clazz, f"{column_name}_concept", None),
     }
 
 

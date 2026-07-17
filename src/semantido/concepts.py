@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-This module provides the core functionality for Semantido, including decorators,
-generators, and base classes for semantic data models.
+"""Authoring façade for the concept tier.
+
+Everything concept-related in one import:
+
+    from semantido.concepts import (
+        ConceptRegistry, OntologySource,
+        exact_match, close_match, broad_match, narrow_match, related_match,
+    )
 """
 
-from semantido.decorators.semantic_table import semantic_table
 from semantido.generators.concept_registry import (
     Concept,
     ConceptRegistry,
@@ -25,11 +29,12 @@ from semantido.generators.concept_registry import (
     ExternalMapping,
     MappingRelation,
     OntologySource,
+    broad_match,
+    close_match,
+    exact_match,
+    narrow_match,
+    related_match,
 )
-from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
-from semantido.generators.semantic_layer import SemanticLayer
-from semantido.models.declarative_base import SemanticDeclarativeBase
-from semantido.models.semantic_base import SemanticBase
 
 __all__ = [
     "Concept",
@@ -38,9 +43,9 @@ __all__ = [
     "ExternalMapping",
     "MappingRelation",
     "OntologySource",
-    "SemanticBase",
-    "SemanticDeclarativeBase",
-    "SemanticLayer",
-    "SQLAlchemySemanticBridge",
-    "semantic_table",
+    "broad_match",
+    "close_match",
+    "exact_match",
+    "narrow_match",
+    "related_match",
 ]

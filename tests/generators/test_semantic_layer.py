@@ -37,7 +37,7 @@ def complex_semantic_layer():
         name="users",
         description="User registry",
         columns=cols,
-        primary_key="id",
+        primary_key=["id"],
         business_context="Customer Data",
     )
     sl.add_table(user_table)

@@ -187,9 +187,9 @@ semantic_model:
         instructions: Operational audit timestamp — do not use as a time axis for business
           questions.
   relationships:
-  - name: account_info_to_transaction_info
-    from: account_info
-    to: transaction_info
+  - name: transaction_info_to_account_info
+    from: transaction_info
+    to: account_info
     from_columns:
     - account_id
     to_columns:
@@ -198,4 +198,4 @@ semantic_model:
       instructions: Movements posted to this account.
     custom_extensions:
     - vendor_name: SEMANTIDO
-      data: '{"relationship_type": "one-to-many"}'
+      data: '{"relationship_type": "many-to-one"}'

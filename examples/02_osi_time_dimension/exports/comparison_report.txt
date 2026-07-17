@@ -15,12 +15,12 @@ Strategy: CURATED
 
 Agent task: 'monthly transaction volume' -> needs ONE GROUP BY
 column on transaction_info.
-  OFF:      0 candidates flagged; the agent guesses from names and
-            types — booking vs. value vs. settlement is a slot machine.
-  NAIVE:    five candidates flagged, including created_at/updated_at.
+  OFF     : 0 candidates flagged; the agent guesses from names and
+            types — booking vs value vs settlement is a coin toss.
+  NAIVE   : 5 candidates flagged, including created_at/updated_at.
             Signal-to-noise 1:5; audit timestamps look identical
             to business dates.
-  CURATED:  booking_date is marked PRIMARY with grain DAY;
+  CURATED : booking_date is marked PRIMARY with grain DAY;
             value_date/settlement_date remain secondary axes;
             audit columns carry an explicit do-not-use instruction
             and no dimension block.

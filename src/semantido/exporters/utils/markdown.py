@@ -53,7 +53,10 @@ def render_table(table: dict) -> list[str]:
     lines.append(f"- **Full Name**: {full_name}")
 
     if primary_key := table.get("primary_key"):
-        lines.append(f"- **Primary Key**: {primary_key}")
+        lines.append(f"- **Primary Key**: {', '.join(primary_key)}")
+    if unique_keys := table.get("unique_keys"):
+        rendered = "; ".join(", ".join(key) for key in unique_keys)
+        lines.append(f"- **Unique Keys**: {rendered}")
 
     lines.append(
         f"- **Description**: {table.get('description', 'No description available')}"

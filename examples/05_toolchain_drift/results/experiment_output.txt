@@ -1,0 +1,90 @@
+==========================================================================
+EXPERIMENT 05: one glossary, two toolchains (authored vs generated)
+==========================================================================
+
+RUN: baseline
+  [C1 name-normalized] identity 5/5  flags: 0
+  [C2 anchor alignment] identity 3/5  flags: 4
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_emir
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty_emir
+  [C3 anchors+corroboration] identity 5/5  flags: 10
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_emir
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty_emir
+
+RUN: id_rename
+  [C1 name-normalized] identity 3/5  flags: 0
+  [C2 anchor alignment] identity 3/5  flags: 4
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_trading_party
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_trading_party
+  [C3 anchors+corroboration] identity 5/5  flags: 10
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_trading_party
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_trading_party
+
+RUN: definition_paraphrase
+  [C1 name-normalized] identity 5/5  flags: 0
+  [C2 anchor alignment] identity 3/5  flags: 4
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_emir
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty_emir
+  [C3 anchors+corroboration] identity 3/5  flags: 13
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_emir
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty_emir
+
+RUN: stale_pin
+  [C1 name-normalized] identity 5/5  flags: 0
+  [C2 anchor alignment] identity 2/5  flags: 5
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_emir
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty_emir
+  [C3 anchors+corroboration] identity 4/5  flags: 11
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_emir
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty_emir
+
+RUN: equivalence_inflation
+  [C1 name-normalized] identity 5/5  flags: 0
+  [C2 anchor alignment] identity 3/5  flags: 4
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_emir
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty_emir
+  [C3 anchors+corroboration] identity 3/5  flags: 12
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_emir
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty_mifir
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty_emir
+
+RUN: granularity_merge
+  [C1 name-normalized] identity 3/5  flags: 0
+  [C2 anchor alignment] identity 3/5  flags: 2
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty
+  [C3 anchors+corroboration] identity 4/5  flags: 5
+      - NOT_SUBSTITUTABLE counterparty_emir<->dim_counterparty
+      - NOT_SUBSTITUTABLE counterparty_mifir<->dim_counterparty
+      - IDENTITY_BY_CHECKSUM counterparty_emir<->dim_counterparty: sibling verdict overridden — same anchor, same relation, same definition
+
+==========================================================================
+DRIFT DETECTION MATRIX (per injected fault)
+==========================================================================
+condition                     definition_paraphr           stale_pin  equivalence_inflat   granularity_merge
+C1 name-normalized                         BLIND               BLIND               BLIND               BLIND
+C2 anchor alignment                        BLIND            DETECTED               BLIND               BLIND
+C3 anchors+corroboration                DETECTED            DETECTED            DETECTED            DETECTED
+
+IDENTITY RECALL (anchored terms recovered as same)
+condition                               baseline           id_rename  definition_paraphr
+C1 name-normalized                           5/5                 3/5                 5/5
+C2 anchor alignment                          3/5                 3/5                 3/5
+C3 anchors+corroboration                     5/5                 5/5                 3/5
+
+Reading: C1 survives renames it can guess and nothing it can't;
+C2 recovers identity through anchors regardless of naming but is
+structurally blind to definition drift and relation inflation;
+C3 buys detection of every injected fault at the price of review
+queues. The anchorless term (trade_report) is invisible to C2/C3
+by construction — anchor alignment cannot see what was never
+mapped, which is the honest limit of the rendezvous mechanism.

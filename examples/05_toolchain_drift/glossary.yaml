@@ -1,0 +1,44 @@
+# Golden business glossary — the single source both derivation stacks consume.
+# Each term: definition, external anchors with the ARCHITECT-JUDGED relation.
+terms:
+  legal_entity:
+    definition: "An LEI-identified legal person or structure."
+    anchors:
+      - {source: gleif, target: "lei", relation: exact_match}
+  counterparty_emir:
+    label: counterparty
+    definition: "Counterparty within the meaning of EMIR Art. 2(8)-(9)."
+    broader: legal_entity
+    anchors:
+      - {source: fibo, target: "FND/Parties/Parties/Counterparty",
+         relation: narrow_match,
+         because: "EMIR sense is jurisdiction- and instrument-scoped"}
+  counterparty_mifir:
+    label: counterparty
+    definition: "Buyer/seller identification in a MiFIR transaction report (RTS 22)."
+    broader: legal_entity
+    distinct_from: counterparty_emir   # declared from the later side
+    anchors:
+      - {source: fibo, target: "FND/Parties/Parties/Counterparty",
+         relation: narrow_match,
+         because: "MiFIR sense is execution-report-scoped"}
+  notional:
+    definition: "Notional amount of the derivative contract, EUR."
+    anchors:
+      - {source: fibo, target: "DER/DerivativesContracts/NotionalAmount",
+         relation: exact_match}
+      - {source: iso20022, target: "auth:NotionalAmount", relation: exact_match}
+  asset_class:
+    definition: "EMIR asset class of the derivative (IR, FX, CR, EQ, CO)."
+    anchors:
+      - {source: fibo, target: "FBC/FinancialInstruments/InstrumentClassification",
+         relation: exact_match}
+  trade_report:
+    definition: "An EMIR trade-state submission to the trade repository."
+    anchors: []   # deliberately anchorless: invisible to anchor alignment
+
+sources:
+  gleif:    {namespace: "urn:gleif:lei", version: "2026-06"}
+  fibo:     {namespace: "https://spec.edmcouncil.org/fibo/ontology/",
+             version: "2025Q3", profile: "fnd-parties"}
+  iso20022: {namespace: "urn:iso:20022", version: "2025"}

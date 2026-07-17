@@ -1,0 +1,77 @@
+========================================================================
+ALIGNMENT TABLE (bank_a.glossary <-> bank_b.vocab)
+========================================================================
+  asset_class            <-> instrument_class        CANDIDATE_REVERIFY
+      - https://spec.edmcouncil.org/fibo/ontology/#FBC/FinancialInstruments/InstrumentClassification: exact_match ∘ exact_match -> ALIGNED_EXACT
+      - https://spec.edmcouncil.org/fibo/ontology/#FBC/FinancialInstruments/InstrumentClassification: pin mismatch (2025Q3 vs 2026Q1) — capped at CANDIDATE_REVERIFY
+  counterparty.emir      <-> counterparty.mifir      RELATED_NOT_SUBSTITUTABLE
+      - https://spec.edmcouncil.org/fibo/ontology/#FND/Parties/Parties/Counterparty: both narrower than the anchor — siblings under a broader notion, possibly disjoint
+      - https://spec.edmcouncil.org/fibo/ontology/#FND/Parties/Parties/Counterparty: pin mismatch (2025Q3 vs 2026Q1) — capped at CANDIDATE_REVERIFY
+  legal_entity           <-> party                   ALIGNED_EXACT
+      - urn:gleif:lei#lei: exact_match ∘ exact_match -> ALIGNED_EXACT
+  notional               <-> transaction_amount      ALIGNED_EXACT
+      - https://spec.edmcouncil.org/fibo/ontology/#DER/DerivativesContracts/NotionalAmount: exact_match ∘ exact_match -> ALIGNED_EXACT
+      - https://spec.edmcouncil.org/fibo/ontology/#DER/DerivativesContracts/NotionalAmount: pin mismatch (2025Q3 vs 2026Q1) — capped at CANDIDATE_REVERIFY
+      - urn:iso:20022#auth:NotionalAmount: exact_match ∘ exact_match -> ALIGNED_EXACT
+
+========================================================================
+EXPERIMENT: Bank B's agent queries Bank A's agent
+========================================================================
+
+REQUEST: Total exposure per party (LEI) in your book
+  asker terms: {'group_by': 'party', 'measure': 'amount'} | asker concepts: {'group_by': 'party', 'measure': 'transaction_amount'}
+  [condition 1: raw schema, lexical match] -> CORRECT
+      grounding: {'group_by': 'cpty_lei', 'measure': 'notional'}
+      rows: [('LEI-AAA', 8000000.0), ('LEI-BBB', 7500000.0), ('LEI-CCC', 1250000.0)]
+  [condition 2: semantic layer, no concepts] -> CORRECT
+      grounding: {'group_by': 'cpty_lei', 'measure': 'notional'}
+      rows: [('LEI-AAA', 8000000.0), ('LEI-BBB', 7500000.0), ('LEI-CCC', 1250000.0)]
+  [condition 3: concept protocol + alignment] -> CORRECT
+      grounding: {'group_by': 'cpty_lei', 'measure': 'notional'}
+      rows: [('LEI-AAA', 8000000.0), ('LEI-BBB', 7500000.0), ('LEI-CCC', 1250000.0)]
+
+REQUEST: Sum by counterparty — MiFIR sense (RTS 22 buyer/seller)
+  asker terms: {'group_by': 'counterparty', 'measure': 'amount'} | asker concepts: {'group_by': 'counterparty.mifir', 'measure': 'transaction_amount'}
+  [condition 1: raw schema, lexical match] -> SILENT_ERROR
+      grounding: {'group_by': 'cpty_lei', 'measure': 'notional'}
+      rows: [('LEI-AAA', 8000000.0), ('LEI-BBB', 7500000.0), ('LEI-CCC', 1250000.0)]
+  [condition 2: semantic layer, no concepts] -> SILENT_ERROR
+      grounding: {'group_by': 'cpty_lei', 'measure': 'notional'}
+      rows: [('LEI-AAA', 8000000.0), ('LEI-BBB', 7500000.0), ('LEI-CCC', 1250000.0)]
+  [condition 3: concept protocol + alignment] -> CORRECT
+      refusal: group_by: RELATED_NOT_SUBSTITUTABLE for counterparty.mifir vs local counterparty.emir: https://spec.edmcouncil.org/fibo/ontology/#FND/Parties/Parties/Counterparty: both narrower than the anchor — siblings under a broader notion, possibly disjoint; https://spec.edmcouncil.org/fibo/ontology/#FND/Parties/Parties/Counterparty: pin mismatch (2025Q3 vs 2026Q1) — capped at CANDIDATE_REVERIFY
+
+REQUEST: Sum amount by asset class (our instrument classification)
+  asker terms: {'group_by': 'asset class', 'measure': 'amount'} | asker concepts: {'group_by': 'instrument_class', 'measure': 'transaction_amount'}
+  [condition 1: raw schema, lexical match] -> CORRECT
+      grounding: {'group_by': 'asset_class', 'measure': 'notional'}
+      rows: [('CR', 1250000.0), ('FX', 3000000.0), ('IR', 12500000.0)]
+  [condition 2: semantic layer, no concepts] -> CORRECT
+      grounding: {'group_by': 'asset_class', 'measure': 'notional'}
+      rows: [('CR', 1250000.0), ('FX', 3000000.0), ('IR', 12500000.0)]
+  [condition 3: concept protocol + alignment] -> CORRECT
+      refusal: group_by: CANDIDATE_REVERIFY for instrument_class vs local asset_class: https://spec.edmcouncil.org/fibo/ontology/#FBC/FinancialInstruments/InstrumentClassification: exact_match ∘ exact_match -> ALIGNED_EXACT; https://spec.edmcouncil.org/fibo/ontology/#FBC/FinancialInstruments/InstrumentClassification: pin mismatch (2025Q3 vs 2026Q1) — capped at CANDIDATE_REVERIFY
+
+REQUEST: Your execution reports filed last quarter
+  asker terms: {'group_by': 'execution report', 'measure': 'amount'} | asker concepts: {'group_by': 'execution_report', 'measure': 'transaction_amount'}
+  [condition 1: raw schema, lexical match] -> SILENT_ERROR
+      grounding: {'group_by': 'uti', 'measure': 'notional'}
+      rows: [('UTI-001', 5000000.0), ('UTI-002', 3000000.0), ('UTI-003', 7500000.0), ('UTI-004', 1250000.0)]
+  [condition 2: semantic layer, no concepts] -> CORRECT
+      refusal: group_by: no semantic match for 'execution report'
+  [condition 3: concept protocol + alignment] -> CORRECT
+      refusal: group_by: no bridge for foreign concept bank_b.vocab:execution_report — NO_BRIDGE, asking for clarification instead of guessing
+
+========================================================================
+SCOREBOARD                               correct  silent-error  false-refusal
+========================================================================
+condition 1: raw schema, lexical match      2          2             0      
+condition 2: semantic layer, no concepts    3          1             0      
+condition 3: concept protocol + alignment    4          0             0      
+
+The metric that matters in a regulated context is the middle column:
+silent errors are confident answers grounded in the wrong legal
+concept. The concept protocol converts them into inspectable
+refusals carrying the reason (sibling-narrower, pin mismatch, or
+no bridge) — the heterogeneous-ontology problem made visible
+instead of silently absorbed.

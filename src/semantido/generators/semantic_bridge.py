@@ -14,7 +14,7 @@
 
 """Extracts and synchronizes semantic metadata from SQLAlchemy models into a unified layer."""
 
-from typing import Type
+from typing import Optional, Type
 
 from sqlalchemy import (
     DateTime,
@@ -28,6 +28,7 @@ from semantido.generators.semantic_layer import (
     Relationship,
     RelationshipType,
 )
+from semantido.generators.concept_registry import ConceptRegistry
 from semantido.generators.utils import check_grain_supported_by_type
 
 from semantido.generators.utils.sqlalchemy_mapping import (
@@ -63,12 +64,22 @@ class SQLAlchemySemanticBridge:
         """
         return self.semantic_layer
 
-    def sync_from_models(self) -> SemanticLayer:
+    def sync_from_models(
+        self, concept_registry: Optional[ConceptRegistry] = None
+    ) -> SemanticLayer:
         """
         Extracts schema and semantic information from all mapped models.
 
         This method clears any previously cached metadata and performs a full scan
         of the SQLAlchemy registry to rebuild the semantic layer.
+
+        Args:
+            concept_registry: Optional registry the models' concept
+                references are resolved against. When provided, the
+                registry itself is validated first, then every
+                ``concept=...`` / ``<column>_concept`` reference must
+                resolve to a registered concept id — unknown references
+                fail the sync (same policy as ``time_dimension``).
 
         Returns:
             SemanticLayer: The fully populated semantic layer.
@@ -107,7 +118,39 @@ class SQLAlchemySemanticBridge:
                     f"'{clazz.__name__}' (table: '{table_name}')"
                 ) from exc
 
+        self.semantic_layer.concept_registry = concept_registry
+        if concept_registry is not None:
+            concept_registry.validate()
+            self._validate_concept_references(concept_registry)
+
         return self.semantic_layer
+
+    def _validate_concept_references(self, registry: ConceptRegistry) -> None:
+        """Checks that every declared concept reference resolves.
+
+        Collects all unknown references across the layer and raises once,
+        so a failing sync reports every dangling reference.
+
+        Args:
+            registry: The concept registry to resolve against.
+
+        Raises:
+            ValueError: Listing every unresolved concept reference.
+        """
+        unknown: list[str] = []
+        for table in self.semantic_layer.tables.values():
+            if table.concept and table.concept not in registry.concepts:
+                unknown.append(f"table '{table.name}' -> {table.concept!r}")
+            for column in table.columns:
+                if column.concept and column.concept not in registry.concepts:
+                    unknown.append(
+                        f"column '{table.name}.{column.name}' " f"-> {column.concept!r}"
+                    )
+        if unknown:
+            raise ValueError(
+                "Unresolved concept references (not in registry):\n  - "
+                + "\n  - ".join(unknown)
+            )
 
     @staticmethod
     def _extract_table(clazz: Type, mapper) -> Table:
@@ -144,8 +187,10 @@ class SQLAlchemySemanticBridge:
                     f"must be of a Date or DateTime type"
                 )
 
-        primary_keys = [key.name for key in mapper.primary_key]
-        primary_key = primary_keys[0] if primary_keys else None
+        primary_key = [key.name for key in mapper.primary_key] or None
+        unique_keys = SQLAlchemySemanticBridge._extract_unique_keys(
+            mapper, primary_key
+        )
 
         columns = []
 
@@ -161,13 +206,50 @@ class SQLAlchemySemanticBridge:
             description=meta["description"],
             columns=columns,
             primary_key=primary_key,
+            unique_keys=unique_keys,
             schema=schema,
             synonyms=meta["synonyms"],
             sql_filters=meta["sql_filters"],
             application_context=meta["application_context"],
             business_context=meta["business_context"],
             time_dimension=meta["time_dimension"],
+            concept=meta["concept"],
         )
+
+
+    @staticmethod
+    def _extract_unique_keys(mapper, primary_key) -> list[list[str]] | None:
+        """Extracts unique constraints and unique indexes as key column lists.
+
+        Covers ``UniqueConstraint`` in ``__table_args__``, the implicit
+        constraint created by ``Column(unique=True)``, and ``Index(...,
+        unique=True)``. The primary key is excluded (it is already declared
+        via ``primary_key``), duplicates are collapsed, and the result is
+        sorted for deterministic output.
+
+        Declaring these matters downstream: OSI cardinality inference
+        (Foundation section 6.4) treats join columns with no declared key as
+        worst-case N:N, so dropping a unique key silently restricts the
+        query surface of every relationship targeting those columns.
+        """
+        # pylint: disable=C0415
+        from sqlalchemy import UniqueConstraint
+
+        table = mapper.persist_selectable
+        keys: set[tuple[str, ...]] = set()
+
+        for constraint in getattr(table, "constraints", ()):
+            if isinstance(constraint, UniqueConstraint):
+                keys.add(tuple(col.name for col in constraint.columns))
+
+        for index in getattr(table, "indexes", ()):
+            if getattr(index, "unique", False):
+                keys.add(tuple(col.name for col in index.columns))
+
+        if primary_key:
+            keys.discard(tuple(primary_key))
+
+        return [list(key) for key in sorted(keys)] or None
 
     @staticmethod
     def _extract_column(clazz: Type, column_name: str, prop) -> Column:
@@ -211,6 +293,7 @@ class SQLAlchemySemanticBridge:
             application_rules=meta["application_rules"],
             is_time_dimension=meta["is_time_dimension"],
             time_grain=meta["time_grain"],
+            concept=meta["concept"],
         )
 
     @staticmethod

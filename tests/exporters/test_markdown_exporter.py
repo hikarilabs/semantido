@@ -12,7 +12,7 @@ def _layer() -> SemanticLayer:
         synonyms=["accounts"],
         business_context="Balances are end-of-day.",
         application_context="Core banking.",
-        primary_key="account_id",
+        primary_key=["account_id"],
         columns=[
             Column(
                 name="account_id",

@@ -14,9 +14,10 @@
 
 """Provides the base mixin for integrating SQLAlchemy models with the semantic layer."""
 
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
+from semantido.generators.concept_registry import ConceptRegistry
 from semantido.generators.semantic_layer import SemanticLayer
 
 
@@ -66,17 +67,25 @@ class SemanticBase:
         )
 
     @classmethod
-    def sync_semantic_layer(cls) -> SemanticLayer:
+    def sync_semantic_layer(
+        cls, concept_registry: Optional[ConceptRegistry] = None
+    ) -> SemanticLayer:
         """
         Synchronizes the semantic layer with the current state of all mapped models.
 
         This method clears existing semantic metadata and re-extracts all tables,
         columns, and relationships from the SQLAlchemy registry.
 
+        Args:
+            concept_registry: Optional concept registry; when provided,
+                concept references declared on models are validated
+                against it and the registry travels with the layer
+                into exporters.
+
         Returns:
             SemanticLayer: The updated semantic layer containing the synchronized metadata.
         """
         bridge = cls.get_semantic_bridge()
-        semantic_layer = bridge.sync_from_models()
+        semantic_layer = bridge.sync_from_models(concept_registry=concept_registry)
 
         return semantic_layer

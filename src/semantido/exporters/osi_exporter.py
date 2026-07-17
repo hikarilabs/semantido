@@ -37,6 +37,9 @@ Mapping summary::
     sql_filters              SEMANTIDO custom_extensions
     application_rules        field ai_context.instructions
     application_glossary     model ai_context.instructions
+    Table.concept            dataset SEMANTIDO custom_extensions
+    Column.concept           field SEMANTIDO custom_extensions
+    ConceptRegistry          model SEMANTIDO custom_extensions (subset)
 
 Time-dimension policy
 
@@ -70,6 +73,7 @@ from semantido.generators.semantic_layer import (
     Column,
     PrivacyLevel,
     Relationship,
+    RelationshipType,
     SemanticLayer,
     Table,
 )
@@ -142,9 +146,22 @@ def to_osi_dict(
     if ai_context:
         model["ai_context"] = ai_context
 
-    model["custom_extensions"] = [
-        _vendor_extension({"exporter": "semantido.exporters.osi"})
-    ]
+    model_ext: dict[str, Any] = {"exporter": "semantido.exporters.osi"}
+    referenced = {
+        table.concept for table in semantic_layer.tables.values() if table.concept
+    } | {
+        column.concept
+        for table in semantic_layer.tables.values()
+        for column in table.columns
+        if column.concept
+    }
+    if semantic_layer.concept_registry is not None and referenced:
+        # Embed only the closure of referenced concepts, so a large
+        # organization-wide registry does not bloat every model export.
+        model_ext["concept_registry"] = semantic_layer.concept_registry.subset(
+            referenced
+        ).to_dict()
+    model["custom_extensions"] = [_vendor_extension(model_ext)]
 
     model["datasets"] = [
         _table_to_dataset(table, audit_pattern)
@@ -202,7 +219,12 @@ def _table_to_dataset(table: Table, audit_pattern: re.Pattern) -> dict:
         "source": f"{table.schema}.{table.name}" if table.schema else table.name,
     }
     if table.primary_key:
-        dataset["primary_key"] = [table.primary_key]
+        dataset["primary_key"] = list(table.primary_key)
+    if table.unique_keys:
+        # OSI Foundation section 6.4 infers relationship cardinality from
+        # declared keys; omitting a unique key degrades every relationship
+        # targeting those columns to worst-case N:N.
+        dataset["unique_keys"] = [list(key) for key in table.unique_keys]
     if table.description:
         dataset["description"] = table.description
 
@@ -217,10 +239,13 @@ def _table_to_dataset(table: Table, audit_pattern: re.Pattern) -> dict:
     if ai_context:
         dataset["ai_context"] = ai_context
 
+    dataset_ext: dict[str, Any] = {}
     if table.sql_filters:
-        dataset["custom_extensions"] = [
-            _vendor_extension({"sql_filters": table.sql_filters})
-        ]
+        dataset_ext["sql_filters"] = table.sql_filters
+    if table.concept:
+        dataset_ext["concept"] = table.concept
+    if dataset_ext:
+        dataset["custom_extensions"] = [_vendor_extension(dataset_ext)]
 
     dataset["fields"] = [
         _column_to_field(column, table, audit_pattern) for column in table.columns
@@ -296,6 +321,8 @@ def _build_field_extension(column: Column, is_primary: bool) -> dict[str, Any]:
         extension["is_primary_time_dimension"] = True
     if column.time_grain:
         extension["time_grain"] = column.time_grain.value
+    if column.concept:
+        extension["concept"] = column.concept
     return extension
 
 
@@ -318,9 +345,20 @@ def _relationships_to_osi(relationships: list[Relationship]) -> list[dict]:
             continue
         seen.add(key)
 
+        # OSI section 4.4 requires `from` = many/FK side, `to` = one/PK-UK
+        # side. SQLAlchemy declares each relationship on the class that owns
+        # the attribute, so a parent-declared one-to-many arrives inverted;
+        # normalize it here (many-to-one from the FK side is the same edge).
+        # This also makes deduplication independent of ORM iteration order.
+        from_table, to_table = rel.from_table, rel.to_table
+        relationship_type = rel.relationship_type
+        if relationship_type is RelationshipType.ONE_TO_MANY:
+            from_table, to_table = to_table, from_table
+            relationship_type = RelationshipType.MANY_TO_ONE
+
         from_columns, to_columns = [], []
         for left, right in pairs:
-            if _table_of(left) == rel.from_table:
+            if _table_of(left) == from_table:
                 from_columns.append(_column_of(left))
                 to_columns.append(_column_of(right))
             else:
@@ -328,9 +366,9 @@ def _relationships_to_osi(relationships: list[Relationship]) -> list[dict]:
                 to_columns.append(_column_of(left))
 
         entry: dict[str, Any] = {
-            "name": f"{rel.from_table}_to_{rel.to_table}",
-            "from": rel.from_table,
-            "to": rel.to_table,
+            "name": f"{from_table}_to_{to_table}",
+            "from": from_table,
+            "to": to_table,
             "from_columns": from_columns,
             "to_columns": to_columns,
         }
@@ -338,9 +376,9 @@ def _relationships_to_osi(relationships: list[Relationship]) -> list[dict]:
             # The schema has no `description` on relationships; ai_context
             # is the conformant home for join semantics prose.
             entry["ai_context"] = {"instructions": rel.description}
-        if rel.relationship_type:
+        if relationship_type:
             entry["custom_extensions"] = [
-                _vendor_extension({"relationship_type": rel.relationship_type.value})
+                _vendor_extension({"relationship_type": relationship_type.value})
             ]
         result.append(entry)
     return result

@@ -20,6 +20,8 @@ from typing import Optional, Any
 from dataclasses import dataclass, field
 from typing_extensions import deprecated
 
+from semantido.generators.concept_registry import ConceptRegistry
+
 
 class PrivacyLevel(Enum):
     """
@@ -104,6 +106,9 @@ class Column:
     is_time_dimension: Optional[bool] = False
     time_grain: Optional[TimeGrain] = None
 
+    # Concept tier (v0.4.0): id of the registered concept this column realizes
+    concept: Optional[str] = None
+
 
 @dataclass
 class Table:
@@ -118,7 +123,12 @@ class Table:
         name: The physical name of the table in the database.
         description: A human-readable explanation of the table's purpose.
         columns: A list of Column objects belonging to this table.
-        primary_key: The name of the primary key column.
+        primary_key: The primary key column names (composite keys keep
+            every member column, in declaration order).
+        unique_keys: Additional unique constraints, one list of column
+            names per constraint. Feeds OSI cardinality inference:
+            an omitted unique key degrades relationships targeting those
+            columns to worst-case N:N.
         schema: The database schema to which the table belongs.
         synonyms: Alternative names for the entity represented by the table.
         sql_filters: Default SQL fragments for filtering or security.
@@ -129,8 +139,9 @@ class Table:
     name: str
     description: str
     columns: list[Column]
-    primary_key: Optional[str]
+    primary_key: Optional[list[str]]
     schema: Optional[str] = None
+    unique_keys: Optional[list[list[str]]] = None
     synonyms: Optional[list[str]] = None
     sql_filters: Optional[list[str]] = None
     application_context: Optional[str] = None
@@ -138,6 +149,9 @@ class Table:
 
     # OSI Extended Field
     time_dimension: Optional[str] = None
+
+    # Concept tier (v0.4.0): id of the registered concept this table realizes
+    concept: Optional[str] = None
 
 
 @dataclass
@@ -176,6 +190,7 @@ class SemanticLayer:
     tables: dict[str, Table] = field(default_factory=dict[str, Table])
     relationships: list[Relationship] = field(default_factory=list[Relationship])
     application_glossary: dict[str, str] = field(default_factory=dict[dict, str])
+    concept_registry: Optional[ConceptRegistry] = None
 
     def add_table(self, table: Table):
         """
@@ -240,12 +255,14 @@ class SemanticLayer:
                     "name": table.name,
                     "description": table.description,
                     "primary_key": table.primary_key,
+                    "unique_keys": table.unique_keys,
                     "schema": table.schema,
                     "synonyms": table.synonyms,
                     "sql_filters": table.sql_filters,
                     "application_context": table.application_context,
                     "business_context": table.business_context,
                     "time_dimension": table.time_dimension,
+                    "concept": table.concept,
                     "columns": [
                         {
                             "name": column.name,
@@ -267,6 +284,7 @@ class SemanticLayer:
                                 if isinstance(column.time_grain, Enum)
                                 else column.time_grain
                             ),
+                            "concept": column.concept,
                         }
                         for column in table.columns
                     ],
@@ -288,6 +306,9 @@ class SemanticLayer:
                 for relationship in self.relationships
             ],
         }
+
+        if self.concept_registry is not None:
+            raw_dict["concepts"] = self.concept_registry.to_dict()
 
         if include_empty:
             return raw_dict

@@ -18,7 +18,7 @@ def test_semantic_layer_generation_from_sqlalchemy(models):
 
     users_table = semantic_layer.tables["users"]
     assert users_table.description == "Standard user account table"
-    assert users_table.primary_key == "id"
+    assert users_table.primary_key == ["id"]
 
     # Verify Columns and Metadata
     username_col = next(c for c in users_table.columns if c.name == "username")
@@ -51,4 +51,7 @@ def test_to_json_export():
     json_data = sl.to_json()
 
     assert '"name": "simple"' in json_data
-    assert '"primary_key": "id"' in json_data
+    import json as _json
+
+    parsed = _json.loads(json_data)
+    assert parsed["tables"]["users"]["primary_key"] == ["id"]
