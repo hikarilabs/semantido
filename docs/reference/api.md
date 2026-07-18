@@ -32,9 +32,9 @@ class Base(SemanticBase, DeclarativeBase):
     pass
 ```
 
-**`classmethod sync_semantic_layer() -> SemanticLayer`**
+**`classmethod sync_semantic_layer(concept_registry: ConceptRegistry | None = None) -> SemanticLayer`**
 
-Walks the registry and re-extracts every table, column, and relationship. No database connection. Deterministic.
+Walks the registry and re-extracts every table, column, and relationship. No database connection. Deterministic. When a `concept_registry` is passed, every `concept=` / `<column>_concept` reference is validated against it — unresolved references raise `ValueError` listing all of them — and the registry is attached to the returned layer for export.
 
 **`classmethod get_semantic_bridge() -> SQLAlchemySemanticBridge`**
 
@@ -50,6 +50,7 @@ semantic_table(
     application_context: str | None = None,
     business_context: str | None = None,
     time_dimension: str | None = None,
+    concept: str | None = None,        # v0.4.0 — id of a registered concept
 )
 ```
 
@@ -124,6 +125,7 @@ Constants in `semantido.exporters.osi_exporter`:
 tables: dict[str, Table]
 relationships: list[Relationship]
 application_glossary: dict[str, str]
+concept_registry: ConceptRegistry | None    # v0.4.0
 
 add_table(table: Table)
 add_relationship(relationship: Relationship)
@@ -146,6 +148,7 @@ sql_filters: list[str] | None = None
 application_context: str | None = None
 business_context: str | None = None
 time_dimension: str | None = None
+concept: str | None = None           # v0.4.0
 ```
 
 ### `Column`
@@ -162,6 +165,7 @@ references: str | None = None        # "table.column"
 application_rules: list[str] | None = None
 is_time_dimension: bool | None = False
 time_grain: TimeGrain | None = None
+concept: str | None = None           # v0.4.0
 ```
 
 ### `Relationship`
@@ -178,8 +182,50 @@ description: str
 
 `PrivacyLevel`, `TimeGrain`, `RelationshipType` — see the [metadata reference](semantic-metadata.md#enums).
 
+## Concepts — `semantido.concepts` *(v0.4.0)*
+
+```python
+from semantido.concepts import (
+    ConceptRegistry, Concept, OntologySource,
+    ConceptRelation, MappingRelation, ExternalMapping,
+    exact_match, close_match, narrow_match, broad_match, related_match,
+)
+```
+
+`semantido.concepts` is the canonical import path; the same objects live at `semantido.generators.concept_registry`.
+
+### `ConceptRegistry`
+
+| Method | Purpose |
+|---|---|
+| `concept(concept_id, definition, *, label=None, synonyms=None, broader=None, narrower=None, same_as=None, related=None, distinct_from=None, external=None) -> Concept` | The only authoring path. Relation kwargs take `Concept` handles (or iterables); symmetric relations (`same_as`, `related`, `distinct_from`) auto-reciprocate. |
+| `add_source(source: OntologySource) -> None` | Registers a pinned external ontology release. |
+| `find_homonyms() -> dict[str, list[str]]` | Labels/synonyms claimed by more than one concept → their ids. |
+| `subset(concept_ids: set[str]) -> ConceptRegistry` | Self-contained sub-registry closed over the ids via relations. |
+| `validate() -> None` | Referential checks; collects all violations, raises once. |
+| `to_dict()` / `to_yaml(path=None)` | Serialization; YAML is the sidecar `concepts.yaml` form. |
+
+### `Concept`
+
+Fields: `id`, `label`, `definition`, `synonyms`, `mappings`, `relations`, plus computed `definition_checksum` — a stable fingerprint of the definition text.
+
+### `OntologySource`
+
+```python
+OntologySource(name: str, namespace: str, version: str,
+               location: str | None = None, profile: str | None = None)
+```
+
+`version` is required: an unpinned mapping cannot be validated or detected as stale.
+
+### Mapping helpers
+
+`exact_match(source, target, because=None)` and siblings (`close_match`, `narrow_match`, `broad_match`, `related_match`) each build an `ExternalMapping` carrying its SKOS relation — an untyped mapping is unrepresentable.
+
+Full behaviour and worked example: [The concept registry](../guides/concept-registry.md).
+
 ## Requirements
 
-Python ≥ 3.11 · SQLAlchemy ≥ 2.0 · typing-extensions ≥ 4.5
+Current release: **0.4.0**. Python ≥ 3.11 · SQLAlchemy ≥ 2.0 · typing-extensions ≥ 4.5
 
 Extras: `osi` (PyYAML), `dev`, `publish`.

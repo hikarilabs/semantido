@@ -448,6 +448,33 @@ system_prompt = f"""You are a SQL analyst. Write PostgreSQL only.
 
 That's the whole integration. semantido produces a string; what you do with it is your pipeline.
 
+## 5. Optional: bind business concepts
+
+*New in v0.4.0.* When the same word means different things in different parts of your schema — the EMIR *Counterparty* is not the MiFIR *Counterparty* — the concept registry lets you say so, and the exporters carry the warning to the agent:
+
+```python
+from semantido.concepts import ConceptRegistry
+
+reg = ConceptRegistry()
+emir = reg.concept("counterparty.emir",
+    "EMIR Art. 2(8): a party to a derivative contract, including CCPs.",
+    label="Counterparty")
+mifir = reg.concept("counterparty.mifir",
+    "MiFIR RTS 22: the execution counterparty on a reportable transaction.",
+    label="Counterparty", distinct_from=emir)
+
+@semantic_table(description="EMIR trade state reports.", concept="counterparty.emir")
+class EmirTrade(SemanticDeclarativeBase):
+    __tablename__ = "emir_trades"
+    id = Column(Integer, primary_key=True)
+    cpty = Column(String(20))
+    cpty_concept = "counterparty.emir"
+
+layer = SemanticDeclarativeBase.sync_semantic_layer(concept_registry=reg)
+```
+
+The Markdown export gains a `## Concepts` section and a `## Disambiguation` section listing every label claimed by more than one concept. Unresolved concept references fail at sync time. The full story — external ontology mappings, subset closure, the sidecar `concepts.yaml` — is in [The concept registry](../guides/concept-registry.md).
+
 ## A realistic example
 
 The two-table version above is a tutorial. [`examples/01_getting_started`](https://github.com/hikarilabs/semantido/tree/main/examples/01_getting_started) is a walkthrough on a synthetic EMIR/MiFIR regulatory reporting subset that deliberately encodes the three classic text-to-SQL failure modes — bridge fan-out, sign conventions, and amount ambiguity — and shows the annotations that counter each. Reference exports in all three formats are committed alongside it.

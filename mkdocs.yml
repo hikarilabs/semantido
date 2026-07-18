@@ -113,6 +113,7 @@ nav:
   - Guides:
       - Annotating your models: guides/annotating-models.md
       - Modelling time: guides/modelling-time.md
+      - The concept registry: guides/concept-registry.md
       - Refining context quality: guides/refining-context.md
       - Privacy and governance: guides/privacy-and-governance.md
       - OSI (Open Semantic Interchange): guides/osi.md

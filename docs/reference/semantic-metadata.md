@@ -17,6 +17,7 @@ The complete authoring surface. Two mechanisms: decorator arguments for tables, 
     application_context: str | None = None,
     business_context: str | None = None,
     time_dimension: str | None = None,
+    concept: str | None = None,
 )
 ```
 
@@ -28,6 +29,7 @@ The complete authoring surface. Two mechanisms: decorator arguments for tables, 
 | `application_context` | `str` | Technical or functional scope within the app. |
 | `business_context` | `str` | Business domain, and what to know before trusting a number. |
 | `time_dimension` | `str` | Column name of the primary business time axis. Validated at sync. |
+| `concept` | `str` | *(v0.4.0)* Id of a registered concept this table realizes. Validated at sync when a registry is passed. |
 
 Each writes to a dunder you can set directly instead:
 
@@ -39,6 +41,7 @@ Each writes to a dunder you can set directly instead:
 | `application_context` | `__semantic_application_context__` |
 | `business_context` | `__semantic_business_context__` |
 | `time_dimension` | `__semantic_time_dimension__` |
+| `concept` | `__semantic_concept__` |
 
 `time_dimension` on the decorator and `__semantic_time_dimension__` on the **same class body** with different values raises `ValueError`. A dunder inherited from a mixin or base is overridable by the decorator — so a base can set a default.
 
@@ -57,6 +60,7 @@ Attributes on the class body, named for the column they annotate.
 | `<col>_privacy_level` | `PrivacyLevel` | **Advisory** — a label, not a control. |
 | `<col>_is_time_dimension` | `bool` | Marks a *secondary* time axis. |
 | `<col>_time_grain` | `TimeGrain \| str` | Native resolution — the floor for `GROUP BY`. |
+| `<col>_concept` | `str` | *(v0.4.0)* Id of a registered concept this column realizes. Validated at sync when a registry is passed. |
 
 ```python
 class Order(SemanticDeclarativeBase):
@@ -127,6 +131,7 @@ This is the core economy of the design. A join condition typed by hand is a join
 - `time_dimension` naming a non-`Date`/`DateTime` column
 - `<col>_time_grain` that isn't a valid `TimeGrain`
 - `time_dimension` conflicting with `__semantic_time_dimension__` on the same class body
+- *(v0.4.0, when a registry is passed)* any `concept` / `<col>_concept` reference not registered — all unresolved references listed in one error
 
 Warns on:
 

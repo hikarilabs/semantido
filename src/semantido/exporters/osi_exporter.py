@@ -16,7 +16,7 @@
 
 OSI (https://open-semantic-interchange.org, core spec v0.2.x) is a
 vendor-neutral YAML interchange format for semantic models, backed by
-Snowflake, Databricks, dbt Labs, Salesforce and 50+ other organizations.
+Snowflake, Databricks, dbt Labs, Salesforce, and 50+ other organizations.
 This module lets semantido act as an OSI model converter: semantics are
 authored code-native next to the SQLAlchemy models (the inner loop) and
 emitted as OSI YAML for the wider stack to consume (the outer loop).
