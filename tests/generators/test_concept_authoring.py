@@ -164,7 +164,21 @@ class TestHelpers:
         assert isinstance(mapping, ExternalMapping)
         assert mapping.relation is MappingRelation.NARROWER
         assert mapping.justification == "scoped"
-        assert mapping.relation.skos == "skos:narrowMatch"
+        # Concept-first NARROWER serializes as the SKOS inverse: per the
+        # SKOS reference, <A> skos:broadMatch <B> asserts B (the target)
+        # is the broader concept — i.e. A is narrower than B.
+        assert mapping.relation.skos == "skos:broadMatch"
+
+    def test_skos_hierarchy_directions_are_inverted_pairwise(self):
+        """Hierarchy relations map to their SKOS inverses; symmetric
+        relations map name-for-name. Regression guard: the pre-0.4.0
+        mapping emitted skos:narrowMatch for a concept that is narrower
+        than its target, asserting the opposite of the intended triple."""
+        assert MappingRelation.NARROWER.skos == "skos:broadMatch"
+        assert MappingRelation.BROADER.skos == "skos:narrowMatch"
+        assert MappingRelation.EXACT_MATCH.skos == "skos:exactMatch"
+        assert MappingRelation.CLOSE_MATCH.skos == "skos:closeMatch"
+        assert MappingRelation.RELATED.skos == "skos:relatedMatch"
 
     def test_symmetric_relation_reciprocated(self):
         registry = ConceptRegistry()

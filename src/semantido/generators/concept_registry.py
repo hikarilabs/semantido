@@ -113,12 +113,22 @@ class MappingRelation(Enum):
 
     @property
     def skos(self) -> str:
-        """The corresponding SKOS mapping property IRI suffix."""
+        """The direction-correct SKOS mapping property IRI suffix.
+
+        MappingRelation values are concept-first: ``NARROWER`` states the
+        *concept* is narrower than the external target. SKOS hierarchical
+        mapping properties read the other way around: per the SKOS
+        reference, ``<concept> skos:broadMatch <target>`` asserts the
+        *target* (the object of the triple) is the broader one. A concept
+        narrower than its target therefore serializes as
+        ``skos:broadMatch``, and vice versa. Hierarchy values map to
+        their SKOS inverses; symmetric values map name-for-name.
+        """
         return {
             MappingRelation.EXACT_MATCH: "skos:exactMatch",
             MappingRelation.CLOSE_MATCH: "skos:closeMatch",
-            MappingRelation.BROADER: "skos:broadMatch",
-            MappingRelation.NARROWER: "skos:narrowMatch",
+            MappingRelation.BROADER: "skos:narrowMatch",
+            MappingRelation.NARROWER: "skos:broadMatch",
             MappingRelation.RELATED: "skos:relatedMatch",
         }[self]
 
@@ -742,8 +752,12 @@ def _make_mapping_helper(relation: MappingRelation):
 #: Relation-named mapping constructors. There is deliberately no helper
 #: that omits the relation: a bare pointer reading as an implicit
 #: exactMatch is the failure mode this vocabulary exists to prevent.
-#: Named after the SKOS *mapping* properties (broad_match, not broader)
-#: to avoid clashing with the broader=/narrower= concept-relation kwargs.
+#: Helper names are spelled after the SKOS *mapping* property family
+#: (broad_match, not broader) to avoid clashing with the
+#: broader=/narrower= concept-relation kwargs — but their semantics are
+#: concept-first: ``narrow_match(...)`` declares the concept narrower
+#: than the target, which serializes as the SKOS inverse
+#: (``skos:broadMatch``); see ``MappingRelation.skos``.
 exact_match = _make_mapping_helper(MappingRelation.EXACT_MATCH)
 close_match = _make_mapping_helper(MappingRelation.CLOSE_MATCH)
 broad_match = _make_mapping_helper(MappingRelation.BROADER)
