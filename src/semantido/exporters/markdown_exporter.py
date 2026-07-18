@@ -2,9 +2,71 @@
 
 from semantido.generators.semantic_layer import SemanticLayer
 from semantido.exporters.utils.markdown import (
-    render_table,
+    render_concept,
+    render_disambiguation,
     render_relationship,
+    render_table,
 )
+
+
+def _concept_sections(layer: SemanticLayer) -> list[str]:
+    """Builds the Concepts and Disambiguation sections, if applicable.
+
+    Mirrors the OSI exporter's embedding rule: only the ``subset()``
+    closure of concepts actually referenced by tables or columns is
+    rendered, so an organization-wide registry does not bloat every
+    schema export. The closure follows concept relations, which is what
+    carries a bound concept's ``distinct_from`` homonym partner into the
+    export even when that partner is unrealized in this schema.
+
+    Args:
+        layer: The SemanticLayer instance being exported.
+
+    Returns:
+        list: Markdown lines, empty when no registry or no bindings.
+    """
+    registry = layer.concept_registry
+    if registry is None:
+        return []
+    referenced = {table.concept for table in layer.tables.values() if table.concept} | {
+        column.concept
+        for table in layer.tables.values()
+        for column in table.columns
+        if column.concept
+    }
+    if not referenced:
+        return []
+
+    scoped_registry = registry.subset(referenced)
+    scoped = scoped_registry.to_dict()
+    concepts = scoped.get("concepts", {})
+    sources = scoped.get("sources", {})
+
+    realized_by: dict[str, list[str]] = {}
+    for table in layer.tables.values():
+        if table.concept:
+            realized_by.setdefault(table.concept, []).append(table.name)
+        for column in table.columns:
+            if column.concept:
+                realized_by.setdefault(column.concept, []).append(
+                    f"{table.name}.{column.name}"
+                )
+
+    lines = [
+        f"## Concepts ({len(concepts)} in scope)\n",
+        "Business concepts realized by this schema. The concept id is the "
+        "authoritative reference; labels may collide (see Disambiguation).\n",
+    ]
+    for concept_id, concept in concepts.items():
+        lines.extend(
+            render_concept(
+                concept_id, concept, sources, realized_by.get(concept_id, [])
+            )
+        )
+
+    if homonyms := scoped_registry.find_homonyms():
+        lines.extend(render_disambiguation(homonyms, concepts, realized_by))
+    return lines
 
 
 def to_markdown(layer: SemanticLayer, include_empty: bool = False):
@@ -36,6 +98,8 @@ def to_markdown(layer: SemanticLayer, include_empty: bool = False):
         lines.append(f"## Relationships ({len(relationships)} connections)\n")
         for rel in relationships:
             lines.extend(render_relationship(rel))
+
+    lines.extend(_concept_sections(layer))
 
     total_columns = sum(len(t.get("columns", [])) for t in tables)
     lines += [
@@ -92,6 +156,10 @@ def to_markdown_table(layer: SemanticLayer, include_empty: bool = False) -> str:
                 f"| {rel.get('relationship_type', '')} "
                 f"| `{rel.get('join_condition', '')}` |"
             )
+
+    if concept_lines := _concept_sections(layer):
+        lines.append("")
+        lines.extend(concept_lines)
 
     return "\n".join(lines)
 

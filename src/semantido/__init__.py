@@ -17,6 +17,7 @@ This module provides the core functionality for Semantido, including decorators,
 generators, and base classes for semantic data models.
 """
 
+from semantido.__version__ import __version__
 from semantido.decorators.semantic_table import semantic_table
 from semantido.generators.concept_registry import (
     Concept,
@@ -32,6 +33,7 @@ from semantido.models.declarative_base import SemanticDeclarativeBase
 from semantido.models.semantic_base import SemanticBase
 
 __all__ = [
+    "__version__",
     "Concept",
     "ConceptRegistry",
     "ConceptRelation",

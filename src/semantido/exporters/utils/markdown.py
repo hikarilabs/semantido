@@ -32,6 +32,8 @@ def render_column(col: dict) -> list[str]:
 
     if col_desc := col.get("description"):
         lines.append(f"  - {col_desc}")
+    if col_concept := col.get("concept"):
+        lines.append(f"  - *Concept*: `{col_concept}`")
     if sample_values := col.get("sample_values", []):
         lines.append(f"  - *Examples*: {', '.join(map(str, sample_values))}")
     if col_synonyms := col.get("synonyms", []):
@@ -62,6 +64,8 @@ def render_table(table: dict) -> list[str]:
         f"- **Description**: {table.get('description', 'No description available')}"
     )
 
+    if table_concept := table.get("concept"):
+        lines.append(f"- **Concept**: `{table_concept}`")
     if synonyms := table.get("synonyms", []):
         lines.append(f"- **Synonyms**: {', '.join(synonyms)}")
     if app_context := table.get("application_context"):
@@ -93,4 +97,106 @@ def render_relationship(rel: dict) -> list[str]:
     if rel_desc := rel.get("description"):
         lines.append(f"- **Description**: {rel_desc}")
     lines.append("")
+    return lines
+
+
+#: Human-readable phrasing for concept-to-concept relation edges. An edge
+#: ``(BROADER, target)`` reads "target is the broader concept" — matching
+#: the ``broader=`` authoring kwarg on ``ConceptRegistry.concept()``.
+_RELATION_PHRASES = {
+    "same_as": "same as",
+    "broader": "broader",
+    "narrower": "narrower",
+    "related": "related to",
+    "distinct_from": "distinct from",
+}
+
+#: Human-readable phrasing for concept-to-external mapping relations,
+#: read concept-first: "narrower than → <target>" states the concept is
+#: narrower than the external target.
+_MAPPING_PHRASES = {
+    "exact_match": "exact match",
+    "close_match": "close match",
+    "broader": "broader than",
+    "narrower": "narrower than",
+    "related": "related to",
+}
+
+
+def render_concept(
+    concept_id: str, concept: dict, sources: dict, realized_by: list[str]
+) -> list[str]:
+    """Renders a single concept block as Markdown lines.
+
+    Args:
+        concept_id: The registered concept id.
+        concept: The concept's ``to_dict()`` entry.
+        sources: The registry's serialized sources, for version pins.
+        realized_by: Table / table.column names bound to this concept.
+
+    Returns:
+        list: Markdown lines for the concept block.
+    """
+    lines = [f"### `{concept_id}` — {concept.get('label', '')}"]
+    lines.append(f"- **Definition**: {concept.get('definition', '')}")
+    if synonyms := concept.get("synonyms"):
+        lines.append(f"- **Synonyms**: {', '.join(synonyms)}")
+    if realized_by:
+        lines.append(f"- **Realized by**: {', '.join(realized_by)}")
+    else:
+        lines.append("- **Realized by**: — (context only, not bound in this schema)")
+    for mapping in concept.get("mappings", []):
+        source = sources.get(mapping.get("source", ""), {})
+        pin = f"{mapping.get('source', '')}@{source.get('version', '?')}"
+        relation_value = mapping.get("relation", "")
+        entry = (
+            f"- **External**: "
+            f"{_MAPPING_PHRASES.get(relation_value, relation_value)} → "
+            f"`{mapping.get('target', '')}` [{pin}]"
+        )
+        if justification := mapping.get("justification"):
+            entry += f" — {justification}"
+        lines.append(entry)
+    for relation in concept.get("relations", []):
+        phrase = _RELATION_PHRASES.get(
+            relation.get("relation", ""), relation.get("relation", "")
+        )
+        lines.append(f"- **Relation**: {phrase} → `{relation.get('concept', '')}`")
+    lines.append("")
+    return lines
+
+
+def render_disambiguation(
+    homonyms: dict, concepts: dict, realized_by: dict
+) -> list[str]:
+    """Renders the Disambiguation section for colliding surface forms.
+
+    This section is the direct countermeasure to silent lexical
+    collisions: identical labels bound to distinct registered meanings
+    are surfaced as explicit, cheap-to-attend-to context instead of
+    being left for the reader (or the model) to conflate.
+
+    Args:
+        homonyms: ``find_homonyms()`` output — surface form -> concept ids.
+        concepts: The registry's serialized concepts, for definitions.
+        realized_by: concept id -> table / table.column names.
+
+    Returns:
+        list: Markdown lines for the Disambiguation section.
+    """
+    lines = [
+        "## Disambiguation\n",
+        "The surface forms below are claimed by more than one distinct "
+        "concept. Always resolve by concept id, never by label.\n",
+    ]
+    for form, concept_ids in homonyms.items():
+        lines.append(f'### "{form}" — {len(concept_ids)} distinct concepts')
+        for concept_id in concept_ids:
+            concept = concepts.get(concept_id, {})
+            bound = ", ".join(realized_by.get(concept_id, [])) or "not bound here"
+            lines.append(f"- `{concept_id}` ({bound}): {concept.get('definition', '')}")
+        lines.append(
+            "\nDo not treat these as equivalent; do not join or compare "
+            "their columns as if they carried the same meaning.\n"
+        )
     return lines

@@ -26,6 +26,7 @@ from semantido.generators.concept_registry import (
     close_match,
     exact_match,
 )
+
 FIBO = OntologySource(
     name="fibo",
     namespace="https://spec.edmcouncil.org/fibo/ontology/",

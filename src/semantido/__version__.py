@@ -14,4 +14,4 @@
 
 """Version module for semantido specifying the last version of the library"""
 
-__version__ = "0.3.1"
+__version__ = "0.4.0"
