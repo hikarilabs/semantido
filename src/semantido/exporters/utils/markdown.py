@@ -15,8 +15,17 @@
 """Utility module for rendering Markdown content."""
 
 
-def render_column(col: dict) -> list[str]:
-    """Renders a single column as Markdown lines."""
+def render_column(col: dict, enriched: bool = True) -> list[str]:
+    """Renders a single column as Markdown lines.
+
+    Args:
+        col: The column's ``to_dict()`` entry.
+        enriched: If False (the *schema* tier), only structural facts are
+            rendered: name, type, foreign-key target. If True (the
+            *enriched* tier), semantic annotations are added —
+            description, concept binding, samples, synonyms, time
+            semantics, application rules.
+    """
     lines = []
     col_name = col.get("name", "unknown")
     col_type = col.get("data_type", "unknown")
@@ -24,26 +33,56 @@ def render_column(col: dict) -> list[str]:
     is_fk = col.get("is_foreign_key", False)
     references = col.get("references", "")
 
-    type_info = f"{col_type}, {privacy}" if privacy else col_type
+    type_info = f"{col_type}, {privacy}" if (privacy and enriched) else col_type
     line_parts = [f"- **{col_name}** ({type_info})"]
     if is_fk and references:
         line_parts.append(f"ForeignKey → {references}")
     lines.append(" ".join(line_parts))
 
+    if not enriched:
+        return lines
+
     if col_desc := col.get("description"):
         lines.append(f"  - {col_desc}")
     if col_concept := col.get("concept"):
         lines.append(f"  - *Concept*: `{col_concept}`")
+    if time_grain := col.get("time_grain"):
+        lines.append(f"  - *Time grain*: {time_grain}")
+    if col.get("is_time_dimension"):
+        lines.append("  - *Secondary time dimension*")
     if sample_values := col.get("sample_values", []):
         lines.append(f"  - *Examples*: {', '.join(map(str, sample_values))}")
     if col_synonyms := col.get("synonyms", []):
         lines.append(f"  - *Synonyms*: {', '.join(col_synonyms)}")
+    if application_rules := col.get("application_rules", []):
+        for rule in application_rules:
+            lines.append(f"  - *Rule*: {rule}")
 
     return lines
 
 
-def render_table(table: dict) -> list[str]:
-    """Renders a single table block as Markdown lines."""
+def render_table(
+    table: dict,
+    concept_refs: list[str] | None = None,
+    enriched: bool = True,
+) -> list[str]:
+    """Renders a single table block as Markdown lines.
+
+    Args:
+        table: The table's ``to_dict()`` entry.
+        concept_refs: Concept ids realized by this table's columns
+            (excluding the table's own ``concept``, which has its own
+            line). When provided, a one-line backlink is rendered so a
+            reader landing on the table block can jump to the concept
+            blocks — the table-side mirror of a concept's
+            ``Realized by`` line. Only the bundle render passes this;
+            a tables-only export has no concept blocks to link to.
+        enriched: If False (the *schema* tier), only structural facts
+            are rendered: name, keys, columns with types and FK targets.
+            If True (the *enriched* tier), semantic annotations are
+            added — description, concept, synonyms, contexts, time
+            dimension, default filters.
+    """
     lines = []
     table_name = table.get("name", "Unknown")
     schema = table.get("schema", "")
@@ -60,25 +99,36 @@ def render_table(table: dict) -> list[str]:
         rendered = "; ".join(", ".join(key) for key in unique_keys)
         lines.append(f"- **Unique Keys**: {rendered}")
 
-    lines.append(
-        f"- **Description**: {table.get('description', 'No description available')}"
-    )
+    if enriched:
+        lines.append(
+            f"- **Description**: {table.get('description', 'No description available')}"
+        )
 
-    if table_concept := table.get("concept"):
-        lines.append(f"- **Concept**: `{table_concept}`")
-    if synonyms := table.get("synonyms", []):
-        lines.append(f"- **Synonyms**: {', '.join(synonyms)}")
-    if app_context := table.get("application_context"):
-        lines.append(f"- **Application Context**: {app_context}")
-    if business_context := table.get("business_context"):
-        lines.append(f"- **Business Context**: {business_context.strip()}")
+        if table_concept := table.get("concept"):
+            lines.append(f"- **Concept**: `{table_concept}`")
+        if synonyms := table.get("synonyms", []):
+            lines.append(f"- **Synonyms**: {', '.join(synonyms)}")
+        if app_context := table.get("application_context"):
+            lines.append(f"- **Application Context**: {app_context}")
+        if business_context := table.get("business_context"):
+            lines.append(f"- **Business Context**: {business_context.strip()}")
+        if time_dimension := table.get("time_dimension"):
+            lines.append(
+                f"- **Time Dimension**: {time_dimension} — primary time "
+                "axis; use for any per-day/month/quarter aggregation"
+            )
+        if sql_filters := table.get("sql_filters", []):
+            lines.append(f"- **Default Filters**: {' AND '.join(sql_filters)}")
+        if concept_refs:
+            rendered_refs = ", ".join(f"`{ref}`" for ref in concept_refs)
+            lines.append(f"- **Realizes concepts**: {rendered_refs}")
 
     lines.append("")
 
     if columns := table.get("columns", []):
         lines.append("#### Columns")
         for col in columns:
-            lines.extend(render_column(col))
+            lines.extend(render_column(col, enriched=enriched))
         lines.append("")
 
     lines.append("---\n")

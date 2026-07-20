@@ -11,6 +11,8 @@ Machine-readable database schema for natural language queries
 - **Synonyms**: accounts, customer accounts, deposit accounts
 - **Application Context**: Default scope is ACTIVE accounts unless the user explicitly asks for closed or dormant accounts.
 - **Business Context**: Core banking — account master.
+- **Time Dimension**: opened_date — primary time axis; use for any per-day/month/quarter aggregation
+- **Default Filters**: account_status = 'ACTIVE'
 
 #### Columns
 - **account_id** (INTEGER, restricted)
@@ -25,6 +27,8 @@ Machine-readable database schema for natural language queries
   - Funds the customer can draw on now: ledger balance minus holds plus overdraft headroom. Prefer this for 'how much money' questions.
 - **opened_date** (DATE)
   - Date the account was opened. Business date.
+  - *Time grain*: day
+  - *Secondary time dimension*
 - **created_at** (TIMESTAMP)
   - Row creation timestamp (ETL audit column).
 - **updated_at** (TIMESTAMP)
@@ -39,6 +43,7 @@ Machine-readable database schema for natural language queries
 - **Synonyms**: transactions, postings, account movements
 - **Application Context**: Amounts are signed: negative = debit, positive = credit. Sum of amount over a period is net flow, not turnover.
 - **Business Context**: Core banking — transaction ledger.
+- **Time Dimension**: booking_date — primary time axis; use for any per-day/month/quarter aggregation
 
 #### Columns
 - **transaction_id** (INTEGER, restricted)
@@ -49,8 +54,12 @@ Machine-readable database schema for natural language queries
   - Signed transaction amount in the account currency. Negative = debit.
 - **booking_date** (DATE)
   - Date the transaction was booked to the account. THE business time axis for time-series questions.
+  - *Time grain*: day
+  - *Secondary time dimension*
 - **value_date** (DATE)
   - Date the amount becomes interest-effective. Only relevant for interest and value-dating questions.
+  - *Time grain*: day
+  - *Secondary time dimension*
 - **settlement_date** (DATE)
   - Date funds actually settled. Only relevant for settlement/ops questions.
 - **created_at** (TIMESTAMP)
@@ -71,6 +80,12 @@ Machine-readable database schema for natural language queries
 - **Type**: many-to-one
 - **Join**: transaction_info.account_id = account_info.account_id
 - **Description**: The account this movement belongs to.
+
+## Glossary (3 terms)
+
+- **booking date**: date a movement is booked to the account (the axis)
+- **value date**: date a movement becomes interest-effective
+- **net flow**: signed sum of amounts over a period (not turnover)
 
 ## Summary
 - **Total Tables**: 2

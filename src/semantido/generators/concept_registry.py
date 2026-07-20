@@ -80,10 +80,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Iterable, Optional, Union
 
-#: Concept identifiers are dotted paths of lowercase snake_case segments
-#: (e.g. "counterparty.emir"). Dots are a namespacing *convention* only —
-#: no relation is ever derived from an id prefix; the id is an address,
-#: a relation is an assertion, and they are free to disagree.
+# Concept identifiers are dotted paths of lowercase snake_case segments
+# (e.g. "counterparty.emir"). Dots are a namespacing *convention* only —
+# no relation is ever derived from an id prefix; the id is an address,
+# a relation is an assertion, and they are free to disagree.
 _ID_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789_"
 
 
@@ -418,10 +418,10 @@ class ConceptRegistry:
         self._reciprocate_symmetric(registered)
         return registered
 
-    #: Relations that hold in both directions; declaring either side is
-    #: declaring both. Hierarchy (BROADER/NARROWER) is deliberately not
-    #: reciprocated — both spellings already feed one directed graph in
-    #: cycle detection, and mirroring them would only duplicate edges.
+    # Relations that hold in both directions; declaring either side is
+    # declaring both. Hierarchy (BROADER/NARROWER) is deliberately not
+    # reciprocated — both spellings already feed one directed graph in
+    # cycle detection, and mirroring them would only duplicate edges.
     _SYMMETRIC = frozenset(
         {
             ConceptRelation.SAME_AS,

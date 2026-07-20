@@ -18,14 +18,26 @@ including JSON and Markdown exporters.
 """
 
 from semantido.exporters.json_exporter import to_json, to_json_file
-from semantido.exporters.markdown_exporter import to_markdown, to_markdown_file
+from semantido.exporters.markdown_exporter import (
+    to_markdown,
+    to_markdown_concepts,
+    to_markdown_file,
+    to_markdown_schema,
+    to_markdown_tables,
+)
 from semantido.exporters.osi_exporter import to_osi_dict, to_osi_yaml
+from semantido.exporters.skos_exporter import to_skos_file, to_skos_turtle
 
 __all__ = [
     "to_json",
     "to_json_file",
     "to_markdown",
+    "to_markdown_concepts",
     "to_markdown_file",
+    "to_markdown_schema",
+    "to_markdown_tables",
     "to_osi_dict",
     "to_osi_yaml",
+    "to_skos_file",
+    "to_skos_turtle",
 ]

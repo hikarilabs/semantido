@@ -7,14 +7,15 @@ text-to-SQL prompt:
 
     MD — semantido's Markdown export as shipped today.
     OSI — semantido's OSI YAML export as shipped today.
-    MD_ENRICHED — the Markdown export plus a plain-text block containing the
-                   structured signals MD does not yet emit (primary time axis,
-                   grains, audit warnings, sql_filters, glossary).
+    MD_SCHEMA — the structural tier alone (to_markdown_schema): tables,
+                keys, types, FK targets, relationships; no enrichment.
 
-The third condition is the control that decomposes the comparison: MD vs. OSI
-differ in BOTH format and information content, so a raw A/B cannot say which
-mattered. MD vs. MD_ENRICHED isolates the content effect at (near) constant
-format; MD_ENRICHED vs. OSI isolates the format effect at (near) constant
+Since the split-exporters patch, MD natively includes the enrichment
+signals this experiment originally appended by hand (time dimensions,
+grains, default filters, glossary) — MD *is* the old MD_ENRICHED. The
+control that decomposes the comparison is now the schema tier:
+MD_SCHEMA vs. MD isolates the content effect at exactly constant
+format; MD vs. OSI isolates the format effect at (near) constant
 content.
 
 Six probe questions each target one metadata signal, scored deterministically
@@ -42,7 +43,11 @@ import urllib.request
 from pathlib import Path
 
 from semantido import SemanticDeclarativeBase
-from semantido.exporters import to_markdown, to_osi_yaml
+from semantido.exporters import (
+    to_markdown,
+    to_markdown_schema,
+    to_osi_yaml,
+)
 
 from dotenv import load_dotenv
 
@@ -125,7 +130,8 @@ def build_contexts() -> dict[str, str]:
         }
     )
 
-    md = to_markdown(layer)
+    md = to_markdown(layer, include=("schema", "enriched"))
+    md_schema = to_markdown_schema(layer)
     osi = to_osi_yaml(
         layer,
         model_name="core_banking_analytics",
@@ -135,41 +141,17 @@ def build_contexts() -> dict[str, str]:
         ),
     )
 
-    # MD_ENRICHED: append the structured signals MD does not yet emit,
-    # phrased as plain text so the format stays Markdown-like.
-    extra = ["", "## Time semantics and defaults", ""]
-    for table_name, table in layer.tables.items():
-        if table.time_dimension:
-            extra.append(
-                f"- {table_name}: PRIMARY time dimension = {table.time_dimension} "
-                f"(use for any per-day/month/quarter aggregation)"
-            )
-        for column in table.columns:
-            if column.time_grain:
-                extra.append(
-                    f"- {table_name}.{column.name}: native grain "
-                    f"{column.time_grain.value}"
-                )
-            if column.is_time_dimension and column.name != table.time_dimension:
-                extra.append(f"- {table_name}.{column.name}: secondary time dimension")
-            if column.name in ("created_at", "updated_at"):
-                extra.append(
-                    f"- {table_name}.{column.name}: operational audit timestamp "
-                    f"— do not use as a time axis"
-                )
-        if table.sql_filters:
-            extra.append(
-                f"- {table_name}: default filter -> {' AND '.join(table.sql_filters)}"
-            )
-    extra += ["", "## Glossary", ""]
-    extra += [f"- {k}: {v}" for k, v in layer.application_glossary.items()]
-    md_enriched = md + "\n".join(extra) + "\n"
-
-    contexts = {"md": md, "osi": osi, "md_enriched": md_enriched}
+    # Since the split-exporters patch, the enrichment signals this
+    # experiment used to append by hand (primary/secondary time
+    # dimensions, grains, default filters, glossary) are native exporter
+    # output: MD *is* the old MD_ENRICHED. The content-effect comparison
+    # is now expressed as tiers -- md_schema (structure only) vs md
+    # (structure + enrichment) -- at exactly constant format.
+    contexts = {"md": md, "osi": osi, "md_schema": md_schema}
     OUT.mkdir(exist_ok=True)
     (OUT / "context_md.md").write_text(md)
     (OUT / "context_osi.yaml").write_text(osi)
-    (OUT / "context_md_enriched.md").write_text(md_enriched)
+    (OUT / "context_md_schema.md").write_text(md_schema)
     return contexts
 
 
