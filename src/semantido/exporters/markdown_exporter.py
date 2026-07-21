@@ -446,6 +446,4 @@ def to_markdown_file(
         if table:
             f.write(to_markdown_table(layer, include_empty=include_empty))
         else:
-            f.write(
-                to_markdown(layer, include_empty=include_empty, include=include)
-            )
+            f.write(to_markdown(layer, include_empty=include_empty, include=include))

@@ -48,9 +48,7 @@ _RELATION_PREDICATES = {
 
 def _literal(text: str) -> str:
     """Escapes a string for use as a single-line Turtle literal."""
-    escaped = (
-        text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
-    )
+    escaped = text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
     return f'"{escaped}"'
 
 
@@ -132,14 +130,14 @@ def to_skos_turtle(
             )
 
         for mapping in concept.get("mappings", []) or []:
-            source_ns = sources.get(mapping.get("source", ""), {}).get(
-                "namespace", ""
-            )
+            source_ns = sources.get(mapping.get("source", ""), {}).get("namespace", "")
             target_uri = f"{source_ns}{mapping.get('target', '')}"
             predicate = mapping.get("skos", "skos:closeMatch")
             triples.append(f"    {predicate} <{target_uri}>")
             if justification := mapping.get("justification"):
-                triples.append(f"    smtdo:mappingJustification {_literal(justification)}")
+                triples.append(
+                    f"    smtdo:mappingJustification {_literal(justification)}"
+                )
 
         lines.append(" ;\n".join(triples) + " .")
         lines.append("")

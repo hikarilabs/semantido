@@ -5,6 +5,7 @@ Lets an LLM (or a curious human) fetch e.g.
 instead of parsing rendered HTML. Pairs with the 'Ask Claude about this
 page' pattern: link to the raw-docs URL in a chat prompt.
 """
+
 import shutil
 from pathlib import Path
 

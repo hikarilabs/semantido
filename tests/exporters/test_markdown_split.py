@@ -163,11 +163,12 @@ def test_bundle_is_tables_plus_concepts():
     """The bundle contains every content line of both single-artifact
     renders (headers differ; the backlink line is bundle-only)."""
     layer = _layer(_registry())
+
     def content(md: str) -> list[str]:
         """Lines from the first '## ' section on — skips each document's
         own title and preamble, which legitimately differ."""
         lines = md.splitlines()
-        first = next(i for i, l in enumerate(lines) if l.startswith("## "))
+        first = next(i for i, line in enumerate(lines) if line.startswith("## "))
         return lines[first:]
 
     bundle = to_markdown(layer)
@@ -302,8 +303,10 @@ def test_skos_turtle_from_bare_registry():
     assert ":counterparty.emir a skos:Concept" in ttl
     assert 'skos:prefLabel "counterparty"' in ttl
     # SKOS-aligned external mapping resolved against the source namespace
-    assert ("skos:broadMatch <https://spec.edmcouncil.org/fibo/ontology/"
-            "FND/Parties/Parties/Counterparty>") in ttl
+    assert (
+        "skos:broadMatch <https://spec.edmcouncil.org/fibo/ontology/"
+        "FND/Parties/Parties/Counterparty>"
+    ) in ttl
     # distinct_from: custom predicate plus a plain-text warning
     assert "smtdo:distinctFrom :counterparty.mifir" in ttl
     assert "skos:editorialNote" in ttl and "Deliberate homonym" in ttl
