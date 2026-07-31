@@ -28,7 +28,7 @@ Three edge families, on two distinct axes:
 * concept <-> concept (``ConceptRelation``): SAME_AS / BROADER / NARROWER /
   RELATED / DISTINCT_FROM edges inside the registry. DISTINCT_FROM is the
   homonym declaration: two concepts sharing a label that must never be
-  conflated (e.g. EMIR "counterparty" vs MiFIR "counterparty").
+  conflated (e.g., EMIR "counterparty" vs. MiFIR "counterparty").
 * concept -> external (``ExternalMapping``): a typed, source-pinned pointer
   to an external ontology class or glossary term (FIBO IRI, DataHub glossary
   URN, ...). The relation vocabulary is SKOS-aligned because a bare pointer
@@ -42,10 +42,8 @@ graph is acyclic); no OWL semantics are projected onto the model.
 
 Usage:
 
-    from semantido.generators.concept_registry import (
-        Concept, ConceptRegistry, ConceptRelation,
-        ExternalMapping, MappingRelation, OntologySource,
-    )
+    from semantido.generators.concept_registry import (Concept, ConceptRegistry, ConceptRelation,
+        ExternalMapping, MappingRelation, OntologySource)
 
     from semantido.concepts import ConceptRegistry, OntologySource, close_match
 
@@ -81,7 +79,7 @@ from enum import Enum
 from typing import Any, Iterable, Optional, Union
 
 # Concept identifiers are dotted paths of lowercase snake_case segments
-# (e.g. "counterparty.emir"). Dots are a namespacing *convention* only —
+# (e.g. "counterparty.emir"). Dots are namespacing *convention* only —
 # no relation is ever derived from an id prefix; the id is an address,
 # a relation is an assertion, and they are free to disagree.
 _ID_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789_"
@@ -215,12 +213,12 @@ class Concept:
             ``(ConceptRelation, other_concept_id)`` pairs.
         grain: The level of granularity at which the concept identifies
             or measures its subject (e.g. ``"issue"``, ``"listing"``,
-            ``"product"`` for instrument identifiers; ``"trade"`` vs
+            ``"product"`` for instrument identifiers; ``"trade"`` vs.
             ``"position"`` for exposures). Free-form by design — the
-            registry does not impose a vocabulary — but declared grains
+            registry does not impose vocabulary — but declared grains
             are compared verbatim by ``semantido.lint``, which flags
             joins that equate columns bound to concepts of different
-            grain.
+             grains.
     """
 
     id: str  # pylint: disable=C0103
@@ -599,7 +597,7 @@ class ConceptRegistry:
         for cid in sorted(keep):
             concept = self.concepts[cid]
             # Deep-copy: the subset must not alias the parent's mutable
-            # Concept state, otherwise a mutation on the subset (e.g.
+            # Concept state, otherwise a mutation on the subset (e.g.,
             # appending a synonym or mapping) silently corrupts the
             # parent registry.
             result.concepts[cid] = replace(
@@ -709,11 +707,11 @@ class ConceptRegistry:
 # Authoring helpers                                                       #
 # ---------------------------------------------------------------------- #
 
-#: A relation argument in authoring code: one registered Concept handle,
-#: an iterable of them, or None. String ids are deliberately not accepted:
-#: object handles fail at author time (NameError / TypeError), and every
-#: relation can be declared from the later-registered side, so late-binding
-#: forward references are never necessary.
+# A relation argument in authoring code: one registered Concept handle,
+# an iterable of them, or None. String ids are deliberately not accepted:
+# object handles fail at author time (NameError / TypeError), and every
+# relation can be declared from the later-registered side, so late-binding
+# forward references are never necessary.
 ConceptRefs = Union[Concept, Iterable[Concept], None]
 
 #: One ExternalMapping, an iterable of them, or None.
@@ -775,15 +773,15 @@ def _make_mapping_helper(relation: MappingRelation):
     return helper
 
 
-#: Relation-named mapping constructors. There is deliberately no helper
-#: that omits the relation: a bare pointer reading as an implicit
-#: exactMatch is the failure mode this vocabulary exists to prevent.
-#: Helper names are spelled after the SKOS *mapping* property family
-#: (broad_match, not broader) to avoid clashing with the
-#: broader=/narrower= concept-relation kwargs — but their semantics are
-#: concept-first: ``narrow_match(...)`` declares the concept narrower
-#: than the target, which serializes as the SKOS inverse
-#: (``skos:broadMatch``); see ``MappingRelation.skos``.
+# Relation-named mapping constructors. There is deliberately no helper
+# that omits the relation: a bare pointer reading as an implicit
+# exactMatch is the failure mode this vocabulary exists to prevent.
+# Helper names are spelled after the SKOS *mapping* property family
+# (broad_match, not broader) to avoid clashing with the
+# broader=/narrower= concept-relation kwargs — but their semantics are
+# concept-first: ``narrow_match(...)`` declares the concept narrower
+# than the target, which serializes as the SKOS inverse
+# (``skos:broadMatch``); see ``MappingRelation.skos``.
 exact_match = _make_mapping_helper(MappingRelation.EXACT_MATCH)
 close_match = _make_mapping_helper(MappingRelation.CLOSE_MATCH)
 broad_match = _make_mapping_helper(MappingRelation.BROADER)

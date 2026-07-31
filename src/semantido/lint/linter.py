@@ -18,7 +18,7 @@ class Finding:
 
     Attributes:
         code: Stable check identifier (``SL001`` ... ``SL008``).
-        severity: :class:`Severity` of the finding.
+        severity: :class: `Severity` of the finding.
         location: Where the problem lives, as a dotted/physical path
             (e.g. ``"security_master.sql_filters[0]"``).
         message: Human-readable explanation with the offending text.
@@ -72,7 +72,7 @@ def _column_concepts(layer_dict: dict[str, Any]) -> dict[tuple[str, str], str]:
 
 
 def _parse(sqlglot, sql: str):
-    """Parses one expression, raising on any error."""
+    """Parses one expression, rising on any error."""
     return sqlglot.parse_one(
         sql, dialect="postgres", error_level=sqlglot.ErrorLevel.RAISE
     )
@@ -81,7 +81,7 @@ def _parse(sqlglot, sql: str):
 def _column_refs(sqlglot, expression):
     """Yields ``(table_or_None, column_name)`` for every column node."""
     for node in expression.find_all(sqlglot.exp.Column):
-        yield (node.table or None, node.name)
+        yield node.table or None, node.name
 
 
 # --------------------------------------------------------------------- #
@@ -426,8 +426,7 @@ def lint_layer(
             attached concept registry (if any) powers the homonym,
             checksum-drift, and grain checks.
         groundings: Optional groundings document — a path to a YAML file
-            produced by
-            :func:`semantido.exporters.to_groundings_file`, or an
+            produced by: func:`semantido.exporters.to_groundings_file`, or an
             already-parsed dict. Enables the SL007 staleness check.
 
     Returns:

@@ -78,7 +78,7 @@ def render_table(
             ``Realized by`` line. Only the bundle render passes this;
             a tables-only export has no concept blocks to link to.
         enriched: If False (the *schema* tier), only structural facts
-            are rendered: name, keys, columns with types and FK targets.
+            are rendered: name, keys, columns with types, and FK targets.
             If True (the *enriched* tier), semantic annotations are
             added — description, concept, synonyms, contexts, time
             dimension, default filters.
@@ -150,9 +150,9 @@ def render_relationship(rel: dict) -> list[str]:
     return lines
 
 
-#: Human-readable phrasing for concept-to-concept relation edges. An edge
-#: ``(BROADER, target)`` reads "target is the broader concept" — matching
-#: the ``broader=`` authoring kwarg on ``ConceptRegistry.concept()``.
+# Human-readable phrasing for concept-to-concept relation edges. An edge
+# ``(BROADER, target)`` reads "target is the broader concept" — matching
+# the ``broader=`` authoring kwarg on ``ConceptRegistry.concept()``.
 _RELATION_PHRASES = {
     "same_as": "same as",
     "broader": "broader",
@@ -161,9 +161,9 @@ _RELATION_PHRASES = {
     "distinct_from": "distinct from",
 }
 
-#: Human-readable phrasing for concept-to-external mapping relations,
-#: read concept-first: "narrower than → <target>" states the concept is
-#: narrower than the external target.
+# Human-readable phrasing for concept-to-external mapping relations,
+# read concept-first: "narrower than → <target>," states the concept is
+# narrower than the external target.
 _MAPPING_PHRASES = {
     "exact_match": "exact match",
     "close_match": "close match",
@@ -187,8 +187,7 @@ def render_concept(
     Returns:
         list: Markdown lines for the concept block.
     """
-    lines = [f"### `{concept_id}` — {concept.get('label', '')}"]
-    lines.append(f"- **Definition**: {concept.get('definition', '')}")
+    lines = [f"### `{concept_id}` — {concept.get('label', '')}", f"- **Definition**: {concept.get('definition', '')}"]
     if grain := concept.get("grain"):
         lines.append(f"- **Grain**: {grain}")
     if synonyms := concept.get("synonyms"):

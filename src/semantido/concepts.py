@@ -16,10 +16,8 @@
 
 Everything concept-related in one import:
 
-    from semantido.concepts import (
-        ConceptRegistry, OntologySource,
-        exact_match, close_match, broad_match, narrow_match, related_match,
-    )
+    from semantido.concepts import (ConceptRegistry, OntologySource,
+        exact_match, close_match, broad_match, narrow_match, related_match)
 """
 
 from semantido.generators.concept_registry import (

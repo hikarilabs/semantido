@@ -7,8 +7,8 @@ the complementary artifact: *where* each concept is physically grounded
 in one specific deployment — which tables and columns realize it.
 
 Design rule: **meaning travels, groundings don't.** A counterparty sends
-you their concepts file; they never send you their column names. The
-groundings file stays with the deployment it describes, and
+you their concept file; they never send you their column names. The
+grounding file stays with the deployment it describes, and
 ``semantido.lint`` checks it for staleness against both sides:
 
 * every physical anchor must still exist in the layer (schema drift), and
@@ -21,7 +21,7 @@ from typing import Any, Optional, Union
 
 from semantido.generators.semantic_layer import SemanticLayer
 
-#: Format identifier written into every groundings document.
+#: Format identifier written into every grounding document.
 GROUNDINGS_FORMAT = "semantido/groundings"
 GROUNDINGS_VERSION = "1"
 
@@ -43,9 +43,9 @@ def to_groundings_dict(layer: SemanticLayer) -> dict[str, Any]:
               "namespace": <registry namespace, if any>,
               "groundings": {
                 "<concept_id>": {
-                  "definition_checksum": "...",   # if registry attached
-                  "tables": ["..."],              # table-level anchors
-                  "columns": ["table.column"],    # column-level anchors
+                  "definition_checksum": "...", # if registry attached
+                  "tables": ["..."], # table-level anchors
+                  "columns": ["table.column"], # column-level anchors
                 }
               }
             }
@@ -113,7 +113,7 @@ def load_groundings(source: Union[str, dict[str, Any]]) -> dict[str, Any]:
     """Loads and shape-checks a groundings document.
 
     Args:
-        source: A filesystem path to a groundings YAML file, or an
+        source: A filesystem path to a grounding YAML file, or an
             already-parsed document dict.
 
     Returns:
@@ -121,7 +121,7 @@ def load_groundings(source: Union[str, dict[str, Any]]) -> dict[str, Any]:
 
     Raises:
         ValueError: If the document does not carry the expected format
-            marker or groundings mapping.
+            marker or grounding mapping.
     """
     if isinstance(source, str):
         try:

@@ -79,7 +79,7 @@ class SemanticBase:
         Args:
             concept_registry: Optional concept registry; when provided,
                 concept references declared on models are validated
-                against it and the registry travels with the layer
+                against it, and the registry travels with the layer
                 into exporters.
 
         Returns:

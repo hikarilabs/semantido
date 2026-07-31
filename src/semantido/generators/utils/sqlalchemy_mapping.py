@@ -87,7 +87,7 @@ def resolve_foreign_key(sql_column_meta) -> tuple[bool, str | None]:
         sql_column_meta: The SQLAlchemy column metadata.
 
     Returns:
-        tuple: (is_foreign_key, references) where references is 'table.column' or None.
+        tuple: (is_foreign_key, references) where references are 'table.column' or None.
     """
     is_fk = len(sql_column_meta.foreign_keys) > 0
     if not is_fk:

@@ -5,7 +5,7 @@ the schema, the concept registry checks its graph, exporters check their
 formats. What nothing checks are the *seams* — the cross-references
 between systems that rot silently: a ``sql_filter`` naming a renamed
 column, a join condition pointing at a dropped table, a sample value
-that stopped matching its column type, a groundings file recorded
+that stopped matching its column type, a grounding file recorded
 against a definition that has since changed.
 
 The linter owns the seams. It is a Tier-2 *static* check: it never
@@ -35,11 +35,11 @@ SL007   error     Groundings staleness: a recorded physical anchor no
                   registry (meaning drift).
 SL008   error     Grain-mismatched join: a join condition equates
                   columns bound to concepts with different declared
-                  ``grain`` (e.g. an issue-level identifier joined to a
+                  ``grain`` (e.g., an issue-level identifier joined to a
                   listing-level identifier).
 ======  ========  ======================================================
 
-Usage::
+Usage:
 
     from semantido.lint import lint_layer
 

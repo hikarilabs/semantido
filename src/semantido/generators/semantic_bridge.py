@@ -272,7 +272,7 @@ class SQLAlchemySemanticBridge:
         data_type = map_sqlalchemy_type(prop.type)
         is_fk, references = resolve_foreign_key(prop)
 
-        # value check for time grain for durration inconsistencies
+        # value check for time grain for duration inconsistencies
         if meta["time_grain"] is not None:
             check_grain_supported_by_type(
                 clazz, column_name, meta["time_grain"], prop.type
