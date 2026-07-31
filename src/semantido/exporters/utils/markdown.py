@@ -187,7 +187,10 @@ def render_concept(
     Returns:
         list: Markdown lines for the concept block.
     """
-    lines = [f"### `{concept_id}` — {concept.get('label', '')}", f"- **Definition**: {concept.get('definition', '')}"]
+    lines = [
+        f"### `{concept_id}` — {concept.get('label', '')}",
+        f"- **Definition**: {concept.get('definition', '')}",
+    ]
     if grain := concept.get("grain"):
         lines.append(f"- **Grain**: {grain}")
     if synonyms := concept.get("synonyms"):
