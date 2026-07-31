@@ -375,3 +375,28 @@ class TestLint:
         assert [f.severity for f in first] == sorted(
             (f.severity for f in first), key=lambda s: s.value
         )
+
+
+class TestDottedTableGroundings:
+    """Anchors must split on the LAST dot: Kafka-style dotted table
+    names (topics modelled as tables) contain dots themselves."""
+
+    def test_sl007_quiet_for_dotted_table_names(self, tmp_path):
+        registry = ConceptRegistry(namespace="dotted")
+        registry.concept("evt", "An event.", grain="event")
+
+        class Base(SemanticBase, DeclarativeBase):
+            """Isolated registry for this test."""
+
+        @semantic_table(description="Topic-as-table.", concept="evt")
+        class Topic(Base):
+            __tablename__ = "etd.executions"
+            exec_id = Column(String(20), primary_key=True)
+            exec_id_concept = "evt"
+
+        layer = Base.get_semantic_bridge().sync_from_models(concept_registry=registry)
+        path = tmp_path / "groundings.yaml"
+        to_groundings_file(layer, str(path))
+        document = load_groundings(str(path))
+        assert document["groundings"]["evt"]["columns"] == ["etd.executions.exec_id"]
+        assert lint_layer(layer, groundings=str(path)) == []
