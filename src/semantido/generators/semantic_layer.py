@@ -14,11 +14,9 @@
 
 """Defines the data structures for the semantic representation of the database schema."""
 
-import json
 from enum import Enum
 from typing import Optional, Any
 from dataclasses import dataclass, field
-from typing_extensions import deprecated
 
 from semantido.generators.concept_registry import ConceptRegistry
 

@@ -14,7 +14,7 @@ class _Base(SemanticBase, DeclarativeBase):
 
 def test_decorator_time_dimension_sets_primary_axis():
     @semantic_table(description="events", time_dimension="occurred_at")
-    class _Event(_Base):
+    class _EventDeco(_Base):
         __tablename__ = "events_deco"
         id = Column(Integer, primary_key=True)
         occurred_at = Column(DateTime)
@@ -27,7 +27,7 @@ def test_decorator_time_dimension_sets_primary_axis():
 
 def test_dunder_still_supported():
     @semantic_table(description="events")
-    class _Event(_Base):
+    class _EventDunder(_Base):
         __tablename__ = "events_dunder"
         __semantic_time_dimension__ = "occurred_at"
         id = Column(Integer, primary_key=True)
@@ -39,7 +39,7 @@ def test_dunder_still_supported():
 
 def test_matching_decorator_and_dunder_is_allowed():
     @semantic_table(description="events", time_dimension="occurred_at")
-    class _Event(_Base):
+    class _EventBoth(_Base):
         __tablename__ = "events_both"
         __semantic_time_dimension__ = "occurred_at"
         id = Column(Integer, primary_key=True)
@@ -53,7 +53,7 @@ def test_conflicting_decorator_and_dunder_raises():
     with pytest.raises(ValueError, match="conflicts with"):
 
         @semantic_table(description="events", time_dimension="occurred_at")
-        class _Event(_Base):
+        class _EventConflict(_Base):
             __tablename__ = "events_conflict"
             __semantic_time_dimension__ = "created_at"
             id = Column(Integer, primary_key=True)
