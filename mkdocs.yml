@@ -116,6 +116,8 @@ nav:
       - The concept registry: guides/concept-registry.md
       - Refining context quality: guides/refining-context.md
       - Privacy and governance: guides/privacy-and-governance.md
+      - Linting the layer: guides/lint.md
+      - Groundings and the meaning/deployment split: guides/groundings.md
       - OSI (Open Semantic Interchange): guides/osi.md
       - dbt and warehouse-side layers: guides/dbt-and-warehouse-layers.md
       - Versioning and CI: guides/versioning-and-ci.md

@@ -16,6 +16,8 @@ semantic_model:
     source: counterparties
     primary_key:
     - counterparty_id
+    unique_keys:
+    - - lei
     description: Legal entities that are party to reportable derivative trades. One row per
       LEI. Includes both reporting counterparties and their trade counterparties (clients,
       CCPs, brokers).
@@ -145,6 +147,8 @@ semantic_model:
     source: mifir_transactions
     primary_key:
     - transaction_id
+    unique_keys:
+    - - transaction_reference
     description: MiFIR Art. 26 transaction reports. Transaction-level executions reported
       to the NCA — related to but distinct from EMIR trade reports (different scope, different
       lifecycle).
@@ -282,6 +286,8 @@ semantic_model:
     source: trade_reports
     primary_key:
     - trade_id
+    unique_keys:
+    - - uti
     description: EMIR trade reports (trade state view). One row per UTI representing the latest
       reported state of a derivative trade.
     ai_context:
@@ -500,9 +506,9 @@ semantic_model:
         instructions: Operational audit timestamp — do not use as a time axis for business
           questions.
   relationships:
-  - name: counterparties_to_trade_parties
-    from: counterparties
-    to: trade_parties
+  - name: trade_parties_to_counterparties
+    from: trade_parties
+    to: counterparties
     from_columns:
     - counterparty_id
     to_columns:
@@ -511,10 +517,10 @@ semantic_model:
       instructions: Relationship between counterparties and trade_parties
     custom_extensions:
     - vendor_name: SEMANTIDO
-      data: '{"relationship_type": "one-to-many"}'
-  - name: instruments_to_trade_reports
-    from: instruments
-    to: trade_reports
+      data: '{"relationship_type": "many-to-one"}'
+  - name: trade_reports_to_instruments
+    from: trade_reports
+    to: instruments
     from_columns:
     - instrument_id
     to_columns:
@@ -523,7 +529,7 @@ semantic_model:
       instructions: Relationship between instruments and trade_reports
     custom_extensions:
     - vendor_name: SEMANTIDO
-      data: '{"relationship_type": "one-to-many"}'
+      data: '{"relationship_type": "many-to-one"}'
   - name: mifir_transactions_to_counterparties
     from: mifir_transactions
     to: counterparties
@@ -560,9 +566,9 @@ semantic_model:
     custom_extensions:
     - vendor_name: SEMANTIDO
       data: '{"relationship_type": "many-to-one"}'
-  - name: trade_reports_to_trade_valuations
-    from: trade_reports
-    to: trade_valuations
+  - name: trade_valuations_to_trade_reports
+    from: trade_valuations
+    to: trade_reports
     from_columns:
     - trade_id
     to_columns:
@@ -571,4 +577,4 @@ semantic_model:
       instructions: Daily mark-to-market valuation history for this trade
     custom_extensions:
     - vendor_name: SEMANTIDO
-      data: '{"relationship_type": "one-to-many"}'
+      data: '{"relationship_type": "many-to-one"}'

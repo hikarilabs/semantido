@@ -7,6 +7,7 @@ Machine-readable database schema for natural language queries
 ### counterparties
 - **Full Name**: counterparties
 - **Primary Key**: counterparty_id
+- **Unique Keys**: lei
 - **Description**: Legal entities that are party to reportable derivative trades. One row per LEI. Includes both reporting counterparties and their trade counterparties (clients, CCPs, brokers).
 - **Synonyms**: legal entity, client, trading party, LEI record
 - **Application Context**: Reference data — updated via nightly GLEIF sync.
@@ -61,9 +62,12 @@ Machine-readable database schema for natural language queries
 ### mifir_transactions
 - **Full Name**: mifir_transactions
 - **Primary Key**: transaction_id
+- **Unique Keys**: transaction_reference
 - **Description**: MiFIR Art. 26 transaction reports. Transaction-level executions reported to the NCA — related to but distinct from EMIR trade reports (different scope, different lifecycle).
 - **Synonyms**: MiFIR reports, transaction reports, RTS 22 reports
 - **Business Context**: quantity and price are per MiFIR RTS 22: price excludes commission and accrued interest. buyer/seller are LEI references, not signed quantities — do not infer direction from quantity sign.
+- **Time Dimension**: trading_datetime — primary time axis; use for any per-day/month/quarter aggregation
+- **Default Filters**: report_status = 'ACPT'  -- accepted reports only
 
 #### Columns
 - **transaction_id** (INTEGER)
@@ -78,10 +82,13 @@ Machine-readable database schema for natural language queries
   - Column: seller_id
 - **trading_datetime** (TIMESTAMP)
   - UTC execution timestamp (MiFIR field 28). Primary time axis.
+  - *Time grain*: second
+  - *Secondary time dimension*
 - **price** (DECIMAL)
   - Execution price excluding commission and accrued interest (field 33).
 - **quantity** (DECIMAL)
   - Unsigned quantity (field 30). Direction is buyer_id/seller_id, never quantity sign.
+  - *Rule*: Always positive; do not infer buy/sell from sign.
 - **venue_mic** (VARCHAR)
   - Execution venue MIC (field 36); 'XOFF' for off-venue.
 - **report_status** (VARCHAR)
@@ -107,16 +114,20 @@ Machine-readable database schema for natural language queries
 - **role** (VARCHAR)
   - Role of the counterparty on the trade: REPORTING, OTHER, CCP, BROKER or CLEARING_MEMBER.
   - *Examples*: REPORTING, OTHER, CCP
+  - *Rule*: Always filter to one role before aggregating trade amounts.
 
 ---
 
 ### trade_reports
 - **Full Name**: trade_reports
 - **Primary Key**: trade_id
+- **Unique Keys**: uti
 - **Description**: EMIR trade reports (trade state view). One row per UTI representing the latest reported state of a derivative trade.
 - **Synonyms**: trades, derivative trades, EMIR reports, trade state
 - **Application Context**: Sourced from the trade repository submission feed; refreshed T+1.
 - **Business Context**: notional_amount is ALWAYS POSITIVE regardless of direction. The economic side of the reporting counterparty is in `direction` (BYER = buyer/payer, SLLR = seller/receiver). Never infer sign from the amount. To aggregate exposure, join counterparties via trade_parties and filter role = 'REPORTING' to avoid fan-out.
+- **Time Dimension**: execution_timestamp — primary time axis; use for any per-day/month/quarter aggregation
+- **Default Filters**: action_type != 'E'  -- exclude error-cancelled reports
 
 #### Columns
 - **trade_id** (INTEGER)
@@ -128,14 +139,21 @@ Machine-readable database schema for natural language queries
   - Column: instrument_id
 - **execution_timestamp** (TIMESTAMP)
   - UTC timestamp when the trade was executed. Primary business time axis.
+  - *Time grain*: second
+  - *Secondary time dimension*
   - *Synonyms*: trade date, execution time
 - **effective_date** (DATE)
   - Date the contract obligations become effective.
+  - *Time grain*: day
+  - *Secondary time dimension*
 - **maturity_date** (DATE)
   - Contract maturity/expiry date. NULL for open-ended.
+  - *Time grain*: day
 - **notional_amount** (DECIMAL)
   - Trade notional in notional_currency. Always positive; direction of risk is given by `direction`, never by sign.
   - *Synonyms*: notional, trade size
+  - *Rule*: Never SUM across both trade_parties roles — double counts.
+  - *Rule*: Sign is always positive; use direction for buy/sell split.
 - **direction** (VARCHAR)
   - Side of the reporting counterparty: BYER (buyer/payer leg) or SLLR (seller/receiver leg).
   - *Examples*: BYER, SLLR
@@ -158,6 +176,7 @@ Machine-readable database schema for natural language queries
 - **Description**: Daily mark-to-market valuations per trade (EMIR Art. 11 / action type V). One row per trade per valuation date.
 - **Synonyms**: valuations, MTM, mark-to-market
 - **Business Context**: valuation_amount is SIGNED from the reporting counterparty's perspective: positive = asset (in the money), negative = liability. This differs from notional_amount on trade_reports, which is unsigned. 'Exposure' questions usually mean valuation, not notional.
+- **Time Dimension**: valuation_date — primary time axis; use for any per-day/month/quarter aggregation
 
 #### Columns
 - **valuation_id** (INTEGER)
@@ -166,9 +185,13 @@ Machine-readable database schema for natural language queries
   - Column: trade_id
 - **valuation_date** (DATE)
   - Business date of the valuation.
+  - *Time grain*: day
+  - *Secondary time dimension*
 - **valuation_amount** (DECIMAL)
   - Signed mark-to-market value from the reporting counterparty's view. Positive = in the money; negative = out of the money.
   - *Synonyms*: MTM value, mark to market, exposure
+  - *Rule*: Signed — do not take ABS() unless the question asks for gross MTM.
+  - *Rule*: For 'current exposure' use the latest valuation_date per trade.
 - **valuation_currency** (VARCHAR)
   - ISO 4217 currency of valuation_amount.
 - **valuation_type** (VARCHAR)
@@ -230,6 +253,13 @@ Machine-readable database schema for natural language queries
 - **Type**: many-to-one
 - **Join**: trade_valuations.trade_id = trade_reports.trade_id
 - **Description**: Relationship between trade_valuations and trade_reports
+
+## Glossary (4 terms)
+
+- **UTI**: Unique Trade Identifier per ISO 23897
+- **notional**: unsigned contract size — not exposure
+- **exposure**: signed mark-to-market valuation (trade_valuations)
+- **NFC+**: non-financial counterparty above the clearing threshold
 
 ## Summary
 - **Total Tables**: 6

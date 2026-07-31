@@ -26,6 +26,12 @@ from semantido.exporters.markdown_exporter import (
     to_markdown_tables,
 )
 from semantido.exporters.osi_exporter import to_osi_dict, to_osi_yaml
+from semantido.exporters.groundings_exporter import (
+    load_groundings,
+    to_groundings_dict,
+    to_groundings_file,
+    to_groundings_yaml,
+)
 from semantido.exporters.skos_exporter import to_skos_file, to_skos_turtle
 
 __all__ = [
@@ -38,6 +44,10 @@ __all__ = [
     "to_markdown_tables",
     "to_osi_dict",
     "to_osi_yaml",
+    "load_groundings",
+    "to_groundings_dict",
+    "to_groundings_file",
+    "to_groundings_yaml",
     "to_skos_file",
     "to_skos_turtle",
 ]

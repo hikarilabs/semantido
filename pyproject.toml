@@ -30,7 +30,11 @@ dependencies = [
 osi = [
     "PyYAML==6.0.3"
 ]
+lint = [
+    "sqlglot==30.14.0"
+]
 dev = [
+    "sqlglot==30.14.0",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
     "pylint==4.0.6",

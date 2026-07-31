@@ -26,17 +26,17 @@ from semantido.exporters.utils.markdown import (
     render_table,
 )
 
-#: Valid section names for the ``include`` parameter, in render order.
-#: The tiers are additive: *schema* is the bare physical structure
-#: (tables, keys, column types, FK targets, relationships); *enriched*
-#: adds the semantic annotations onto those same blocks (descriptions,
-#: concept bindings, synonyms, contexts, time semantics, default
-#: filters, glossary); *concepts* appends the concept registry sections.
-#: ``"tables"`` is accepted as an alias for ``("schema", "enriched")``.
+# Valid section names for the ``include`` parameter, in render order.
+# The tiers are additive: *schema* is the bare physical structure
+# (tables, keys, column types, FK targets, relationships); *enriched*
+# adds the semantic annotations onto those same blocks (descriptions,
+# concept bindings, synonyms, contexts, time semantics, default
+# filters, glossary); *concepts* append the concept registry sections.
+# ``"tables"`` is accepted as an alias for ``("schema", "enriched")``.
 INCLUDE_SECTIONS = ("schema", "enriched", "concepts")
 
-#: Back-compat alias: the pre-tier "tables" section is the fully
-#: enriched physical layer.
+# Back-compat alias: the pre-tier "tables" section is the fully
+# enriched physical layer.
 _INCLUDE_ALIASES = {"tables": ("schema", "enriched")}
 
 #: Valid values for the ``scope`` parameter of ``to_markdown_concepts``.
@@ -90,7 +90,7 @@ def _realized_by(layer: SemanticLayer) -> dict[str, list[str]]:
 
 
 def _concept_refs_by_table(layer: SemanticLayer) -> dict[str, list[str]]:
-    """Maps table name -> concept ids realized by its columns.
+    """Map a table name -> concept ids realized by its columns.
 
     The table's own ``concept`` is excluded (it has a dedicated
     ``Concept`` line); column order is preserved and duplicates removed,
@@ -117,7 +117,7 @@ def _tables_sections(
     with_backlinks: bool,
     enriched: bool = True,
 ) -> list[str]:
-    """Builds the Database Entities, Relationships and Summary sections.
+    """Builds the Database Entities, Relationships, and Summary sections.
 
     Args:
         layer: The SemanticLayer instance being exported.
@@ -233,9 +233,9 @@ def to_markdown(
     Converts the semantic layer into a structured Markdown document.
     Optimized for LLM understanding and natural language to SQL generation.
 
-    By default this is the *bundle*: the physical layer and the concept
+    By default, this is the *bundle*: the physical layer and the concept
     registry concatenated with cross-references resolved. Pass
-    ``include=("tables",)`` or ``include=("concepts",)`` to render a
+    ``include=("tables", )`` or ``include=("concepts", )`` to render a
     single artifact (or use the dedicated ``to_markdown_tables`` /
     ``to_markdown_concepts`` helpers).
 

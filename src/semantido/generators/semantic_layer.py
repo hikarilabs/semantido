@@ -319,34 +319,3 @@ class SemanticLayer:
         cleaned.setdefault("relationships", [])
 
         return cleaned
-
-    @deprecated(
-        "Use to_json() from semantido.exporters. Will be removed in future versions."
-    )
-    def to_json(self, include_empty: bool = False) -> str:
-        """
-        Exports the entire semantic layer as a formatted JSON string.
-
-        Args:
-            include_empty: If False (default), removes null and empty collection values.
-                          If True, includes all values as-is.
-
-        Returns:
-            str: Indented JSON string representing the semantic layer.
-        """
-        return json.dumps(self.to_dict(include_empty=include_empty), indent=4)
-
-    @deprecated(
-        "Use to_file() from semantido.exporters. Will be removed in future versions."
-    )
-    def to_file(self, file_path: str, include_empty: bool = False):
-        """
-        Serializes and saves the semantic layer to a JSON file.
-
-        Args:
-            file_path: The filesystem path where the JSON file will be created.
-            include_empty: If False (default), removes null and empty collection values.
-                          If True, includes all values as-is.
-        """
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(self.to_dict(include_empty=include_empty), f, indent=4)

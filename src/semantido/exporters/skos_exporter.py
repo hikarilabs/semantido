@@ -52,6 +52,33 @@ def _literal(text: str) -> str:
     return f'"{escaped}"'
 
 
+def _mapping_uri(source: str, source_ns: str, target: str) -> str:
+    """Builds the external mapping target URI.
+
+    Rules, in order:
+    1. An absolute target (contains ``://`` or starts with ``urn:``) is
+       used verbatim — the author already gave a full URI.
+    2. A target written in prefix form for its own source
+       (``{source}:{local}``) has the prefix stripped before joining, so
+       ``iso6166:isin`` under source ``iso6166`` contributes only ``isin``.
+    3. The local part is joined to the source namespace, inserting ``/``
+       unless the namespace already ends in ``/``, ``#`` or ``:``.
+
+    Previously namespace and target were concatenated raw, producing
+    malformed URIs like ``<urn:iso:std:iso:10962iso10962:cfi>``.
+    """
+    if "://" in target or target.startswith("urn:"):
+        return target
+    local = target
+    if source and target.startswith(f"{source}:"):
+        local = target[len(source) + 1 :]
+    if not source_ns:
+        return local
+    if source_ns.endswith(("/", "#", ":")):
+        return f"{source_ns}{local}"
+    return f"{source_ns}/{local}"
+
+
 def _registry_of(source: Union[SemanticLayer, ConceptRegistry]) -> ConceptRegistry:
     if isinstance(source, ConceptRegistry):
         return source
@@ -106,6 +133,8 @@ def to_skos_turtle(
             f"    skos:prefLabel {_literal(concept.get('label', concept_id))}",
             f"    skos:definition {_literal(concept.get('definition', ''))}",
         ]
+        if grain := concept.get("grain"):
+            triples.append(f"    smtdo:grain {_literal(grain)}")
         for synonym in concept.get("synonyms", []) or []:
             triples.append(f"    skos:altLabel {_literal(synonym)}")
 
@@ -130,8 +159,11 @@ def to_skos_turtle(
             )
 
         for mapping in concept.get("mappings", []) or []:
-            source_ns = sources.get(mapping.get("source", ""), {}).get("namespace", "")
-            target_uri = f"{source_ns}{mapping.get('target', '')}"
+            mapping_source = mapping.get("source", "")
+            source_ns = sources.get(mapping_source, {}).get("namespace", "")
+            target_uri = _mapping_uri(
+                mapping_source, source_ns, mapping.get("target", "")
+            )
             predicate = mapping.get("skos", "skos:closeMatch")
             triples.append(f"    {predicate} <{target_uri}>")
             if justification := mapping.get("justification"):

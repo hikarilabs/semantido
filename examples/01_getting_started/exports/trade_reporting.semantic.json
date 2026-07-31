@@ -3,7 +3,14 @@
         "counterparties": {
             "name": "counterparties",
             "description": "Legal entities that are party to reportable derivative trades. One row per LEI. Includes both reporting counterparties and their trade counterparties (clients, CCPs, brokers).",
-            "primary_key": "counterparty_id",
+            "primary_key": [
+                "counterparty_id"
+            ],
+            "unique_keys": [
+                [
+                    "lei"
+                ]
+            ],
             "synonyms": [
                 "legal entity",
                 "client",
@@ -78,7 +85,9 @@
         "instruments": {
             "name": "instruments",
             "description": "Financial instruments referenced by trades. One row per ISIN (or internal identifier for OTC products without an ISIN).",
-            "primary_key": "instrument_id",
+            "primary_key": [
+                "instrument_id"
+            ],
             "synonyms": [
                 "product",
                 "security",
@@ -138,7 +147,14 @@
         "mifir_transactions": {
             "name": "mifir_transactions",
             "description": "MiFIR Art. 26 transaction reports. Transaction-level executions reported to the NCA \u2014 related to but distinct from EMIR trade reports (different scope, different lifecycle).",
-            "primary_key": "transaction_id",
+            "primary_key": [
+                "transaction_id"
+            ],
+            "unique_keys": [
+                [
+                    "transaction_reference"
+                ]
+            ],
             "synonyms": [
                 "MiFIR reports",
                 "transaction reports",
@@ -227,7 +243,9 @@
         "trade_parties": {
             "name": "trade_parties",
             "description": "Bridge table assigning counterparties to trades in specific roles. A trade has at least two rows here (REPORTING and OTHER), plus optional CCP, BROKER and CLEARING_MEMBER rows.",
-            "primary_key": "trade_party_id",
+            "primary_key": [
+                "trade_party_id"
+            ],
             "synonyms": [
                 "trade counterparty roles",
                 "party roles"
@@ -273,7 +291,14 @@
         "trade_reports": {
             "name": "trade_reports",
             "description": "EMIR trade reports (trade state view). One row per UTI representing the latest reported state of a derivative trade.",
-            "primary_key": "trade_id",
+            "primary_key": [
+                "trade_id"
+            ],
+            "unique_keys": [
+                [
+                    "uti"
+                ]
+            ],
             "synonyms": [
                 "trades",
                 "derivative trades",
@@ -400,7 +425,9 @@
         "trade_valuations": {
             "name": "trade_valuations",
             "description": "Daily mark-to-market valuations per trade (EMIR Art. 11 / action type V). One row per trade per valuation date.",
-            "primary_key": "valuation_id",
+            "primary_key": [
+                "valuation_id"
+            ],
             "synonyms": [
                 "valuations",
                 "MTM",

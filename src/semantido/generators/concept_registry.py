@@ -76,7 +76,7 @@ types for consumers iterating a registry.
 import hashlib
 import re as _re
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from enum import Enum
 from typing import Any, Iterable, Optional, Union
 
@@ -213,6 +213,14 @@ class Concept:
         mappings: Typed pointers to external ontology/glossary targets.
         relations: Typed edges to other concepts, as
             ``(ConceptRelation, other_concept_id)`` pairs.
+        grain: The level of granularity at which the concept identifies
+            or measures its subject (e.g. ``"issue"``, ``"listing"``,
+            ``"product"`` for instrument identifiers; ``"trade"`` vs
+            ``"position"`` for exposures). Free-form by design — the
+            registry does not impose a vocabulary — but declared grains
+            are compared verbatim by ``semantido.lint``, which flags
+            joins that equate columns bound to concepts of different
+            grain.
     """
 
     id: str  # pylint: disable=C0103
@@ -221,6 +229,7 @@ class Concept:
     synonyms: Optional[list[str]] = None
     mappings: list[ExternalMapping] = field(default_factory=list)
     relations: list[tuple[ConceptRelation, str]] = field(default_factory=list)
+    grain: Optional[str] = None
 
     def __post_init__(self):
         if not _valid_id(self.id):
@@ -327,6 +336,7 @@ class ConceptRegistry:
         related: "ConceptRefs" = None,
         distinct_from: "ConceptRefs" = None,
         external: "MappingArg" = None,
+        grain: Optional[str] = None,
     ) -> Concept:
         """Constructs, registers, and returns a concept in one step.
 
@@ -362,6 +372,11 @@ class ConceptRegistry:
                 edge on the target.
             external: One mapping or an iterable of mappings built with
                 the relation helpers.
+            grain: Optional granularity declaration (free-form, e.g.
+                ``"issue"``, ``"listing"``, ``"product"``). Serialized
+                only when set. Compared verbatim by ``semantido.lint``
+                to flag joins that equate columns bound to concepts of
+                different grain.
 
         Returns:
             Concept: The registered concept, usable as a reference in
@@ -413,6 +428,7 @@ class ConceptRegistry:
             synonyms=synonyms,
             mappings=mappings,
             relations=relations,
+            grain=grain,
         )
         self._register_concept(registered)
         self._reciprocate_symmetric(registered)
@@ -582,7 +598,16 @@ class ConceptRegistry:
         needed_sources: set[str] = set()
         for cid in sorted(keep):
             concept = self.concepts[cid]
-            result.concepts[cid] = concept
+            # Deep-copy: the subset must not alias the parent's mutable
+            # Concept state, otherwise a mutation on the subset (e.g.
+            # appending a synonym or mapping) silently corrupts the
+            # parent registry.
+            result.concepts[cid] = replace(
+                concept,
+                synonyms=list(concept.synonyms) if concept.synonyms else None,
+                mappings=[replace(m) for m in concept.mappings],
+                relations=list(concept.relations),
+            )
             needed_sources.update(m.source for m in concept.mappings)
         for name in sorted(needed_sources):
             if name in self.sources:
@@ -614,6 +639,7 @@ class ConceptRegistry:
                     "label": concept.label,
                     "definition": concept.definition,
                     "definition_checksum": concept.definition_checksum,
+                    **({"grain": concept.grain} if concept.grain else {}),
                     **({"synonyms": concept.synonyms} if concept.synonyms else {}),
                     **(
                         {

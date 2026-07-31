@@ -189,6 +189,8 @@ def render_concept(
     """
     lines = [f"### `{concept_id}` — {concept.get('label', '')}"]
     lines.append(f"- **Definition**: {concept.get('definition', '')}")
+    if grain := concept.get("grain"):
+        lines.append(f"- **Grain**: {grain}")
     if synonyms := concept.get("synonyms"):
         lines.append(f"- **Synonyms**: {', '.join(synonyms)}")
     if realized_by:

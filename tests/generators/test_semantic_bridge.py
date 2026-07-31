@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer
 from semantido.models.declarative_base import SemanticDeclarativeBase
 from semantido.generators.semantic_layer import PrivacyLevel, RelationshipType
+from semantido.exporters.json_exporter import to_json
 
 
 def test_semantic_layer_generation_from_sqlalchemy(models):
@@ -48,7 +49,7 @@ def test_to_json_export():
         id = Column(Integer, primary_key=True)
 
     sl = SimpleModel.sync_semantic_layer()
-    json_data = sl.to_json()
+    json_data = to_json(sl)
 
     assert '"name": "simple"' in json_data
     import json as _json

@@ -8,6 +8,7 @@ from semantido.generators.semantic_layer import (
     PrivacyLevel,
     RelationshipType,
 )
+from semantido.exporters import to_json, to_json_file
 
 
 @pytest.fixture
@@ -88,7 +89,7 @@ def test_semantic_layer_serialization(complex_semantic_layer):
 
 def test_semantic_layer_json_output(complex_semantic_layer):
     """Verify to_json produces valid, parsable JSON."""
-    json_str = complex_semantic_layer.to_json()
+    json_str = to_json(complex_semantic_layer)
     parsed = json.loads(json_str)
 
     assert "users" in parsed["tables"]
@@ -98,7 +99,7 @@ def test_semantic_layer_json_output(complex_semantic_layer):
 def test_semantic_layer_persistence(complex_semantic_layer, tmp_path):
     """Verify save_to_file writes correctly to disk."""
     output_file = tmp_path / "semantic_layer.json"
-    complex_semantic_layer.to_file(str(output_file))
+    to_json_file(complex_semantic_layer, str(output_file))
 
     assert output_file.exists()
     with open(output_file, "r") as f:
