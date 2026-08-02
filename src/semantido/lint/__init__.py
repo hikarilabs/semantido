@@ -3,7 +3,7 @@
 Every subsystem in a semantic layer validates itself: SQLAlchemy checks
 the schema, the concept registry checks its graph, exporters check their
 formats. What nothing checks are the *seams* — the cross-references
-between systems that rot silently: a ``sql_filter`` naming a renamed
+between systems that drift silently: a ``sql_filter`` naming a renamed
 column, a join condition pointing at a dropped table, a sample value
 that stopped matching its column type, a grounding file recorded
 against a definition that has since changed.

@@ -351,7 +351,7 @@ def _check_undeclared_homonyms(registry) -> list[Finding]:
     return findings
 
 
-def _check_groundings(layer_dict, schema, registry, groundings) -> list[Finding]:
+def _check_groundings(schema, registry, groundings) -> list[Finding]:
     from semantido.exporters.groundings_exporter import (  # pylint: disable=C0415
         load_groundings,
     )
@@ -370,8 +370,8 @@ def _check_groundings(layer_dict, schema, registry, groundings) -> list[Finding]
                     )
                 )
         for anchor in entry.get("columns", []) or []:
-            # rpartition: table names may themselves contain dots
-            # (e.g. Kafka topic names like "etd.executions" modelled as
+            # partition: table names may themselves contain dots
+            # (e.g., Kafka topic names like "etd.executions" modeled as
             # tables); only the final segment is the column.
             table_name, _, column_name = anchor.rpartition(".")
             if table_name not in schema or column_name not in schema.get(
@@ -448,7 +448,7 @@ def lint_layer(
     findings += _check_synonym_collisions(layer_dict, column_concepts)
     findings += _check_undeclared_homonyms(registry)
     if groundings is not None:
-        findings += _check_groundings(layer_dict, schema, registry, groundings)
+        findings += _check_groundings(schema, registry, groundings)
 
     return sorted(
         findings, key=lambda f: (f.severity.value, f.code, f.location, f.message)
