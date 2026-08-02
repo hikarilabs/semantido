@@ -9,6 +9,7 @@ description: How ~20 files turn annotated mappers into a semantic document.
 
 ```
 semantido/
+├── concepts.py                  # canonical import path for the registry objects
 ├── decorators/
 │   └── semantic_table.py        # writes dunders onto the class
 ├── models/
@@ -17,13 +18,20 @@ semantido/
 ├── generators/
 │   ├── semantic_bridge.py       # extraction engine: mappers -> SemanticLayer
 │   ├── semantic_layer.py        # the dataclasses + enums (the IR)
+│   ├── concept_registry.py      # ConceptRegistry, Concept, relations, mappings
 │   └── utils/
 │       ├── sqlalchemy_mapping.py    # type normalisation, metadata reads, FK resolution
 │       └── time_grain.py            # grain normalisation + type compatibility
+├── lint/
+│   └── linter.py                # lint_layer() — SL001–SL008, Tier-2 static
 └── exporters/
     ├── json_exporter.py
-    ├── markdown_exporter.py
-    └── ossie_exporter.py
+    ├── markdown_exporter.py     # tiered: schema / enriched / concepts
+    ├── ossie_exporter.py
+    ├── skos_exporter.py         # SKOS Turtle concept scheme
+    ├── groundings_exporter.py   # meaning/deployment split — groundings.yaml
+    └── utils/
+        └── markdown.py          # shared block renderers
 ```
 
 ## The pipeline
@@ -47,10 +55,15 @@ semantido/
                               ▼
                         SemanticLayer
                               │
-              ┌───────────────┼───────────────┐
-              ▼               ▼               ▼
-          to_json        to_markdown     to_ossie_dict/yaml
+         ┌──────────┬─────────┼──────────────┬─────────────────┐
+         ▼          ▼         ▼              ▼                 ▼
+     to_json   to_markdown  to_ossie_*   to_skos_turtle   to_groundings_*
+                                                               │
+                                                               ▼
+                                          semantido.lint · lint_layer(layer, groundings)
 ```
+
+The registry rides along: `sync_semantic_layer(concept_registry=...)` validates every `concept=` reference and attaches the registry to the layer, so exporters can render the bundle and the linter can check the seams.
 
 Three stages: **author** (attributes on classes), **extract** (bridge → IR), **render** (exporter → text). Each is independently testable, and the seam between extract and render is why the same layer can serve a prompt and a BI tool.
 

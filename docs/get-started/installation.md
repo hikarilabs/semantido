@@ -27,15 +27,25 @@ SQLAlchemy 2.0 is a hard floor. semantido reads the 2.0 mapper API and does not 
 
 ### `Apache Ossie` — YAML export
 
-The core installation covers the JSON and Markdown exporters, plus `to_ossie_dict()`. Serializing to Apache Ossie **YAML** needs PyYAML:
+The core installation covers the JSON, Markdown, and SKOS Turtle exporters, plus `to_ossie_dict()` and `to_groundings_dict()`. Serializing Apache Ossie or groundings documents to **YAML** needs PyYAML:
 
 ```console
 pip install 'semantido[ossie]'
 ```
 
-If you call `to_oseie_yaml()` without it, you get a clear `ImportError` telling you to install the extra — not a stack trace.
+If you call `to_ossie_yaml()` without it, you get a clear `ImportError` telling you to install the extra — not a stack trace.
 
-Note the split: `to_ossie_dict()` works without the extra, because producing an Apache Ossie document structure needs no YAML. Only serialization does. If you are handing the dict to something else — a JSON API, your own writer — you don't need PyYAML at all.
+Note the split: `to_ossie_dict()` and `to_groundings_dict()` work without the extra, because producing the document structure needs no YAML. Only serialization does (`to_ossie_yaml()`, `to_groundings_yaml()` / `to_groundings_file()`). If you are handing the dict to something else — a JSON API, your own writer — you don't need PyYAML at all.
+
+### `lint` — static checks
+
+The linter parses SQL fragments (`sql_filters`, join conditions) with sqlglot:
+
+```console
+pip install 'semantido[lint]'
+```
+
+Without it, importing `semantido.lint` and calling `lint_layer()` raises a clear `ImportError` pointing at the extra. See [Linting the layer](../guides/lint.md).
 
 ### `dev` — contributing
 
@@ -43,7 +53,7 @@ Note the split: `to_ossie_dict()` works without the extra, because producing an 
 pip install 'semantido[dev]'
 ```
 
-Pins the toolchain used in CI: pytest, pytest-cov, mypy, pylint, ruff, PyYAML, python-dotenv. Pinned exactly, so a green run locally means a green run in CI. See [CONTRIBUTING.md](https://github.com/hikarilabs/semantido/blob/main/CONTRIBUTING.md).
+Pins the toolchain used in CI: pytest, pytest-cov, mypy, pylint, ruff, sqlglot, PyYAML, types-PyYAML, python-dotenv. Pinned exactly, so a green run locally means a green run in CI. See [CONTRIBUTING.md](https://github.com/hikarilabs/semantido/blob/main/CONTRIBUTING.md).
 
 ## Verifying
 

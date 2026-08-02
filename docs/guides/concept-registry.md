@@ -58,6 +58,20 @@ The design rules, each of which prevents a class of silent error:
 - **Dotted ids are namespacing convention only.** `counterparty.emir` derives no relation from its prefix; every edge is explicit.
 - **`validate()` collects everything.** Unresolvable targets, self-relations, unpinned mapping sources, and cycles in the broader/narrower graph are reported in one raise, not one at a time.
 
+## Declaring grain
+
+*(v0.5.0.)* A concept can declare the level at which it identifies or measures its subject:
+
+```python
+isin = registry.concept(
+    "isin", "Issue-level instrument identifier.", grain="issue")
+figi = registry.concept(
+    "figi", "Venue-level instrument identifier.",
+    grain="listing", distinct_from=isin)
+```
+
+Grain is free-form — the registry imposes no vocabulary — but declared grains are compared verbatim by the linter: a join equality between columns bound to concepts of different grain is an [SL008 error](lint.md#grain-mismatched-joins-sl008). This is the static form of the reference-data trap where an issue-level identifier joined to a listing-level identifier fans out or drops rows. Grain travels with the meaning artifact (`registry.to_yaml()`), not the groundings.
+
 ## Binding concepts to the schema
 
 Tables bind via the decorator; columns via the `<column>_concept` convention — both take the concept **id** as a string:

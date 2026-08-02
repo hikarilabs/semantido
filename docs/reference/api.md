@@ -62,7 +62,11 @@ Full semantics in the [semantic metadata reference](semantic-metadata.md).
 from semantido.exporters import (
     to_json, to_json_file,
     to_markdown, to_markdown_file,
+    to_markdown_schema, to_markdown_tables, to_markdown_concepts,   # v0.5.0 tiers
     to_ossie_dict, to_ossie_yaml,
+    to_skos_turtle, to_skos_file,                                   # v0.4.1
+    to_groundings_dict, to_groundings_yaml, to_groundings_file,     # v0.5.0
+    load_groundings,                                                # v0.5.0
 )
 ```
 
@@ -78,12 +82,34 @@ to_json_file(layer: SemanticLayer, file_path: str, include_empty: bool = False) 
 ### Markdown
 
 ```python
-to_markdown(layer: SemanticLayer, include_empty: bool = False) -> str
+to_markdown(layer: SemanticLayer, include_empty: bool = False,
+            include: tuple[str, ...] = ("schema", "enriched", "concepts")) -> str
 to_markdown_file(layer: SemanticLayer, file_path: str,
-                 include_empty: bool = False, table: bool = False) -> None
+                 include_empty: bool = False, table: bool = False,
+                 include: tuple[str, ...] = ("schema", "enriched", "concepts")) -> None
 ```
 
-`table=True` emits the table-shaped variant instead of the nested-list one. The function behind it, `to_markdown_table`, is importable from `semantido.exporters.markdown_exporter` but isn't part of the top-level export surface — treat it as less stable.
+*(v0.5.0)* `include` selects the tiers, rendered additively in this order:
+
+| Section | Contents |
+|-----------|----------|
+| `schema` | Bare physical structure — tables, keys, column types, FK targets, relationships. |
+| `enriched` | Authored semantics layered onto the schema — descriptions, synonyms, filters, glossary. Additive over `schema`: `include=("enriched",)` alone raises. |
+| `concepts` | The concept registry sections, cross-referenced via *Realized by* / *Realizes concepts*. |
+
+`"tables"` is accepted as a back-compat alias for `("schema", "enriched")`. Unknown section names raise `ValueError` listing the valid set.
+
+The dedicated single-tier helpers:
+
+```python
+to_markdown_schema(layer: SemanticLayer, include_empty: bool = False) -> str
+to_markdown_tables(layer: SemanticLayer, include_empty: bool = False) -> str
+to_markdown_concepts(layer: SemanticLayer | ConceptRegistry, scope: str | None = None) -> str
+```
+
+`to_markdown_concepts` accepts a bare registry or a layer carrying one; `scope="bound"` (default) renders the closure referenced by the physical layer, `scope="all"` the entire registry.
+
+`table=True` on `to_markdown_file` emits the table-shaped variant instead of the nested-list one. The function behind it, `to_markdown_table`, is importable from `semantido.exporters.markdown_exporter` but isn't part of the top-level export surface — treat it as less stable.
 
 ### Apache Ossie
 
@@ -115,6 +141,41 @@ Constants in `semantido.exporters.ossie_exporter`:
 | `VENDOR`                    | `"SEMANTIDO"`                                                                                                                                                                        |
 | `DEFAULT_AUDIT_PATTERN`     | `created`/`updated`/`modified`/`inserted`/`deleted`/`loaded`/`ingested`/`processed`/`synced`/`etl`, optional `_at`/`_on`/`_ts`/`_time`/`_timestamp`/`_date` suffix, case-insensitive |
 
+### SKOS *(v0.4.1)*
+
+```python
+to_skos_turtle(source: SemanticLayer | ConceptRegistry, base_uri: str | None = None) -> str
+to_skos_file(source: SemanticLayer | ConceptRegistry, file_path: str,
+             base_uri: str | None = None) -> None
+```
+
+Serializes the concept registry as a SKOS concept scheme in Turtle. Accepts a bare registry or a layer carrying one. Concept URIs are minted as `{base_uri}{concept_id}`; `base_uri` defaults to a URN derived from the registry namespace (`urn:semantido:{namespace}:`), so the export is valid without owning a domain. No dependencies beyond core.
+
+### Groundings *(v0.5.0)*
+
+```python
+to_groundings_dict(layer: SemanticLayer) -> dict
+to_groundings_yaml(layer: SemanticLayer) -> str        # needs PyYAML
+to_groundings_file(layer: SemanticLayer, file_path: str) -> None
+load_groundings(source: str | dict) -> dict
+```
+
+The deployment-side half of the meaning/deployment split: which tables and columns realize each concept in *this* schema, stamped with each concept's `definition_checksum` at recording time. `load_groundings` accepts a path or an already-parsed dict and validates the document shape (`format: semantido/groundings`). Consumed by `semantido.lint` for SL007 staleness checks in both directions. See [the groundings guide](../guides/groundings.md).
+
+Anchor strings are `table.column`; table names may themselves contain dots (Kafka topic names like `etd.executions`) — the final segment is the column *(v0.5.1)*.
+
+## Lint — `semantido.lint` *(v0.5.0)*
+
+```python
+from semantido.lint import lint_layer, Finding, Severity
+
+lint_layer(layer, groundings: str | dict | None = None) -> list[Finding]
+```
+
+Tier-2 static checks for the seams between claim systems — SL001–SL008, deterministic order, errors first. Passing `groundings` (a path or dict) enables SL007. Requires sqlglot (`pip install 'semantido[lint]'`).
+
+`Finding` is a dataclass: `code`, `severity`, `location`, `message`. `Severity` is an enum: `ERROR`, `WARNING`. Errors should gate CI; warnings should not. Check semantics: [Linting the layer](../guides/lint.md).
+
 ## Data model
 
 `semantido.generators.semantic_layer` — plain dataclasses, safe to construct and mutate.
@@ -143,6 +204,7 @@ description: str
 columns: list[Column]
 primary_key: str | None
 schema: str | None = None
+unique_keys: list[list[str]] | None = None   # v0.5.0 — extracted UniqueConstraints, PK excluded
 synonyms: list[str] | None = None
 sql_filters: list[str] | None = None
 application_context: str | None = None
@@ -198,7 +260,7 @@ from semantido.concepts import (
 
 | Method                                                                                                                                                                 | Purpose                                                                                                                                                       |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `concept(concept_id, definition, *, label=None, synonyms=None, broader=None, narrower=None, same_as=None, related=None, distinct_from=None, external=None) -> Concept` | The only authoring path. Relation kwargs take `Concept` handles (or iterables); symmetric relations (`same_as`, `related`, `distinct_from`) auto-reciprocate. |
+| `concept(concept_id, definition, *, label=None, synonyms=None, broader=None, narrower=None, same_as=None, related=None, distinct_from=None, external=None, grain=None) -> Concept` | The only authoring path. Relation kwargs take `Concept` handles (or iterables); symmetric relations (`same_as`, `related`, `distinct_from`) auto-reciprocate. |
 | `add_source(source: OntologySource) -> None`                                                                                                                           | Registers a pinned external ontology release.                                                                                                                 |
 | `find_homonyms() -> dict[str, list[str]]`                                                                                                                              | Labels/synonyms claimed by more than one concept → their ids.                                                                                                 |
 | `subset(concept_ids: set[str]) -> ConceptRegistry`                                                                                                                     | Self-contained sub-registry closed over the ids via relations.                                                                                                |
@@ -207,7 +269,9 @@ from semantido.concepts import (
 
 ### `Concept`
 
-Fields: `id`, `label`, `definition`, `synonyms`, `mappings`, `relations`, plus computed `definition_checksum` — a stable fingerprint of the definition text.
+Fields: `id`, `label`, `definition`, `synonyms`, `mappings`, `relations`, `grain` *(v0.5.0)*, plus computed `definition_checksum` — a stable fingerprint of the definition text.
+
+`grain` declares the level at which the concept identifies or measures its subject (`"issue"` / `"listing"` / `"product"` in the security-master idiom). Free-form, compared verbatim by the linter: joins between columns bound to concepts of different grain are SL008 errors.
 
 ### `OntologySource`
 
@@ -226,6 +290,6 @@ Full behavior and worked example: [The concept registry](../guides/concept-regis
 
 ## Requirements
 
-Current release: **0.4.0**. Python ≥ 3.11 · SQLAlchemy ≥ 2.0 · typing-extensions ≥ 4.5
+Current release: **0.5.2**. Python ≥ 3.11 · SQLAlchemy ≥ 2.0 · typing-extensions ≥ 4.5
 
-Extras: `ossie` (PyYAML), `dev`, `publish`.
+Extras: `ossie` (PyYAML), `lint` (sqlglot), `dev`, `publish`.

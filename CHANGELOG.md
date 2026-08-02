@@ -5,6 +5,27 @@ All notable changes to semantido are documented here. The project adheres to
 the authoring surface is stable in practice; exporter output may move with the
 specs it targets.
 
+## [0.5.2] — 2026-08-01
+
+### Changed
+
+- **OSI → Apache Ossie** naming convention adopted across the source, tests,
+  examples, and docs, tracking the project's rename: `osi_exporter.py` →
+  `ossie_exporter.py`, `to_osi_dict`/`to_osi_yaml` → `to_ossie_dict` /
+  `to_ossie_yaml`, the `osi` extra → `ossie`, and spec constants renamed
+  accordingly (`APACHE_OSSIE_SPEC_VERSION`). No behavioral change to
+  exporter output beyond the vendor/spec identifiers.
+
+## [0.5.1] — 2026-08-01
+
+### Fixed
+
+- **SL007 groundings anchors with dotted table names.** Anchor strings were
+  split on the *first* dot, so tables whose names themselves contain dots —
+  Kafka topic names like `etd.executions` modelled as `__tablename__` —
+  mis-resolved and produced false missing-anchor findings. Anchors now split
+  on the *last* dot: only the final segment is the column.
+
 ## [0.5.0] — 2026-07-31
 
 ### Added
