@@ -8,7 +8,7 @@ description: Annotate two models and export LLM-ready context in five minutes. N
 We'll annotate a two-table commerce schema and export it three ways. **No database connection is needed at any point** — semantido reads mappers, not data.
 
 ```console
-pip install 'semantido[osi]'
+pip install 'semantido[ossie]'
 ```
 
 ## 1. Annotate your models
@@ -73,11 +73,11 @@ layer = SemanticDeclarativeBase.sync_semantic_layer()
 ## 3. Export
 
 ```python
-from semantido.exporters import to_json, to_markdown, to_osi_yaml
+from semantido.exporters import to_json, to_markdown, to_ossie_yaml
 
 to_markdown(layer)                          # LLM prompt context
 to_json(layer)                              # structured, machine-readable
-to_osi_yaml(layer, model_name="commerce")   # vendor-neutral interchange
+to_ossie_yaml(layer, model_name="commerce")   # vendor-neutral interchange
 ```
 
 ### What `to_markdown` gives you
@@ -92,66 +92,66 @@ Machine-readable database schema for natural language queries
 ## Database Entities (2 tables)
 
 ### customers
-- **Full Name**: customers
-- **Primary Key**: customer_id
-- **Description**: Customers who have placed at least one order.
+— **Full Name**: customers
+— **Primary Key**: customer_id
+— **Description**: Customers who have placed at least one order.
 
 #### Columns
-- **customer_id** (INTEGER)
-  - Column: customer_id
-- **email** (VARCHAR, confidential)
-  - Column: email
+— **customer_id** (INTEGER)
+  — Column: customer_id
+— **email** (VARCHAR, confidential)
+  — Column: email
 
 ---
 
 ### orders
-- **Full Name**: orders
-- **Primary Key**: order_id
-- **Description**: Customer orders — one row per order.
-- **Synonyms**: orders, purchases
-- **Business Context**: total_amount is gross, including tax and shipping.
+— **Full Name**: orders
+— **Primary Key**: order_id
+— **Description**: Customer orders — one row per order.
+— **Synonyms**: orders, purchases
+— **Business Context**: total_amount is gross, including tax and shipping.
 
 #### Columns
-- **order_id** (INTEGER)
-  - Column: order_id
-- **customer_id** (INTEGER) ForeignKey → customers.customer_id
-  - Column: customer_id
-- **ordered_at** (TIMESTAMP)
-  - Column: ordered_at
-- **total_amount** (DECIMAL)
-  - Gross order total, including tax and shipping.
-  - *Synonyms*: order value, revenue
-- **status** (VARCHAR)
-  - Column: status
-  - *Examples*: PENDING, SHIPPED, CANCELLED
-- **created_at** (TIMESTAMP)
-  - Column: created_at
+— **order_id** (INTEGER)
+  — Column: order_id
+— **customer_id** (INTEGER) ForeignKey → customers.customer_id
+  — Column: customer_id
+— **ordered_at** (TIMESTAMP)
+  — Column: ordered_at
+— **total_amount** (DECIMAL)
+  — Gross order total, including tax and shipping.
+  — *Synonyms*: order value, revenue
+— **status** (VARCHAR)
+  — Column: status
+  — *Examples*: PENDING, SHIPPED, CANCELLED
+— **created_at** (TIMESTAMP)
+  — Column: created_at
 
 ---
 
 ## Relationships (2 connections)
 
 ### customers → orders
-- **Type**: one-to-many
-- **Join**: customers.customer_id = orders.customer_id
-- **Description**: Relationship between customers and orders
+— **Type**: one-to-many
+— **Join**: customers.customer_id = orders.customer_id
+— **Description**: Relationship between customers and orders
 
 ### orders → customers
-- **Type**: many-to-one
-- **Join**: orders.customer_id = customers.customer_id
-- **Description**: Relationship between orders and customers
+— **Type**: many-to-one
+— **Join**: orders.customer_id = customers.customer_id
+— **Description**: Relationship between orders and customers
 
 ## Summary
-- **Total Tables**: 2
-- **Total Columns**: 8
-- **Total Relationships**: 2
+— **Total Tables**: 2
+— **Total Columns**: 8
+— **Total Relationships**: 2
 ```
 
 Three things worth noticing:
 
 - **The `confidential` tag on `email`** rode in from the one `PrivacyLevel` annotation, inline where a model reading the schema will see it.
 - **Both directions of the relationship are stated.** `customers → orders` (one-to-many) and `orders → customers` (many-to-one) — an agent joining in either direction gets the cardinality it needs.
-- **Un-annotated columns get fallbacks** (`Column: order_id`). Harmless on keys; on anything meaningful, a fallback is the signal you have an annotation to write. See [the coverage gate](../guides/versioning-and-ci.md#gate-on-coverage).
+- **Unannotated columns get fallbacks** (`Column: order_id`). Harmless on keys; on anything meaningful, a fallback is the signal you have an annotation to write. See [the coverage gate](../guides/versioning-and-ci.md#gate-on-coverage).
 
 And note what's missing: no `CREATE TABLE`, no nullability, no index definitions. That absence is the point — see [Correctness](../concepts/correctness.md).
 
@@ -306,9 +306,9 @@ This is the format for when *your own code* is the consumer — chunking for ret
     }
     ```
 
-### What `to_osi_yaml` gives you
+### What `to_ossie_yaml` gives you
 
-The complete OSI document for the two-table model — every line below was generated by the quickstart code above, nothing edited:
+The complete Apache Ossie document for the two-table model — every line below was generated by the quickstart code above, nothing edited:
 
 ```yaml
 version: 0.2.0.dev0
@@ -316,7 +316,7 @@ semantic_model:
 - name: commerce
   custom_extensions:
   - vendor_name: SEMANTIDO
-    data: '{"exporter": "semantido.exporters.osi"}'
+    data: '{"exporter": "semantido.exporters.ossie"}'
   datasets:
   - name: customers
     source: customers
@@ -433,9 +433,9 @@ Worth pausing on what happened to the two timestamp columns:
       for business questions.
 ```
 
-You declared `time_dimension="ordered_at"`. You said nothing about `created_at` — semantido recognised it as an audit column by name and **actively demoted it**, telling the consumer not to use it. Left alone, `created_at` is one of the most reliable sources of wrong answers in text-to-SQL. See [Modelling time](../guides/modelling-time.md).
+You declared `time_dimension="ordered_at"`. You said nothing about `created_at` — semantido recognised it as an audit column by name and **actively demoted it**, telling the consumer not to use it. Left alone, `created_at` is one of the most reliable sources of wrong answers in text-to-SQL. See [Modeling time](../guides/modelling-time.md).
 
-Also note where the semantido-specific metadata went: `privacy_level`, `sample_values`, `time_grain`, and relationship cardinality ride in `custom_extensions` under the `SEMANTIDO` vendor, because OSI has no first-class home for them yet. A consumer that ignores extensions still gets the datasets, fields, and relationships. See [OSI export](../guides/osi.md).
+Also note where the semantido-specific metadata went: `privacy_level`, `sample_values`, `time_grain`, and relationship cardinality ride in `custom_extensions` under the `SEMANTIDO` vendor, because Apache Ossie has no first-class home for them yet. A consumer that ignores extensions still gets the datasets, fields, and relationships. See [Apache Ossie export](../guides/ossie.md).
 
 ## 4. Put it in a prompt
 
@@ -446,7 +446,7 @@ system_prompt = f"""You are a SQL analyst. Write PostgreSQL only.
 """
 ```
 
-That's the whole integration. semantido produces a string; what you do with it is your pipeline.
+That's the whole integration. `semantido` produces a string; what you do with it is your pipeline.
 
 ## 5. Optional: bind business concepts
 
@@ -482,5 +482,5 @@ The two-table version above is a tutorial. [`examples/01_getting_started`](https
 ## Next
 
 - [Annotating your models](../guides/annotating-models.md) — the full authoring surface
-- [Modelling time](../guides/modelling-time.md) — the highest-value annotation you can write
+- [Modeling time](../guides/modelling-time.md) — the highest-value annotation you can write
 - [Quickstart with your agent](quickstart-with-agent.md)

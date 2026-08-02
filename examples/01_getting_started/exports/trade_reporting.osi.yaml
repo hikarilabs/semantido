@@ -10,7 +10,7 @@ semantic_model:
       valuation (trade_valuations); NFC+: non-financial counterparty above the clearing threshold'
   custom_extensions:
   - vendor_name: SEMANTIDO
-    data: '{"exporter": "semantido.exporters.osi"}'
+    data: '{"exporter": "semantido.exporters.ossie"}'
   datasets:
   - name: counterparties
     source: counterparties

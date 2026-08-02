@@ -6,9 +6,9 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://spdx.org/licenses/Apache-2.0.html)
 
 **Code-native semantic layer authoring for SQLAlchemy.** Annotate your
-models where they live, and generate LLM-ready schema context for
-text-to-SQL agents, RAG pipelines, and BI tools — as JSON, Markdown, or
-vendor-neutral [OSI](https://open-semantic-interchange.org) YAML.
+models where they live and generate LLM-ready schema context for
+text-to-SQL agents, RAG pipelines, and BI tools, as JSON, Markdown, or
+vendor-neutral [Apache Ossie](https://open-semantic-interchange.org) YAML.
 
 -----
 
@@ -50,12 +50,12 @@ Installation
 pip install semantido
 ```
 
-The core install is dependency-light (SQLAlchemy only) and covers the
-JSON and Markdown exporters plus `to_osi_dict()`. For OSI YAML export
-(`to_osi_yaml()`), add the `osi` extra, which pulls in PyYAML:
+The core installation is dependency-light (SQLAlchemy only) and covers the
+JSON and Markdown exporters plus `to_ossie_dict()`. For Apache Ossie YAML export
+(`to_ossie_yaml()`), add the `ossie` extra, which pulls in PyYAML:
 
 ```console
-pip install 'semantido[osi]'
+pip install 'semantido[ossie]'
 ```
 
 Quickstart
@@ -110,13 +110,13 @@ class Customer(SemanticDeclarativeBase):
 Then build the layer and export it:
 
 ```python
-from semantido.exporters import to_json, to_markdown, to_osi_yaml
+from semantido.exporters import to_json, to_markdown, to_ossie_yaml
 
 layer = SemanticDeclarativeBase.sync_semantic_layer()
 
-to_json(layer)                                    # structured JSON
-to_markdown(layer)                                # LLM prompt context
-to_osi_yaml(layer, model_name="commerce")         # OSI interchange (requires [osi])
+to_json(layer)                                      # structured JSON
+to_markdown(layer)                                  # LLM prompt context
+to_ossie_yaml(layer, model_name="commerce")         # Apache OOssie  interchange (requires [ossie])
 ```
 
 Relationships, join conditions, cardinality, foreign keys, and primary
@@ -126,17 +126,17 @@ author what the schema cannot express.
 What gets captured
 -----
 
-| Concern | Authored as |
-|---|---|
-| Table meaning, business & application context | `@semantic_table(...)` arguments |
-| Column meaning, synonyms, sample values | `<column>_description`, `<column>_synonyms`, `<column>_sample_values` |
-| Business rules an agent must respect | `<column>_application_rules` |
-| Data sensitivity | `<column>_privacy_level` (`PUBLIC` … `CONFIDENTIAL`) |
-| Primary business time axis | `time_dimension=` in the decorator (or `__semantic_time_dimension__` on the class) |
-| Secondary time axes & native grain | `<column>_is_time_dimension`, `<column>_time_grain` (`TimeGrain` or `"day"`) |
-| Default filters / row-level security fragments | `sql_filters` on the table |
-| Relationship semantics | `<relationship>_relationship_description` |
-| Join conditions, cardinality, FKs, PKs | extracted automatically from SQLAlchemy |
+| Concern                                        | Authored as                                                                        |
+|------------------------------------------------|------------------------------------------------------------------------------------|
+| Table meaning, business & application context  | `@semantic_table(...)` arguments                                                   |
+| Column meaning, synonyms, sample values        | `<column>_description`, `<column>_synonyms`, `<column>_sample_values`              |
+| Business rules an agent must respect           | `<column>_application_rules`                                                       |
+| Data sensitivity                               | `<column>_privacy_level` (`PUBLIC` … `CONFIDENTIAL`)                               |
+| Primary business time axis                     | `time_dimension=` in the decorator (or `__semantic_time_dimension__` on the class) |
+| Secondary time axes & native grain             | `<column>_is_time_dimension`, `<column>_time_grain` (`TimeGrain` or `"day"`)       |
+| Default filters / row-level security fragments | `sql_filters` on the table                                                         |
+| Relationship semantics                         | `<relationship>_relationship_description`                                          |
+| Join conditions, cardinality, FKs, PKs         | extracted automatically from SQLAlchemy                                            |
 
 Exporters
 -----
@@ -145,7 +145,7 @@ Exporters
   values pruned by default.
 - **Markdown** (`to_markdown`, `to_markdown_file`) — formatted for direct
   inclusion in LLM prompts for text-to-SQL and agentic analytics.
-- **OSI YAML** (`to_osi_dict`, `to_osi_yaml`) — the
+- **Apche Ossie YAML** (`to_ossie_dict`, `to_ossie_yaml`) — the
   [Open Semantic Interchange](https://open-semantic-interchange.org)
   format for exchanging semantic models across the wider data stack.
   Time dimensions are curated on export: declared axes are flagged

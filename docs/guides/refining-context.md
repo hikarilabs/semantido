@@ -5,11 +5,11 @@ description: How to improve accuracy after the first pass — measure, find the 
 
 # Refining context quality
 
-The first pass of annotations gets most of the gain. Getting the rest is a loop, and the loop needs a measurement or you are guessing.
+The first pass of annotations gets most of the gain. Getting the rest is a loop, and the loop needs a measurement, or you are guessing.
 
 ## Build the eval first
 
-Ten to fifty question–SQL pairs with expected results. That's it. Run them in CI.
+Ten to fifty question – SQL pairs with expected results. That's it. Run them in CI.
 
 ```python
 CASES = [
@@ -28,15 +28,15 @@ Without this you cannot tell whether an annotation helped, and you will not noti
 
 The score tells you there's a problem. The generated SQL tells you which annotation is missing. Diagnose by shape:
 
-| The model did this | The missing annotation |
-|---|---|
-| Picked the wrong table | Table `description` too vague, or missing `synonyms` |
-| Picked the wrong date column | `time_dimension` — see [Modelling time](modelling-time.md) |
+| The model did this                            | The missing annotation                                                |
+|-----------------------------------------------|-----------------------------------------------------------------------|
+| Picked the wrong table                        | Table `description` too vague, or missing `synonyms`                  |
+| Picked the wrong date column                  | `time_dimension` — see [Modelling time](modelling-time.md)            |
 | Summed and got a multiple of the right answer | Fan-out. `application_rules` on the measure, grain in the description |
-| Filtered on a value that doesn't exist | `sample_values` |
-| Used the wrong amount column | Imprecise `description` on the ambiguous cluster |
-| Invented a join | Relationship missing from the retrieved context |
-| Ignored a stated rule | The rule is prose, not an expression — give it the SQL |
+| Filtered on a value that doesn't exist        | `sample_values`                                                       |
+| Used the wrong amount column                  | Imprecise `description` on the ambiguous cluster                      |
+| Invented a join                               | Relationship missing from the retrieved context                       |
+| Ignored a stated rule                         | The rule is prose, not an expression — give it the SQL                |
 
 That last row is the one people miss. If the model ignores your rule, the rule is usually unusable rather than unread:
 
@@ -55,7 +55,7 @@ More context is not better context. This is the counterintuitive one, and it fol
 
 Every token that carries no signal dilutes the ones that do. Delete:
 
-- `customer_id_description = "The customer ID."` — the fallback is no worse and shorter.
+- `customer_id_description = "The customer ID."` — the fallback is not worse and shorter.
 - Synonyms nobody says. `["orders", "order table", "orders data", "the orders"]` is one useful synonym and three distractors.
 - Sample values on high-cardinality columns. Five example emails teach the model nothing except that emails exist.
 - Tables the agent should never query. Better: don't put them in the layer at all.
@@ -94,7 +94,7 @@ layer.application_glossary["ACV"] = "Annual contract value — see the finance d
 layer.application_glossary["active customer"] = "Placed an order in the trailing 90 days."
 ```
 
-It rides into the OSI export as model-level `ai_context.instructions`. It's the right home for cross-cutting definitions and the wrong home for anything that's really about one column.
+It rides into the Apache Ossie export as model-level `ai_context.instructions`. It's the right home for cross-cutting definitions and the wrong home for anything that's really about one column.
 
 ## Watch for description rot
 

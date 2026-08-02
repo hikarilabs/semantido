@@ -11,7 +11,7 @@ This sounds like an implementation detail. It is the reason the artifacts are us
 
 ## What it buys you
 
-**You can commit the export.** A generated `model.osi.yaml` in the repo is only meaningful if regenerating it on an unchanged schema produces no diff. Otherwise the file churns on every CI run and everyone learns to ignore it.
+**You can commit the export.** A generated `model.ossie.yaml` in the repo is only meaningful if regenerating it on an unchanged schema produces no diff. Otherwise, the file churns on every CI run, and everyone learns to ignore it.
 
 **You can diff the export.** This is the one that matters in regulated environments. When the definition of `notional` changes, the diff shows exactly that — a semantic change, isolated, reviewable, attributable to a commit and an author. "The AI decided" is not an audit response. "Here is the versioned definition, here is the PR, here is the reviewer" is.
 
@@ -32,7 +32,7 @@ The corollary is that the export is only as stable as your model files. If your 
 
 ## What semantido deliberately does not do
 
-Some semantic layer systems get smarter over time: they store confirmed question–SQL pairs, index them, and retrieve them as few-shot examples for similar future questions. It is a genuinely good idea and it makes those systems better with use.
+Some semantic layer systems get smarter over time: they store confirmed question–SQL pairs, index them, and retrieve them as few-shot examples for similar future questions. It is a genuinely good idea, and it makes those systems better with use.
 
 semantido has no such loop, on purpose.
 

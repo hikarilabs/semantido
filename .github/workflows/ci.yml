@@ -8,7 +8,7 @@ on:
 jobs:
   base-install:
     # Verifies the base installation works without PyYAML: core imports and
-    # to_osi_dict must succeed, and yaml must NOT be importable. This is
+    # to_ossie_dict must succeed, and yaml must NOT be importable. This is
     # the job that catches a hard yaml import creeping into the module path.
     name: Base install (no extras)
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
           uv run python -c "
           import importlib.util
           import semantido
-          from semantido.exporters import to_json, to_markdown, to_osi_dict
+          from semantido.exporters import to_json, to_markdown, to_ossie_dict
           assert importlib.util.find_spec('yaml') is None, \
               'PyYAML must not be present in a base install'
           print('base install OK — yaml-free')

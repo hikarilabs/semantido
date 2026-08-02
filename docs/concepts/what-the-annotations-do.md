@@ -5,7 +5,7 @@ description: The causal chain from what you write, to what gets built, to what t
 
 # What do the annotations do for the agent?
 
-An annotation is not decoration. Every attribute you author lands somewhere specific and does a specific job for the model reading it.
+An annotation is not a decoration. Every attribute you author lands somewhere specific and does a specific job for the model reading it.
 
 This page is the chain: **what you write → what gets built → what the agent sees**.
 
@@ -30,20 +30,20 @@ class Order(SemanticDeclarativeBase):
 
 Each argument answers a question the schema can't:
 
-| Argument | The question it answers |
-|---|---|
-| `description` | What is a row of this table? |
-| `synonyms` | What might a user call this thing? |
-| `business_context` | What must someone know before trusting a number from here? |
-| `application_context` | Which part of the system owns this? |
-| `sql_filters` | What should always apply — tenancy, soft deletes? |
-| `time_dimension` | When someone says "last month", which column do they mean? |
+| Argument              | The question it answers                                    |
+|-----------------------|------------------------------------------------------------|
+| `description`         | What is a row of this table?                               |
+| `synonyms`            | What might a user call this thing?                         |
+| `business_context`    | What must someone know before trusting a number from here? |
+| `application_context` | Which part of the system owns this?                        |
+| `sql_filters`         | What should always apply — tenancy, soft deletes?          |
+| `time_dimension`      | When someone says "last month", which column do they mean? |
 
 The decorator writes these to dunders (`__semantic_description__`, and so on); you can set those directly instead. `time_dimension` and `__semantic_time_dimension__` conflicting on the same class body raises `ValueError` rather than silently picking one.
 
 ### The column convention — field-level meaning
 
-There is no column decorator. semantido reads class attributes named `<column>_<concern>`:
+There is no column decorator. `semantido` reads class attributes named `<column>_<concern>`:
 
 ```python
 class Order(SemanticDeclarativeBase):
@@ -68,7 +68,7 @@ Everything the mapper already knows is extracted:
 - primary keys
 - foreign keys and their `table.column` targets
 - relationships, their **join conditions**, and their **cardinality**
-- column data types, normalised
+- column data types, normalized
 
 This is the core economy of the design. You author what the schema cannot express, and nothing else. A join condition typed by hand is a join condition that can be wrong.
 
@@ -98,21 +98,21 @@ The `SemanticLayer` is not what reaches the model — an **exporter** is, and th
 
 - **`to_markdown`** — terse, prose-shaped, for the system prompt.
 - **`to_json`** — the tree, empty values pruned, for your own code.
-- **[`to_osi_yaml`](../guides/osi.md)** — interchange, when something else is the consumer.
+- **[`to_ossie_yaml`](../guides/ossie.md)** — interchange, when something else is the consumer.
 
 `to_markdown` renders roughly this:
 
 ```markdown
 ### orders
-- **Primary Key**: order_id
-- **Description**: Customer orders — one row per order.
-- **Synonyms**: orders, purchases
-- **Business Context**: total_amount is gross, including tax and shipping.
+— **Primary Key**: order_id
+— **Description**: Customer orders — one row per order.
+— **Synonyms**: orders, purchases
+— **Business Context**: total_amount is gross, including tax and shipping.
 
 #### Columns
-- **total_amount** (DECIMAL)
-  - Gross order total, including tax and shipping.
-  - *Synonyms*: order value, revenue
+— **total_amount** (DECIMAL)
+  — Gross order total, including tax and shipping.
+  — *Synonyms*: order value, revenue
 ```
 
 Note what's absent: no `CREATE TABLE`, no nullability, no indexes. That absence is the product — see [Correctness](correctness.md).

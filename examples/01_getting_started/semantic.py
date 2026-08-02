@@ -1,10 +1,10 @@
 """Builds the semantic layer for the trade reporting schema and exports it
-to JSON, Markdown (LLM prompt context) and OSI YAML (interchange)."""
+to JSON, Markdown (LLM prompt context) and Apache Ossie YAML (interchange)."""
 
 from pathlib import Path
 
 from semantido import SemanticDeclarativeBase
-from semantido.exporters import to_json_file, to_markdown_file, to_osi_yaml
+from semantido.exporters import to_json_file, to_markdown_file, to_ossie_yaml
 
 from models.trade_reporting import (
     Counterparty,
@@ -21,7 +21,7 @@ OUT = Path(__file__).parent
 def main() -> None:
     layer = SemanticDeclarativeBase.sync_semantic_layer()
 
-    # Domain glossary consumed by the OSI model-level ai_context
+    # Domain glossary consumed by the Apache Ossie model-level ai_context
     layer.application_glossary.update(
         {
             "UTI": "Unique Trade Identifier per ISO 23897",
@@ -33,7 +33,7 @@ def main() -> None:
 
     to_json_file(layer, str(OUT / "exports" / "trade_reporting.semantic.json"))
     to_markdown_file(layer, str(OUT / "exports" / "trade_reporting.semantic.md"))
-    to_osi_yaml(
+    to_ossie_yaml(
         layer,
         model_name="emir_mifir_trade_reporting",
         description=(
@@ -44,7 +44,7 @@ def main() -> None:
             "Amounts are unsigned unless stated otherwise; direction always "
             "comes from a code column, never from an amount sign."
         ),
-        path=str(OUT / "exports" / "trade_reporting.osi.yaml"),
+        path=str(OUT / "exports" / "trade_reporting.ossie.yaml"),
     )
 
     print(

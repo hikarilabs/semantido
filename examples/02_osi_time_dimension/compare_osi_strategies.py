@@ -25,7 +25,7 @@ from pathlib import Path
 import yaml
 
 from semantido import SemanticDeclarativeBase
-from semantido.exporters import to_osi_dict, to_osi_yaml
+from semantido.exporters import to_ossie_dict, to_ossie_yaml
 
 # Importing registers the mapped classes with the declarative base
 from models.core_banking import AccountInfo, TransactionInfo  # noqa: F401
@@ -97,12 +97,12 @@ def main() -> None:
     layer = build_layer()
 
     # CURATED — the library default, straight from the real exporter
-    curated = to_osi_dict(layer, **MODEL_KWARGS)
-    to_osi_yaml(layer, path=str(OUT / "osi_export_curated.yaml"), **MODEL_KWARGS)
+    curated = to_ossie_dict(layer, **MODEL_KWARGS)
+    to_ossie_yaml(layer, path=str(OUT / "osi_export_curated.yaml"), **MODEL_KWARGS)
 
     # NAIVE — no curation, no audit demotion: pure type inference
     naive_layer = strip_time_curation(layer)
-    naive = to_osi_dict(naive_layer, audit_pattern=NEVER_MATCH, **MODEL_KWARGS)
+    naive = to_ossie_dict(naive_layer, audit_pattern=NEVER_MATCH, **MODEL_KWARGS)
     (OUT / "osi_export_naive.yaml").write_text(
         yaml.safe_dump(naive, sort_keys=False, allow_unicode=True, width=88)
     )

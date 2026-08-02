@@ -1,8 +1,8 @@
-"""Tests for the OSI exporter.
+"""Tests for the Apache Ossie exporter.
 
-``to_osi_dict`` tests run in every environment. ``to_osi_yaml`` tests are
-skipped unless PyYAML is installed (the ``semantido[osi]`` extra), so a
-contributor on a base install gets skips rather than failures.
+``to_ossie_dict`` tests run in every environment. ``to_ossie_yaml`` tests are
+skipped unless PyYAML is installed (the ``semantido[ossie]`` extra), so a
+contributor on a base installation gets skips rather than failures.
 """
 
 import pytest
@@ -11,7 +11,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import DeclarativeBase, relationship
 
 from semantido import SemanticBase, semantic_table
-from semantido.exporters import to_osi_dict
+from semantido.exporters import to_ossie_dict
 from semantido.generators.semantic_layer import PrivacyLevel, TimeGrain
 
 
@@ -70,19 +70,19 @@ def _ext_data(entity):
     return json.loads(ext["data"])
 
 
-def test_to_osi_dict_structure(layer):
-    doc = to_osi_dict(layer, model_name="test_model")
+def test_to_ossie_dict_structure(layer):
+    doc = to_ossie_dict(layer, model_name="test_model")
     model = doc["semantic_model"][0]
 
     assert model["name"] == "test_model"
     assert {ds["name"] for ds in model["datasets"]} == {"trades", "books"}
     assert "Glossary" in model["ai_context"]["instructions"]
     assert doc["version"] == "0.2.0.dev0"
-    assert _ext_data(model)["exporter"] == "semantido.exporters.osi"
+    assert _ext_data(model)["exporter"] == "semantido.exporters.ossie"
 
 
-def test_to_osi_dict_time_dimension_policy(layer):
-    doc = to_osi_dict(layer, model_name="test_model")
+def test_to_ossie_dict_time_dimension_policy(layer):
+    doc = to_ossie_dict(layer, model_name="test_model")
     trades = next(
         ds for ds in doc["semantic_model"][0]["datasets"] if ds["name"] == "trades"
     )
@@ -108,8 +108,8 @@ def test_to_osi_dict_time_dimension_policy(layer):
     assert _ext_data(fields["notional"])["privacy_level"] == "restricted"
 
 
-def test_to_osi_dict_relationship_dedup(layer):
-    doc = to_osi_dict(layer, model_name="test_model")
+def test_to_ossie_dict_relationship_dedup(layer):
+    doc = to_ossie_dict(layer, model_name="test_model")
     rels = doc["semantic_model"][0]["relationships"]
 
     # trades<->books is bidirectional in the ORM but exported once
@@ -119,7 +119,7 @@ def test_to_osi_dict_relationship_dedup(layer):
     assert rel["from_columns"] and rel["to_columns"]
 
 
-def test_to_osi_dict_is_yaml_safe(layer):
+def test_to_ossie_dict_is_yaml_safe(layer):
     """Every value must be a plain type — no enums, no str subclasses."""
 
     def assert_plain(obj, path="$"):
@@ -133,16 +133,16 @@ def test_to_osi_dict_is_yaml_safe(layer):
         elif obj is not None:
             assert type(obj) in (str, int, float, bool), f"{path}: {type(obj)}"
 
-    assert_plain(to_osi_dict(layer, model_name="test_model"))
+    assert_plain(to_ossie_dict(layer, model_name="test_model"))
 
 
-def test_to_osi_yaml_round_trip(layer, tmp_path):
-    yaml = pytest.importorskip("yaml", reason="requires semantido[osi]")
-    from semantido.exporters import to_osi_yaml
+def test_to_ossie_yaml_round_trip(layer, tmp_path):
+    yaml = pytest.importorskip("yaml", reason="requires semantido[ossie]")
+    from semantido.exporters import to_ossie_yaml
 
-    out = tmp_path / "model.osi.yaml"
-    text = to_osi_yaml(layer, model_name="test_model", path=str(out))
+    out = tmp_path / "model.ossie.yaml"
+    text = to_ossie_yaml(layer, model_name="test_model", path=str(out))
 
     parsed = yaml.safe_load(text)
-    assert parsed == to_osi_dict(layer, model_name="test_model")
+    assert parsed == to_ossie_dict(layer, model_name="test_model")
     assert yaml.safe_load(out.read_text(encoding="utf-8")) == parsed

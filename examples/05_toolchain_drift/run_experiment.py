@@ -8,7 +8,7 @@ Conditions reconcile the authored and generated registries:
   C3  C2 + three corroborations:
         checksum   definition_checksum disagreement -> NEEDS_REVIEW
         asymmetry  relation differs across sides for same anchor ->
-                   INFLATION_SUSPECTED (the generated exact vs authored
+                   INFLATION_SUSPECTED (the generated exact vs. authored
                    narrower case)
         collision  one generated concept aligned to two authored
                    concepts that are DISTINCT_FROM each other -> CONFLICT
@@ -120,7 +120,7 @@ def condition_c3(generated):
                 "overridden — same anchor, same relation, same definition"
             )
 
-        # checksum corroboration on anything bridged at all
+        # checksum corroboration on anything bridged completely
         if concept_a.definition_checksum != concept_g.definition_checksum:
             flags.append(
                 f"NEEDS_REVIEW {a_id}<->{g_id}: definition checksum "
