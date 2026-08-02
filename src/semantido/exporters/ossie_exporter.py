@@ -120,7 +120,7 @@ def to_ossie_dict(
 
     Args:
         semantic_layer: The synchronized layer, e.g., from `sync_semantic_layer()`.
-        model_name: The Appache Ossie `semantic_model` name.
+        model_name: The Apache Ossie `semantic_model` name.
         description: Optional model-level description.
         instructions: Optional model-level `ai_context` instructions.
         audit_pattern: Regex deciding which temporal columns are demoted to
