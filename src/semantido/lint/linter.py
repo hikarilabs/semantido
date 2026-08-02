@@ -371,7 +371,7 @@ def _check_groundings(layer_dict, schema, registry, groundings) -> list[Finding]
                 )
         for anchor in entry.get("columns", []) or []:
             # rpartition: table names may themselves contain dots
-            # (e.g. Kafka topic names like "etd.executions" modelled as
+            # (e.g., Kafka topic names like "etd.executions" modeled as
             # tables); only the final segment is the column.
             table_name, _, column_name = anchor.rpartition(".")
             if table_name not in schema or column_name not in schema.get(

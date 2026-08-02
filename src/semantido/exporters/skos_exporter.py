@@ -14,7 +14,7 @@
 
 """Exports a ConceptRegistry as a SKOS concept scheme in Turtle.
 
-The registry's model is SKOS-aligned by construction — mapping relations
+Construction SKOS-aligns the registry's model — mapping relations
 carry their ``skos:*Match`` predicate, concept relations mirror
 ``skos:broader`` / ``narrower`` / ``related`` / ``exactMatch`` — so this
 exporter is mostly a faithful transcription. One deliberate extension:
@@ -25,7 +25,7 @@ the pair additionally surfaced in a ``skos:editorialNote`` so consumers
 that ignore unknown predicates still see the warning as text.
 
 Zero dependencies: the Turtle is built by hand. Literals are escaped for
-quotes, backslashes and newlines; ids are used as URI local names (the
+quotes, backslashes, and newlines; ids are used as URI local names (the
 registry already restricts ids to dotted snake_case, which is URI-safe).
 """
 

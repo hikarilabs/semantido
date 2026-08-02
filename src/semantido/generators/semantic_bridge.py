@@ -224,7 +224,7 @@ class SQLAlchemySemanticBridge:
         via ``primary_key``), duplicates are collapsed, and the result is
         sorted for deterministic output.
 
-        Declaring these matters downstream: OSI cardinality inference
+        Declaring these matters downstream: Apache Ossie cardinality inference
         (Foundation section 6.4) treats join columns with no declared key as
         worst-case N:N, so dropping a unique key silently restricts the
         query surface of every relationship targeting those columns.

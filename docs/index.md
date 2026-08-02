@@ -5,9 +5,9 @@ description: semantido is code-native semantic layer authoring for SQLAlchemy �
 
 # semantido
 
-**Code-native semantic layer authoring for SQLAlchemy.** Annotate your models where they live, and generate LLM-ready schema context for text-to-SQL agents, RAG pipelines, and BI tools — as JSON, Markdown, or vendor-neutral [OSI](https://open-semantic-interchange.org) YAML.
+**Code-native semantic layer authoring for SQLAlchemy.** Annotate your models where they live and generate LLM-ready schema context for text-to-SQL agents, RAG pipelines, and BI tools — as JSON, Markdown, or vendor-neutral [Apache Ossie](https://open-semantic-interchange.org) YAML.
 
-A database schema tells an LLM what your tables are called — not what they *mean*. semantido closes that gap without introducing a separate modelling language or a YAML repository to keep in sync.
+A database schema tells an LLM what your tables are called — not what they *mean*. `semantido` closes that gap without introducing a separate modeling language or a YAML repository to keep in sync.
 
 ```console
 pip install semantido
@@ -39,13 +39,13 @@ class Order(SemanticDeclarativeBase):
 One call extracts models, columns, and relationships — with join conditions and cardinality — into a semantic layer you can export anywhere:
 
 ```python
-from semantido.exporters import to_json, to_markdown, to_osi_yaml
+from semantido.exporters import to_json, to_markdown, to_ossie_yaml
 
 layer = SemanticDeclarativeBase.sync_semantic_layer()
 
 to_markdown(layer)                          # LLM prompt context
 to_json(layer)                              # structured, machine-readable
-to_osi_yaml(layer, model_name="commerce")   # vendor-neutral interchange
+to_ossie_yaml(layer, model_name="commerce")   # vendor-neutral interchange
 ```
 
 ## Why this and not a YAML repo
@@ -63,6 +63,6 @@ Annotations attached to the model are reviewed in the same pull request, version
 
 ## Status
 
-semantido is **alpha** (`Development Status :: 3 - Alpha`). The authoring surface — `@semantic_table` and the `<column>_*` conventions — is stable in practice and used in production. Exporter output, particularly OSI, tracks a spec that is itself pre-1.0 and should be expected to move.
+`semantido` is **alpha** (`Development Status :: 3 - Alpha`). The authoring surface — `@semantic_table` and the `<column>_*` conventions — is stable in practice and used in production. Exporter output, particularly Apache Ossie, tracks a spec that is itself pre-1.0 and should be expected to move.
 
 Apache-2.0. [Source on GitHub](https://github.com/hikarilabs/semantido).

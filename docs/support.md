@@ -7,15 +7,15 @@ description: semantido is Apache-2.0, all of it. There is no paid tier. Here's w
 
 ## There is no commercial tier
 
-semantido is [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html), all of it. No open-core split, no feature gating, no license key, no hosted version, no "contact us for the enterprise exporter".
+`semantido` is [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html), all of it. No open-core split, no feature gating, no license key, no hosted version, no "contact us for the enterprise exporter".
 
 Everything documented on this site is in `pip install semantido`.
 
-This is worth stating plainly because the pattern in this category is the opposite: an open library that stops exactly where the useful part begins. semantido isn't structured that way, and the reason is structural rather than generous — it's a library that produces a document. There is no server to host, no seat to meter, no execution to bill. The natural boundary for a paid tier doesn't exist.
+This is worth stating plainly because the pattern in this category is the opposite: an open library that stops exactly where the useful part begins. `semantido` isn't structured that way, and the reason is structural rather than generous — it's a library that produces a document. There is no server to host, no seat to meter, no execution to bill. The natural boundary for a paid tier doesn't exist.
 
-## What that means for you
+## What does that mean for you?
 
-**No vendor lock-in on your definitions.** Your semantic layer is Python in your repo. If semantido is abandoned tomorrow, your annotations are still class attributes, and reading them takes about fifty lines. The [OSI export](guides/osi.md) exists so the same is true of the output.
+**No vendor lock-in on your definitions.** Your semantic layer is Python in your repo. If semantido is abandoned tomorrow, your annotations are still class attributes, and reading them takes about fifty lines. The [Apache Ossie export](guides/ossie.md) exists, so the same is true of the output.
 
 **No roadmap leverage.** Nobody can hold a feature hostage to a contract. The flip side: nobody owes you a feature either.
 
@@ -26,7 +26,7 @@ This is worth stating plainly because the pattern in this category is the opposi
 **Alpha** (`Development Status :: 3 - Alpha`). Concretely:
 
 - The **authoring surface** — `@semantic_table`, the `<column>_*` conventions — is used in production and won't break without a deprecation path.
-- **Exporter output** is less settled. The OSI exporter targets a spec that is itself pre-1.0 (`0.2.0.dev0`) and will move as the spec does.
+- **Exporter output** is less settled. The Apache Ossie exporter targets a spec that is itself pre-1.0 (`0.2.0.dev0`) and will move as the spec does.
 - **Pin the version** if you snapshot-test exports. See [Versioning and CI](guides/versioning-and-ci.md#snapshot-the-export).
 
 ## Contributing
@@ -39,7 +39,7 @@ pip install 'semantido[dev]'
 
 The dev extra pins the CI toolchain exactly (pytest, mypy, pylint, ruff), so a green run locally means a green run in CI.
 
-The highest-value contributions are usually **not** features. They're annotation patterns from schemas that break the current model — a fan-out shape the docs don't cover, a time-dimension case the audit demoter gets wrong, a SQLAlchemy construct the bridge mishandles. The library is small on purpose; keeping it small is a feature.
+The highest-value contributions are usually **not** features. They're annotation patterns from schemas that break the current model — a fan-out shape the docs don't cover, a time-dimension case the audit demoter gets wrong, an SQLAlchemy construct the bridge mishandles. The library is small on purpose; keeping it small is a feature.
 
 ## Where commercial help fits
 
@@ -54,4 +54,4 @@ The library is free and stays free. What Hikari Labs sells is the part the libra
 
 The relationship is the ordinary one: the library exists because the consulting work needed it, and it's open because a semantic layer nobody can inspect is a semantic layer nobody should trust.
 
-You never need to talk to anyone to use semantido. If the accuracy problem is expensive and you'd rather not solve it twice, that's what the other thing is for.
+You never need to talk to anyone to use semantido. If the accuracy problem is expensive, and you'd rather not solve it twice, that's what the other thing is for.

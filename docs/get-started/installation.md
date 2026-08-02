@@ -13,29 +13,29 @@ That's it. There is no server, no daemon, no configuration file, and nothing to 
 
 ## Requirements
 
-| | |
-|---|---|
-| Python | **≥ 3.11** |
-| SQLAlchemy | **≥ 2.0** |
+|               |                           |
+|---------------|---------------------------|
+| Python        | **≥ 3.11**                |
+| SQLAlchemy    | **≥ 2.0**                 |
 | Also installs | `typing-extensions ≥ 4.5` |
 
-The core install is deliberately dependency-light — SQLAlchemy and nothing else — because semantido is meant to sit in the dependency tree of applications that already have opinions about their dependencies.
+The core installation is deliberately dependency-light — SQLAlchemy and nothing else — because semantido is meant to sit in the dependency tree of applications that already have opinions about their dependencies.
 
 SQLAlchemy 2.0 is a hard floor. semantido reads the 2.0 mapper API and does not support the 1.x declarative style.
 
 ## Extras
 
-### `osi` — OSI YAML export
+### `Apache Ossie` — YAML export
 
-The core install covers the JSON and Markdown exporters, plus `to_osi_dict()`. Serialising to OSI **YAML** needs PyYAML:
+The core installation covers the JSON and Markdown exporters, plus `to_ossie_dict()`. Serializing to Apache Ossie **YAML** needs PyYAML:
 
 ```console
-pip install 'semantido[osi]'
+pip install 'semantido[ossie]'
 ```
 
-If you call `to_osi_yaml()` without it, you get a clear `ImportError` telling you to install the extra — not a stack trace.
+If you call `to_oseie_yaml()` without it, you get a clear `ImportError` telling you to install the extra — not a stack trace.
 
-Note the split: `to_osi_dict()` works without the extra, because producing the OSI document structure needs no YAML. Only serialisation does. If you are handing the dict to something else — a JSON API, your own writer — you don't need PyYAML at all.
+Note the split: `to_ossie_dict()` works without the extra, because producing an Apache Ossie document structure needs no YAML. Only serialization does. If you are handing the dict to something else — a JSON API, your own writer — you don't need PyYAML at all.
 
 ### `dev` — contributing
 
@@ -74,7 +74,7 @@ If that prints a Markdown document, you are done.
 semantido is classified **alpha**. In practice:
 
 - The **authoring surface** — `@semantic_table` and the `<column>_*` conventions — is what production code depends on and is not expected to break without a deprecation path.
-- The **exporter output** is less settled. The OSI exporter tracks a spec that is itself pre-1.0 (`0.2.0.dev0`); its output will move as the spec does.
+- The **exporter output** is less settled. The Apache Ossie exporter tracks a spec that is itself pre-1.0 (`0.2.0.dev0`); its output will move as the spec does.
 
 If you snapshot-test exports (and you should — see [Versioning and CI](../guides/versioning-and-ci.md)), pin the semantido version.
 

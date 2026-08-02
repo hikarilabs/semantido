@@ -9,7 +9,7 @@ description: Declare what your schema means at the concept tier — including wh
 
 Everything else in semantido describes **physical objects** — tables, columns, joins. The concept registry describes the **business concepts** those objects realize, and the relations between the concepts themselves.
 
-The motivating case is a homonym that costs real money. Under EMIR, a *Counterparty* is a party to a derivative contract, including CCPs. Under MiFIR, a *Counterparty* is the execution counterparty on a reportable transaction. Same word, same industry, same bank, different legal concepts, and different reports. Nothing at the schema tier can say that `emir_trades.cpty` and `mifir_tx.party` are **not the same thing** — the concept registry exists so something can.
+The motivating case is a homonym that costs real money. Under EMIR, a *Counterparty* is a party to a derivative contract, including CCPs. Under MiFIR, a *Counterparty* is the execution counterparty on a reportable transaction. Same word, same industry, same bank, different legal concepts, and different reports. Nothing at the schema tier can say that `emir_trades.cpty` and `mifir_tx.party` are **different thing** — the concept registry exists so something can.
 
 ## Authoring
 
@@ -90,7 +90,7 @@ ValueError: Unresolved concept references (not in registry):
   - table 'emir_trades' -> 'counterparty.emri'
 ```
 
-This closes the silent-typo gap that column annotations have — a concept binding cannot quietly not-exist.
+This closes the silent-typo gap that column annotations have — a concept binding cannot quietly-exist.
 
 ## What the agent sees
 
@@ -99,35 +99,35 @@ The Markdown exporter renders the **subset closure**: only concepts actually ref
 ```markdown
 ## Concepts (3 in scope)
 
-Business concepts realized by this schema. The concept id is the authoritative
+This schema realizes business concepts. The concept id is the authoritative
 reference; labels may collide (see Disambiguation).
 
 ### `counterparty.emir` — Counterparty
-- **Definition**: EMIR Art. 2(8): a party to a derivative contract, including CCPs.
-- **Realized by**: emir_trades, emir_trades.cpty
-- **External**: exact match → `fibo-fnd-pty-pty:PartyInRole` [fibo@2025Q3]
-- **Relation**: broader → `party`
-- **Relation**: distinct from → `counterparty.mifir`
+— **Definition**: EMIR Art. 2(8): a party to a derivative contract, including CCPs.
+— **Realized by**: emir_trades, emir_trades.cpty
+— **External**: exact match → `fibo-fnd-pty-pty:PartyInRole` [fibo@2025Q3]
+— **Relation**: broader → `party`
+— **Relation**: distinct from → `counterparty.mifir`
 
 ### `counterparty.mifir` — Counterparty
-- **Definition**: MiFIR RTS 22: the execution counterparty on a reportable transaction.
-- **Realized by**: — (context only, not bound in this schema)
-- **Relation**: broader → `party`
-- **Relation**: distinct from → `counterparty.emir`
+— **Definition**: MiFIR RTS 22: the execution counterparty on a reportable transaction.
+— **Realized by**: — (context only, not bound in this schema)
+— **Relation**: broader → `party`
+— **Relation**: distinct from → `counterparty.emir`
 
 ### `party` — party
-- **Definition**: A legal person able to enter contracts.
-- **Realized by**: — (context only, not bound in this schema)
+— **Definition**: A legal person able to enter contracts.
+— **Realized by**: — (context only, not bound in this schema)
 
 ## Disambiguation
 
 The surface forms below are claimed by more than one distinct concept. Always
-resolve by concept id, never by label.
+resolve by concept id, never by labeling it.
 
-### "counterparty" — 2 distinct concepts
-- `counterparty.emir` (emir_trades, emir_trades.cpty): EMIR Art. 2(8): a party
+### "counterparty" — two distinct concepts
+— `counterparty.emir` (emir_trades, emir_trades.cpty): EMIR Art. 2(8): a party
   to a derivative contract, including CCPs.
-- `counterparty.mifir` (not bound here): MiFIR RTS 22: the execution
+— `counterparty.mifir` (not bound here): MiFIR RTS 22: the execution
   counterparty on a reportable transaction.
 
 Do not treat these as equivalent; do not join or compare their columns as if
@@ -136,7 +136,7 @@ they carried the same meaning.
 
 The `## Disambiguation` section is `find_homonyms()` surfaced: every label or synonym claimed by more than one concept, with the instruction an agent needs. You can also call `reg.find_homonyms()` yourself — it returns `dict[str, list[str]]`, surface form to concept ids — for CI checks or your own rendering.
 
-In the **OSI export**, the same closure rides in the model-level `custom_extensions` under the `SEMANTIDO` vendor, including relations and per-concept `definition_checksum`s. The **JSON export** carries it as a top-level `concepts` key. And independent of any schema, the registry serializes to a sidecar document:
+In the **Apache Ossie export**, the same closure rides in the model-level `custom_extensions` under the `SEMANTIDO` vendor, including relations and per-concept `definition_checksum`s. The **JSON export** carries it as a top-level `concepts` key. And independent of any schema, the registry serializes to a sidecar document:
 
 ```python
 reg.to_yaml("concepts.yaml")
@@ -156,7 +156,7 @@ shared.to_yaml("emir_concepts.yaml")
 
 Handles deliberately do **not** transfer between registries — a `Concept` from one registry used in another's `concept()` call raises. Exchange happens through serialized documents, not shared Python objects, which is what keeps a registry auditable as a unit.
 
-What semantido ships is the registry, the closure, and the exports. **Cross-registry alignment — computing which of *your* concepts corresponds to which of *theirs* — is deliberately not a library feature.** A reference alignment protocol (SKOS relation composition with weakest-link semantics) is demonstrated in [`examples/04_federated_agents`](https://github.com/hikarilabs/semantido/tree/main/examples/04_federated_agents), where it takes silent cross-institution errors from 2 to 0 in a two-bank EMIR/MiFIR experiment. It lives in examples because alignment policy — how much composition you trust, where you cap confidence — is a decision your governance should own, not one a library should freeze.
+What semantido ships is the registry, the closure, and the exports. **Cross-registry alignment — computing which of *your* concepts corresponds to which of *theirs* — is deliberately not a library feature.** A reference alignment protocol (SKOS relation composition with weakest-link semantics) is demonstrated in [`examples/04_federated_agents`](https://github.com/hikarilabs/semantido/tree/main/examples/04_federated_agents), where it takes silent cross-institution errors from 2 to 0 in a two-bank EMIR/MiFIR experiment. It lives in example because of alignment policy — how much composition you trust, where you cap confidence — is a decision your governance should own, not one a library should freeze.
 
 ## What to register (and what not to)
 
@@ -164,7 +164,7 @@ The registry earns its keep on concepts that are **contested, regulated, or coll
 
 Register: concepts with a legal definition (EMIR/MiFIR/SFTR terms), homonyms across regimes or departments, concepts you map to an external ontology, and concepts two schemas must agree on.
 
-Skip: concepts that exist in one table with one uncontested meaning. `orders` does not need a concept; its table description already says everything. A registry of four hundred trivially-true concepts buries the six that matter.
+Skip: concepts that exist in one table with one uncontested meaning. `orders` does not need a concept; its table description already says everything. A registry of four hundred trivially true concepts buries the six that matter.
 
 ## In short
 

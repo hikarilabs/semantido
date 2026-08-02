@@ -8,7 +8,7 @@ Each test pins one defect found by running OSI Foundation section 6.4
 cardinality inference against the exporter's own output:
 
 1. Composite primary keys were truncated to their first column -- a false
-   uniqueness assertion. Under OSI's trust-but-don't-validate principle an
+   uniqueness assertion. Under OSI's trust-but-don't-validate principle, an
    engine would infer 1:1 where reality is N:1 and skip fan-out protection,
    producing silently doubled aggregates (a Semantic 2 violation caused by
    the producer).
@@ -25,7 +25,7 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 
 from semantido import SemanticBase, semantic_table
 from semantido.generators.semantic_bridge import SQLAlchemySemanticBridge
-from semantido.exporters import to_osi_dict
+from semantido.exporters import to_ossie_dict
 
 
 class _Base(SemanticBase, DeclarativeBase):
@@ -70,7 +70,7 @@ class _OrderLine(_Base):
 def osi_model():
     bridge = SQLAlchemySemanticBridge(_Base)
     layer = bridge.sync_from_models()
-    return to_osi_dict(layer, "producer_conformance")["semantic_model"][0]
+    return to_ossie_dict(layer, "producer_conformance")["semantic_model"][0]
 
 
 @pytest.fixture(scope="module")

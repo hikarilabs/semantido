@@ -5,7 +5,7 @@ description: The three delivery paths — prompt context, structured JSON, and i
 
 # How does an agent consume semantido context?
 
-semantido produces a document. It does not decide how that document reaches a model. That decision is yours, and it has more consequence than most teams expect.
+`semantido` produces a document. It does not decide how that document reaches a model. That decision is yours, and it has more consequences than most teams expect.
 
 There are three paths, and they are not interchangeable.
 
@@ -27,7 +27,7 @@ Rules: return only SQL. Respect all application rules stated above.
 
 **Use when:** the whole schema fits comfortably in context — roughly up to 30–50 tables, depending on how richly annotated they are.
 
-**The failure mode is silent.** As the schema grows, the model doesn't error, it just starts attending less well to any given table. Accuracy degrades gradually and you will not get a signal. Watch for it; measure it.
+**The failure mode is silent.** As the schema grows, the model doesn't error; it just starts attending less well to any given table. Accuracy degrades gradually, and you will not get a signal. Watch for it; measure it.
 
 ## Path 2 — Retrieval over the layer
 
@@ -62,19 +62,19 @@ See [Integrations](../integrations/overview.md) for the current state of `semant
 
 ## What the agent does not get
 
-Worth being explicit, because it shapes what you build on top:
+Worth being explicit because it shapes what you build on top:
 
-- **No execution.** semantido never connects to your database. It cannot tell an agent whether the SQL ran, or what came back.
+- **No execution.** semantido never connects to your database. It cannot tell an agent whether the SQL ran or what came back.
 - **No validation.** It will not check the generated SQL against the schema. Do that yourself with `EXPLAIN` or a parser.
 - **No retry loop, no repair, no memory.** If the first attempt is wrong, semantido has nothing to say about the second.
 
-These are the responsibilities of the pipeline around semantido, not the library. It is a context source, and it tries to be a very good one, and nothing else.
+These are the responsibilities of the pipeline around semantido, not the library. It is a context source, and it tries to be great, and nothing else.
 
 ## Choosing
 
-| Situation | Path |
-|---|---|
-| < ~30 tables, one agent | Markdown in prompt |
-| Large schema, or many domains | Retrieval |
-| Multiple agents, or access control matters | MCP |
-| A BI tool or catalog is the consumer | [OSI export](../guides/osi.md) |
+| Situation                                  | Path                                    |
+|--------------------------------------------|-----------------------------------------|
+| < ~30 tables, one agent                    | Markdown in prompt                      |
+| Large schema, or many domains              | Retrieval                               |
+| Multiple agents, or access control matters | MCP                                     |
+| A BI tool or catalog is the consumer       | [Apache Ossie export](../guides/ossie.md) |

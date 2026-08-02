@@ -5,32 +5,32 @@ description: What semantido is for, what it is not, and how it differs from the 
 
 # Why semantido? (and how it compares)
 
-semantido is **code-native semantic layer authoring**: a way to declare what your schema means, next to the SQLAlchemy models that define it, and export that meaning to whatever consumes it. This page is the honest version — what it is for, what it is *not*, and where it loses.
+`semantido` is **code-native semantic layer authoring**: a way to declare what your schema means, next to the SQLAlchemy models that define it, and export that meaning to whatever consumes it. This page is the honest version — what it is for, what it is *not*, and where it loses.
 
 ## The problem semantido solves
 
-Agents are everywhere: Claude Code, Cursor, ChatGPT, LangChain pipelines, in-house copilots. None of them know what your data *means*. Point one at a warehouse and it writes confident, plausible, wrong SQL, because the meaning it needs never got written down anywhere it can read.
+Agents are everywhere: Claude Code, Cursor, ChatGPT, LangChain pipelines, in-house copilots. None of them know what your data *means*. Point one at a warehouse, and it writes confident, plausible, wrong SQL, because the meaning it needs never got written down anywhere it can read.
 
 The specific things a schema doesn't say are remarkably consistent:
 
 - bridge tables that fan out and silently double-count
-- amount columns whose sign convention lives in a separate code column
+- amount columns whose sign convention is living in a separate code column
 - three different columns that all look like "the amount"
 - four different columns that all look like "the date"
 
-semantido's answer is narrow on purpose: put that meaning in the model file, and get a deterministic artifact out.
+`semantido's` answer is narrow on purpose: put that meaning in the model file and get a deterministic artifact out.
 
 ## How semantido compares
 
-|  | Raw DDL in the prompt | A YAML semantic layer (dbt, Cube) | A semantic layer platform (Wren, AtScale) | **semantido** |
-|---|---|---|---|---|
-| Describes what columns *mean* | ❌ | ✅ | ✅ | ✅ |
-| Cannot drift from the schema | ✅ | ❌ | ❌ | ✅ |
-| Reviewed in the same PR as the migration | ✅ | ❌ | ❌ | ✅ |
-| Runs queries / serves results | ❌ | ✅ | ✅ | ❌ |
-| Ships a UI | ❌ | ❌ | ✅ | ❌ |
-| Vendor-neutral export | n/a | partial | partial | ✅ (OSI) |
-| Works without SQLAlchemy | ✅ | ✅ | ✅ | ❌ |
+|                                          | Raw DDL in the prompt | A YAML semantic layer (dbt, Cube) | A semantic layer platform (Wren, AtScale) | **semantido**         |
+|------------------------------------------|-----------------------|-----------------------------------|-------------------------------------------|-----------------------|
+| Describes what columns *mean*            | ❌                     | ✅                                 | ✅                                         | ✅                     |
+| Cannot drift from the schema             | ✅                     | ❌                                 | ❌                                         | ✅                     |
+| Reviewed in the same PR as the migration | ✅                     | ❌                                 | ❌                                         | ✅                     |
+| Runs queries / serves results            | ❌                     | ✅                                 | ✅                                         | ❌                     |
+| Ships a UI                               | ❌                     | ❌                                 | ✅                                         | ❌                     |
+| Vendor-neutral export                    | n/a                   | partial                           | partial                                   | ✅ (Full Apache Ossie) |
+| Works without SQLAlchemy                 | ✅                     | ✅                                 | ✅                                         | ❌                     |
 
 Distinctions worth being precise about:
 
@@ -51,7 +51,7 @@ Distinctions worth being precise about:
 - **SQLAlchemy is not your source of truth.** If your models are generated from the warehouse, or the tables are owned by a dbt project, or your Python service reads tables it doesn't define, code-native authoring is the wrong shape. Use a warehouse-side layer.
 - **You need query execution, caching, or aggregation.** semantido never touches your database. It reads mappers, not data.
 - **You want a UI.** There isn't one, and there isn't going to be one.
-- **You need cross-warehouse metric federation.** That is a platform problem.
+- **You need a cross-warehouse metric federation.** That is a platform problem.
 
 ## Where to go next
 

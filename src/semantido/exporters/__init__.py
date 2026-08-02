@@ -25,7 +25,7 @@ from semantido.exporters.markdown_exporter import (
     to_markdown_schema,
     to_markdown_tables,
 )
-from semantido.exporters.osi_exporter import to_osi_dict, to_osi_yaml
+from semantido.exporters.ossie_exporter import to_ossie_dict, to_ossie_yaml
 from semantido.exporters.groundings_exporter import (
     load_groundings,
     to_groundings_dict,
@@ -42,8 +42,8 @@ __all__ = [
     "to_markdown_file",
     "to_markdown_schema",
     "to_markdown_tables",
-    "to_osi_dict",
-    "to_osi_yaml",
+    "to_ossie_dict",
+    "to_ossie_yaml",
     "load_groundings",
     "to_groundings_dict",
     "to_groundings_file",

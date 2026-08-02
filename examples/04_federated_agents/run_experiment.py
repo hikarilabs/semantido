@@ -117,7 +117,7 @@ MESSAGES = [
                 "measure": "transaction_amount",
             },
         ),
-        # Only obstacle is the fibo pin mismatch: semantically the same
+        # The only obstacle is the fibo pin mismatch: semantically the same
         # concept, so answering {asset_class, notional} is defensible AND
         # a conservative refusal (re-verify against re-pinned fibo) is
         # defensible. Both accepted; what differs is auditability.

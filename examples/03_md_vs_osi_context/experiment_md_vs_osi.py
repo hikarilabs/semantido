@@ -46,7 +46,7 @@ from semantido import SemanticDeclarativeBase
 from semantido.exporters import (
     to_markdown,
     to_markdown_schema,
-    to_osi_yaml,
+    to_ossie_yaml,
 )
 
 from dotenv import load_dotenv
@@ -132,7 +132,7 @@ def build_contexts() -> dict[str, str]:
 
     md = to_markdown(layer, include=("schema", "enriched"))
     md_schema = to_markdown_schema(layer)
-    osi = to_osi_yaml(
+    osi = to_ossie_yaml(
         layer,
         model_name="core_banking_analytics",
         instructions=(
@@ -143,9 +143,9 @@ def build_contexts() -> dict[str, str]:
 
     # Since the split-exporters patch, the enrichment signals this
     # experiment used to append by hand (primary/secondary time
-    # dimensions, grains, default filters, glossary) are native exporter
+    # dimensions, grains, default filters, glossary) have been native exporter
     # output: MD *is* the old MD_ENRICHED. The content-effect comparison
-    # is now expressed as tiers -- md_schema (structure only) vs md
+    # is now expressed as tiers -- md_schema (structure only) vs. md
     # (structure + enrichment) -- at exactly constant format.
     contexts = {"md": md, "osi": osi, "md_schema": md_schema}
     OUT.mkdir(exist_ok=True)

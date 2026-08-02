@@ -15,7 +15,7 @@
 """End-to-end tests for concept binding: decorator -> bridge -> layer -> OSI.
 
 The fixture models the registry's motivating case: an EMIR-style and a
-MiFIR-style table whose "counterparty" columns are homonyms — same surface
+MiFIR-style table whose "counterparty" columns are homonyms, the same surface
 form, legally distinct definitions — bound to two distinct concepts that
 declare DISTINCT_FROM.
 """
@@ -34,7 +34,7 @@ from semantido import (
     semantic_table,
 )
 from semantido.concepts import narrow_match
-from semantido.exporters import to_osi_dict
+from semantido.exporters import to_ossie_dict
 
 
 def _registry() -> ConceptRegistry:
@@ -192,7 +192,7 @@ class TestOsiExport:
     def test_concepts_travel_in_extensions(self):
         base = _build_models()
         layer = base.sync_semantic_layer(concept_registry=_registry())
-        doc = to_osi_dict(layer, model_name="regreport")
+        doc = to_ossie_dict(layer, model_name="regreport")
         model = doc["semantic_model"][0]
 
         # model-level: subset registry with only referenced concepts + sources
@@ -217,7 +217,7 @@ class TestOsiExport:
     def test_no_registry_no_concept_payload(self):
         base = _build_models()
         layer = base.sync_semantic_layer()
-        doc = to_osi_dict(layer, model_name="regreport")
+        doc = to_ossie_dict(layer, model_name="regreport")
         model_ext = self._ext(doc["semantic_model"][0])
         assert "concept_registry" not in model_ext
-        assert model_ext["exporter"] == "semantido.exporters.osi"
+        assert model_ext["exporter"] == "semantido.exporters.ossie"

@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Exports a SemanticLayer to the Open Semantic Interchange (OSI) format.
+"""Exports a SemanticLayer to the Open Semantic Interchange (Apache Ossie) format.
 
-OSI (https://open-semantic-interchange.org, core spec v0.2.x) is a
+Apache Ossie (https://open-semantic-interchange.org, core spec v0.2.x) is a
 vendor-neutral YAML interchange format for semantic models, backed by
 Snowflake, Databricks, dbt Labs, Salesforce, and 50+ other organizations.
-This module lets semantido act as an OSI model converter: semantics are
+This module lets semantido act as an Apache Ossie model converter: semantics are
 authored code-native next to the SQLAlchemy models (the inner loop) and
-emitted as OSI YAML for the wider stack to consume (the outer loop).
+emitted as an Apache Ossie YAML for the wider stack to consume (the outer loop).
 
 Mapping summary::
 
-    SemanticLayer OSI
+    SemanticLayer - Apache Ossie
     -------------            ---
     Table                    dataset (source = schema.table)
     Column                   field (ANSI_SQL expression)
@@ -32,7 +32,7 @@ Mapping summary::
     business_context         dataset ai_context.instructions
     synonyms                 ai_context.synonyms
     time_dimension           field dimension.is_time + PRIMARY marker
-    PrivacyLevel             SEMANTIDO custom_extensions (no OSI core field)
+    PrivacyLevel             SEMANTIDO custom_extensions (no Apache Ossie core field)
     sample_values            SEMANTIDO custom_extensions
     sql_filters              SEMANTIDO custom_extensions
     application_rules        field ai_context.instructions
@@ -45,7 +45,7 @@ Time-dimension policy
 
 * The table's declared ``time_dimension`` column is flagged
   ``dimension.is_time: true`` and marked as the PRIMARY time axis in
-  ``ai_context`` plus an `` SEMANTIDO `` extension (OSI core has no
+  ``ai_context`` plus an `` SEMANTIDO `` extension (Apache Ossie core has no
   primary-axis or grain concept).
 * Columns with ``is_time_dimension=True`` are flagged as secondary axes.
 * Remaining temporal columns (DATE/TIMESTAMP) are flagged unless their
@@ -56,13 +56,13 @@ Time-dimension policy
 
 Usage:
 
-    from semantido.exporters import to_osi_yaml
+    from semantido.exporters import to_ossie_yaml
 
     layer = MyBase.sync_semantic_layer()
-    to_osi_yaml(layer, model_name="core_banking", path="model.osi.yaml")
+    to_ossie_yaml(layer, model_name="core_banking", path="model.ossie.yaml")
 
-PyYAML is an optional dependency (``pip install semantido[osi]``);
-``to_osi_dict`` works without it.
+PyYAML is an optional dependency (``pip install semantido[ossie]``);
+``to_ossie_dict`` works without it.
 """
 
 import json
@@ -78,9 +78,9 @@ from semantido.generators.semantic_layer import (
     Table,
 )
 
-# Must match the `const` in osi-schema.json exactly; the schema pins the
+# Must match the `const` in an Apache ossie-schema.json exactly; the schema pins the
 # full version string including pre-release tags.
-OSI_SPEC_VERSION = "0.2.0.dev0"
+APACHE_OSSIE_SPEC_VERSION = "0.2.0.dev0"
 DEFAULT_DIALECT = "ANSI_SQL"
 VENDOR = "SEMANTIDO"
 
@@ -99,7 +99,7 @@ DEFAULT_AUDIT_PATTERN = re.compile(
 def _vendor_extension(payload: dict[str, Any]) -> dict[str, str]:
     """Wraps semantido metadata as a spec-conformant custom extension.
 
-    The OSI schema requires custom extensions to be exactly
+    The Apache Ossie schema requires custom extensions to be exactly
     ``{vendor_name: str, data: str}`` where ``data`` is a serialized JSON
     string; flattened keys fail schema validation.
     """
@@ -109,25 +109,25 @@ def _vendor_extension(payload: dict[str, Any]) -> dict[str, str]:
     }
 
 
-def to_osi_dict(
+def to_ossie_dict(
     semantic_layer: SemanticLayer,
     model_name: str,
     description: Optional[str] = None,
     instructions: Optional[str] = None,
     audit_pattern: re.Pattern = DEFAULT_AUDIT_PATTERN,
 ) -> dict:
-    """Converts a SemanticLayer into an OSI semantic model document.
+    """Converts a SemanticLayer into an Apache Ossie semantic model document.
 
     Args:
         semantic_layer: The synchronized layer, e.g., from `sync_semantic_layer()`.
-        model_name: The OSI `semantic_model` name.
+        model_name: The Appache Ossie `semantic_model` name.
         description: Optional model-level description.
         instructions: Optional model-level `ai_context` instructions.
         audit_pattern: Regex deciding which temporal columns are demoted to
             audit timestamps. Pass `re.compile(r"$^")` to disable demotion.
 
     Returns:
-        dict: The OSI document, ready for YAML/JSON serialization.
+        dict: The Apache Ossie document, ready for YAML/JSON serialization.
     """
     model: dict[str, Any] = {"name": model_name}
     if description:
@@ -146,7 +146,7 @@ def to_osi_dict(
     if ai_context:
         model["ai_context"] = ai_context
 
-    model_ext: dict[str, Any] = {"exporter": "semantido.exporters.osi"}
+    model_ext: dict[str, Any] = {"exporter": "semantido.exporters.ossie"}
     referenced = {
         table.concept for table in semantic_layer.tables.values() if table.concept
     } | {
@@ -168,41 +168,41 @@ def to_osi_dict(
         for table in semantic_layer.tables.values()
     ]
 
-    relationships = _relationships_to_osi(semantic_layer.relationships)
+    relationships = _relationships_to_ossie(semantic_layer.relationships)
     if relationships:
         model["relationships"] = relationships
 
-    return {"version": OSI_SPEC_VERSION, "semantic_model": [model]}
+    return {"version": APACHE_OSSIE_SPEC_VERSION, "semantic_model": [model]}
 
 
-def to_osi_yaml(
+def to_ossie_yaml(
     semantic_layer: SemanticLayer,
     model_name: str,
     path: Optional[str] = None,
     **kwargs,
 ) -> str:
-    """Serializes a SemanticLayer to OSI YAML, optionally writing it to a file.
+    """Serializes a SemanticLayer to an Apache Ossie YAML, optionally writing it to a file.
 
-    Requires PyYAML (``pip install semantido[osi]``).
+    Requires PyYAML (``pip install semantido[ossie]``).
 
     Args:
         semantic_layer: The synchronized layer.
-        model_name: The OSI `semantic_model` name.
+        model_name: The Apache Ossie `semantic_model` name.
         path: Optional filesystem path to also write the YAML to.
-        **kwargs: Forwarded to `to_osi_dict`.
+        **kwargs: Forwarded to `to_ossie_dict`.
 
     Returns:
-        str: The OSI document as YAML text.
+        str: The Apache Ossie document as YAML text.
     """
     try:
         import yaml  # pylint: disable=C0415
     except ImportError as exc:  # pragma: no cover
         raise ImportError(
-            "PyYAML is required for OSI YAML export. "
-            "Install it with: pip install semantido[osi]"
+            "PyYAML is required for Apache Ossie YAML export. "
+            "Install it with: pip install semantido[ossie]"
         ) from exc
 
-    doc = to_osi_dict(semantic_layer, model_name=model_name, **kwargs)
+    doc = to_ossie_dict(semantic_layer, model_name=model_name, **kwargs)
     text = yaml.safe_dump(doc, sort_keys=False, allow_unicode=True, width=88)
     if path is not None:
         with open(path, "w", encoding="utf-8") as f:
@@ -221,7 +221,7 @@ def _table_to_dataset(table: Table, audit_pattern: re.Pattern) -> dict:
     if table.primary_key:
         dataset["primary_key"] = list(table.primary_key)
     if table.unique_keys:
-        # OSI Foundation section 6.4 infers relationship cardinality from
+        # Apache Ossie Foundation section 6.4 infers relationship cardinality from
         # declared keys; omitting a unique key degrades every relationship
         # targeting those columns to worst-case N:N.
         dataset["unique_keys"] = [list(key) for key in table.unique_keys]
@@ -329,11 +329,11 @@ def _build_field_extension(column: Column, is_primary: bool) -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 # Relationships                                                               #
 # --------------------------------------------------------------------------- #
-def _relationships_to_osi(relationships: list[Relationship]) -> list[dict]:
+def _relationships_to_ossie(relationships: list[Relationship]) -> list[dict]:
     """Converts relationships, deduplicating the two ORM directions.
 
     SQLAlchemy emits both sides of a bidirectional relationship (ONE_TO_MANY
-    and MANY_TO_ONE). OSI relationships are join definitions, so only one is
+    and MANY_TO_ONE). Apache Ossie relationships are join definitions, so only one is
     exported per join condition.
     """
     seen: set[frozenset] = set()
@@ -345,7 +345,7 @@ def _relationships_to_osi(relationships: list[Relationship]) -> list[dict]:
             continue
         seen.add(key)
 
-        # OSI section 4.4 requires `from` = many/FK side, `to` = one/PK-UK
+        # Apache Ossie section 4.4 requires `from` = many/FK side, `to` = one/PK-UK
         # side. SQLAlchemy declares each relationship on the class that owns
         # the attribute, so a parent-declared one-to-many arrives inverted;
         # normalize it here (many-to-one from the FK side is the same edge).

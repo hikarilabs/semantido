@@ -100,7 +100,7 @@ class Column:
     references: Optional[str] = None  # Format: table.column
     application_rules: Optional[list[str]] = None
 
-    # OSI Extended Field
+    # Apache Ossie Extended Field
     is_time_dimension: Optional[bool] = False
     time_grain: Optional[TimeGrain] = None
 
@@ -124,7 +124,7 @@ class Table:
         primary_key: The primary key column names (composite keys keep
             every member column, in declaration order).
         unique_keys: Additional unique constraints, one list of column
-            names per constraint. Feeds OSI cardinality inference:
+            names per constraint. Feeds Apache Ossie cardinality inference:
             an omitted unique key degrades relationships targeting those
             columns to worst-case N:N.
         schema: The database schema to which the table belongs.
@@ -145,7 +145,7 @@ class Table:
     application_context: Optional[str] = None
     business_context: Optional[str] = None
 
-    # OSI Extended Field
+    # Apache Ossie Extended Field
     time_dimension: Optional[str] = None
 
     # Concept tier (v0.4.0): id of the registered concept this table realizes

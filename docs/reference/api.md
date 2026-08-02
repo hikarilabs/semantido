@@ -25,7 +25,7 @@ from semantido import (
 
 ### `SemanticBase`
 
-Mixin, if you already have a base:
+Mixin if you already have a base:
 
 ```python
 class Base(SemanticBase, DeclarativeBase):
@@ -62,7 +62,7 @@ Full semantics in the [semantic metadata reference](semantic-metadata.md).
 from semantido.exporters import (
     to_json, to_json_file,
     to_markdown, to_markdown_file,
-    to_osi_dict, to_osi_yaml,
+    to_ossie_dict, to_ossie_yaml,
 )
 ```
 
@@ -85,10 +85,10 @@ to_markdown_file(layer: SemanticLayer, file_path: str,
 
 `table=True` emits the table-shaped variant instead of the nested-list one. The function behind it, `to_markdown_table`, is importable from `semantido.exporters.markdown_exporter` but isn't part of the top-level export surface — treat it as less stable.
 
-### OSI
+### Apache Ossie
 
 ```python
-to_osi_dict(
+to_ossie_dict(
     semantic_layer: SemanticLayer,
     model_name: str,
     description: str | None = None,
@@ -96,24 +96,24 @@ to_osi_dict(
     audit_pattern: re.Pattern = DEFAULT_AUDIT_PATTERN,
 ) -> dict
 
-to_osi_yaml(
+to_ossie_yaml(
     semantic_layer: SemanticLayer,
     model_name: str,
     path: str | None = None,
-    **kwargs,          # forwarded to to_osi_dict
+    **kwargs,          # forwarded to to_ossie_dict
 ) -> str
 ```
 
-`to_osi_yaml` requires PyYAML (`pip install 'semantido[osi]'`) and raises a clear `ImportError` without it. `to_osi_dict` doesn't. Returns the YAML text whether or not `path` is given.
+`to_ossie_yaml` requires PyYAML (`pip install 'semantido[ossie]'`) and raises a clear `ImportError` without it. `to_ossie_dict` doesn't. Returns the YAML text whether `path` is given.
 
-Constants in `semantido.exporters.osi_exporter`:
+Constants in `semantido.exporters.ossie_exporter`:
 
-| | |
-|---|---|
-| `OSI_SPEC_VERSION` | `"0.2.0.dev0"` |
-| `DEFAULT_DIALECT` | `"ANSI_SQL"` |
-| `VENDOR` | `"SEMANTIDO"` |
-| `DEFAULT_AUDIT_PATTERN` | `created`/`updated`/`modified`/`inserted`/`deleted`/`loaded`/`ingested`/`processed`/`synced`/`etl`, optional `_at`/`_on`/`_ts`/`_time`/`_timestamp`/`_date` suffix, case-insensitive |
+|                             |                                                                                                                                                                                      |
+|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `APACHE_OSSIE_SPEC_VERSION` | `"0.2.0.dev0"`                                                                                                                                                                       |
+| `DEFAULT_DIALECT`           | `"ANSI_SQL"`                                                                                                                                                                         |
+| `VENDOR`                    | `"SEMANTIDO"`                                                                                                                                                                        |
+| `DEFAULT_AUDIT_PATTERN`     | `created`/`updated`/`modified`/`inserted`/`deleted`/`loaded`/`ingested`/`processed`/`synced`/`etl`, optional `_at`/`_on`/`_ts`/`_time`/`_timestamp`/`_date` suffix, case-insensitive |
 
 ## Data model
 
@@ -196,14 +196,14 @@ from semantido.concepts import (
 
 ### `ConceptRegistry`
 
-| Method | Purpose |
-|---|---|
+| Method                                                                                                                                                                 | Purpose                                                                                                                                                       |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `concept(concept_id, definition, *, label=None, synonyms=None, broader=None, narrower=None, same_as=None, related=None, distinct_from=None, external=None) -> Concept` | The only authoring path. Relation kwargs take `Concept` handles (or iterables); symmetric relations (`same_as`, `related`, `distinct_from`) auto-reciprocate. |
-| `add_source(source: OntologySource) -> None` | Registers a pinned external ontology release. |
-| `find_homonyms() -> dict[str, list[str]]` | Labels/synonyms claimed by more than one concept → their ids. |
-| `subset(concept_ids: set[str]) -> ConceptRegistry` | Self-contained sub-registry closed over the ids via relations. |
-| `validate() -> None` | Referential checks; collects all violations, raises once. |
-| `to_dict()` / `to_yaml(path=None)` | Serialization; YAML is the sidecar `concepts.yaml` form. |
+| `add_source(source: OntologySource) -> None`                                                                                                                           | Registers a pinned external ontology release.                                                                                                                 |
+| `find_homonyms() -> dict[str, list[str]]`                                                                                                                              | Labels/synonyms claimed by more than one concept → their ids.                                                                                                 |
+| `subset(concept_ids: set[str]) -> ConceptRegistry`                                                                                                                     | Self-contained sub-registry closed over the ids via relations.                                                                                                |
+| `validate() -> None`                                                                                                                                                   | Referential checks; collects all violations, raises once.                                                                                                     |
+| `to_dict()` / `to_yaml(path=None)`                                                                                                                                     | Serialization; YAML is the sidecar `concepts.yaml` form.                                                                                                      |
 
 ### `Concept`
 
@@ -222,10 +222,10 @@ OntologySource(name: str, namespace: str, version: str,
 
 `exact_match(source, target, because=None)` and siblings (`close_match`, `narrow_match`, `broad_match`, `related_match`) each build an `ExternalMapping` carrying its SKOS relation — an untyped mapping is unrepresentable.
 
-Full behaviour and worked example: [The concept registry](../guides/concept-registry.md).
+Full behavior and worked example: [The concept registry](../guides/concept-registry.md).
 
 ## Requirements
 
 Current release: **0.4.0**. Python ≥ 3.11 · SQLAlchemy ≥ 2.0 · typing-extensions ≥ 4.5
 
-Extras: `osi` (PyYAML), `dev`, `publish`.
+Extras: `ossie` (PyYAML), `dev`, `publish`.

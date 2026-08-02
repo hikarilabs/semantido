@@ -10,7 +10,7 @@ Baseline (all mutations off) is a faithful generator: dimension-style ids
 survivable), glossary definitions carried verbatim, glossary relations
 honored, per-source pins copied.
 
-Five injectable mutations, each a documented real-world generator failure:
+Five injectable mutations, each is a documented real-world generator failure:
 
   id_rename              gratuitous rename beyond prefix convention
   definition_paraphrase  definitions rephrased/truncated by the pipeline
@@ -59,7 +59,7 @@ RENAMES = {"counterparty_emir": "trading_party", "notional": "contract_value"}
 
 
 #: Generated realized_by mapping table (generators emit mapping tables,
-#: not decorators): physical column -> generated concept id.
+# not decorators): physical column -> generated concept id.
 def realized_map(mutations: Mutations) -> dict[str, str]:
     ids = {t: _gen_id(t, mutations) for t in GLOSSARY["terms"]}
     mapping = {

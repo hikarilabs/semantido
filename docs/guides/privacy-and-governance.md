@@ -5,7 +5,7 @@ description: What privacy_level and sql_filters do — and, more importantly, wh
 
 # Privacy and governance
 
-semantido carries two governance-shaped annotations. Both are **advisory**. Understanding that precisely is the difference between using them well and shipping a false sense of security.
+`semantido` carries two governance-shaped annotations. Both are **advisory**. Understanding that precisely is the difference between using them well and shipping a false sense of security.
 
 ## Privacy levels
 
@@ -19,7 +19,7 @@ class Customer(SemanticDeclarativeBase):
 
 Four levels: `PUBLIC`, `INTERNAL`, `RESTRICTED`, `CONFIDENTIAL`.
 
-The level travels into every export — as a suffix in Markdown (`**email** (VARCHAR, confidential)`), as a field in JSON, and as a vendor extension in OSI:
+The level travels into every export — as a suffix in Markdown (`**email** (VARCHAR, confidential)`), as a field in JSON, and as a vendor extension in Apache Ossie:
 
 ```yaml
 custom_extensions:
@@ -29,7 +29,7 @@ custom_extensions:
 
 ## What this does not do
 
-**It does not restrict access.** semantido never touches your database. A `CONFIDENTIAL` label on `email` does not stop an agent selecting it, does not stop the query running, and does not stop the value reaching a user. It is a string in a document.
+**It does not restrict access.** `semantido` never touches your database. A `CONFIDENTIAL` label on `email` does not stop an agent selecting it, does not stop the query running, and does not stop the value reaching a user. It is a string in a document.
 
 Same for `sql_filters`:
 
@@ -40,10 +40,10 @@ Same for `sql_filters`:
 )
 ```
 
-This is a **hint** that lands in the export. semantido does not inject it, does not rewrite queries, and cannot verify a generated query respects it. A model can ignore it and sometimes will.
+This is a **hint** that lands in the export. `semantido` does not inject it, does not rewrite queries, and cannot verify a generated query respects it. A model can ignore it and sometimes will.
 
 !!! danger "Do not use these as security controls"
-    Tenancy isolation belongs in a database role and row-level security policy. If your multi-tenant safety depends on an LLM honouring a prompt instruction, you do not have multi-tenant safety.
+    Tenancy isolation belongs in a database role and row-level security policy. If your multi-tenant safety depends on an LLM honoring a prompt instruction, you do not have multi-tenant safety.
 
     Enforce in the database. Annotate so the model doesn't fight the enforcement.
 
@@ -51,7 +51,7 @@ This is a **hint** that lands in the export. semantido does not inject it, does 
 
 Given that, why bother?
 
-**They make the agent's SQL match the policy the database enforces.** An agent that knows about `tenant_id` writes queries that RLS lets through. An agent that doesn't writes queries that come back empty and then retries, confused. Same security, fewer wasted round-trips.
+**They make the agent's SQL match the policy the database enforces.** An agent that knows about `tenant_id` writes queries that RLS lets through. An agent that doesn't write queries that come back empty and then retries, confused. Same security, fewer wasted round-trips.
 
 **They let you build the real control on top.** The privacy level is machine-readable, which is the point. You can filter the layer before it ever reaches the model:
 
@@ -72,7 +72,7 @@ Now the confidential columns are not in the prompt at all. The model cannot sele
 
 This is the strongest use of `privacy_level`, and it is why the annotation exists.
 
-**They document the classification where it can be reviewed.** When someone adds a column carrying personal data and labels it `PUBLIC`, that's a line in a diff a reviewer can catch. Compare to the same decision living in a data catalog nobody opens.
+**They document the classification where it can be reviewed.** When someone adds a column carrying personal data and labels it `PUBLIC`, that's a line in a diff a reviewer can catch. Compare to the same decision living in a data catalog, nobody opens.
 
 ## Auditability
 
@@ -84,7 +84,7 @@ In a regulated environment this is the difference between an explanation and a f
 
 Make it real:
 
-- Commit the generated export (`model.osi.yaml`, or the Markdown). Diffs on it are semantic changes, isolated from code churn.
+- Commit the generated export (`model.ossie.yaml`, or the Markdown). Diffs on it are semantic changes, isolated from code churn.
 - Put model files behind CODEOWNERS if definitions need a named approver.
 - Fail CI when a column arrives with no description. See [Versioning and CI](versioning-and-ci.md).
 

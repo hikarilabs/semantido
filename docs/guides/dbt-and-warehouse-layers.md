@@ -11,20 +11,20 @@ This page is mostly about when **not** to use semantido.
 
 **Which artifact is the source of truth for the schema your agent queries?**
 
-- If it's a **SQLAlchemy model** → semantido is the right shape.
+- If it's an **SQLAlchemy model** → semantido is the right shape.
 - If it's a **dbt model** → author in dbt. semantido would be describing a copy.
 
 That's the whole decision. Everything below is elaboration.
 
 ## Why authoring in the wrong place is worse than not authoring
 
-If dbt owns the marts and you annotate SQLAlchemy models that mirror them, you have rebuilt exactly the problem code-native authoring exists to solve: a description that lives apart from the thing it describes, free to drift.
+If dbt owns the marts, and you annotate SQLAlchemy models that mirror them, you have rebuilt exactly the problem code-native authoring exists to solve: a description that lives apart from the thing it describes, free to drift.
 
-Worse than the YAML case, in fact — at least dbt's YAML is drifting alongside the model it ships with. A SQLAlchemy mirror of a dbt mart drifts across a repository boundary, on a different release cadence, maintained by a different team.
+Worse than the YAML case, in fact — at least dbt's YAML is drifting alongside the model it ships with. An SQLAlchemy mirror of a dbt mart drifts across a repository boundary, on a different release cadence, maintained by a different team.
 
 **Accurate descriptions of the wrong schema are worse than no descriptions.** They make an agent confident.
 
-## The common architectures
+## The common architecture
 
 ### Application database, SQLAlchemy-owned
 
@@ -56,7 +56,7 @@ Two truths, two audiences. Options, in order:
 
 2. **Author in dbt, skip semantido for the analytics surface.** Perfectly reasonable. Use semantido only if you also have agents querying the OLTP side.
 
-3. **Author in both, reconcile via OSI.** Both export OSI; merge downstream. Viable, more moving parts than most teams need, and now you have two places to forget to update.
+3. **Author in both, reconcile via Apache Ossie.** Both export Apache Ossie; merge downstream. Viable, more moving parts than most teams need, and now you have two places to forget to update.
 
 **What not to do:** annotate the OLTP models and point the agent at the warehouse. That's drift with extra steps.
 
@@ -64,20 +64,20 @@ Two truths, two audiences. Options, in order:
 
 Where both exist legitimately, they're doing different jobs:
 
-| | dbt | semantido |
-|---|---|---|
-| Describes | Warehouse marts | Application schema |
-| Authored in | YAML beside the model | Python, on the model |
-| Drift risk | Low within dbt; the YAML ships with the SQL | None — same object |
-| Audience | Analysts, BI, catalogs | Agents, RAG, text-to-SQL |
-| Exports OSI | Increasingly | Yes |
+|                      | dbt                                         | semantido                |
+|----------------------|---------------------------------------------|--------------------------|
+| Describes            | Warehouse marts                             | Application schema       |
+| Authored in          | YAML beside the model                       | Python, on the model     |
+| Drift risk           | Low within dbt; the YAML ships with the SQL | None — same object       |
+| Audience             | Analysts, BI, catalogs                      | Agents, RAG, text-to-SQL |
+| Exports Apache Ossie | Increasingly                                | Yes                      |
 
-OSI is the meeting point. If both sides export it, a downstream consumer can read one merged model without either side adopting the other's tooling.
+Apache Ossie is the meeting point. If both sides export it, a downstream consumer can read one merged model without either side adopting the other's tooling.
 
 ## Cube, AtScale, Wren
 
-Different category. Those are **systems** — they hold definitions, run queries, serve results, cache aggregates. semantido produces a document and goes away.
+Different categories. Those are **systems** — they hold definitions, run queries, serve results, cache aggregates. `semantido` produces a document and goes away.
 
-The interesting composition is feeding them: author in code, export OSI, let the platform execute. You get code-native authoring and drift resistance; they get to do the part semantido has no interest in doing.
+The interesting composition is feeding them: author in code, export Apache Ossie, let the platform execute. You get code-native authoring and drift resistance; they get to do the part semantido has no interest in doing.
 
-Whether that composition is worth it depends on how good their OSI import is this quarter. Check before you architect around it.
+Whether that composition is worth it depends on how good their Apache Ossie import is this quarter. Check before you architect around it.

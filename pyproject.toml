@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-osi = [
+ossie = [
     "PyYAML==6.0.3"
 ]
 lint = [

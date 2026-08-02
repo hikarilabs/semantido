@@ -23,7 +23,7 @@ def build_registry() -> ConceptRegistry:
     registry.add_source(
         OntologySource(name="gleif", namespace="urn:gleif:lei", version="2026-06")
     )
-    # Shared anchor, DIFFERENT pin than Bank B (2025Q3 vs 2026Q1)
+    # Shared anchor, DIFFERENT pin than Bank B (2025Q3 vs. 2026Q1)
     registry.add_source(
         OntologySource(
             name="fibo",

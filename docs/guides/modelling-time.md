@@ -5,9 +5,9 @@ description: Every fact table has four plausible date columns. This is the annot
 
 # Modelling time
 
-Most semantic layer specs treat time as one more dimension. In practice it is the single largest source of silent wrongness in generated SQL.
+Most semantic layer specs treat time as one more dimension. In practice, it is the single largest source of silent wrongness in generated SQL.
 
-The reason is easy to see once stated: every fact table has three or four plausible date columns, and the model has no way to know which one the analyst means.
+The reason is easy to see once stated: every fact table has three- or four-plausible date columns, and the model has no way to know which one the analyst means.
 
 `created_at`, `updated_at`, `completed_at`, `reported_at`, `value_date`, `trade_date`, `settlement_date`.
 
@@ -52,7 +52,7 @@ Values: `SECOND`, `MINUTE`, `HOUR`, `DAY`, `WEEK`, `MONTH`, `QUARTER`, `YEAR`. S
     booking_date_time_grain = "day"      # normalised to TimeGrain.DAY
 ```
 
-Invalid values raise at sync time with the valid list. Declaring a grain finer than the column type supports — `TimeGrain.SECOND` on a `Date` column — emits a warning, since a `DATE` cannot carry sub-day information.
+Invalid values rise at sync time with the valid list. Declaring a grain finer than the column type supports — `TimeGrain.SECOND` on a `Date` column — emits a warning, since a `DATE` cannot carry sub-day information.
 
 `TimeGrain` is ordered, so `TimeGrain.DAY < TimeGrain.MONTH` is `True` if you need to reason about grain in your own code.
 
@@ -75,13 +75,13 @@ class Trade(SemanticDeclarativeBase):
     )
 ```
 
-`time_dimension=` marks the **primary** axis; `<column>_is_time_dimension = True` marks additional ones. In the OSI export the primary is labelled `PRIMARY time dimension for this dataset`, and secondaries are flagged `dimension.is_time` without the primacy claim.
+`time_dimension=` marks the **primary** axis; `<column>_is_time_dimension = True` marks additional ones. In the Apache Ossie export the primary is labelled `PRIMARY time dimension for this dataset`, and secondaries are flagged `dimension.is_time` without the primacy claim.
 
 ## Audit column demotion
 
 This is the part that does work you didn't ask for.
 
-Temporal columns whose names look like audit timestamps are **automatically demoted** on OSI export — flagged with an explicit instruction not to use them as a time axis:
+Temporal columns whose names look like audit timestamps are **automatically demoted** in an Apache Ossie export — flagged with an explicit instruction not to use them as a time axis:
 
 ```yaml
 - name: created_at
@@ -99,17 +99,17 @@ Override per export:
 ```python
 import re
 
-to_osi_yaml(layer, model_name="commerce",
+to_ossie_yaml(layer, model_name="commerce",
             audit_pattern=re.compile(r"(^|_)(etl|ingested)_at$"))
 
-to_osi_yaml(layer, model_name="commerce",
+to_ossie_yaml(layer, model_name="commerce",
             audit_pattern=re.compile(r"$^"))          # disable demotion entirely
 ```
 
 Override it if your `created_at` genuinely *is* the business event — an append-only event log is the common case. Check the export rather than assuming; the default is a heuristic on names, and heuristics on names are sometimes wrong.
 
 !!! note "Markdown export"
-    Demotion is an OSI-export behaviour. The Markdown exporter renders what the layer holds. If you rely on prompt context and want the same signal, put it in the description:
+    Demotion is an Apache Ossie-export behavior. The Markdown exporter renders what the layer holds. If you rely on prompt context and want the same signal, put it in the description:
 
     ```python
     created_at_description = "Row insert time. Not a business date — use ordered_at."
