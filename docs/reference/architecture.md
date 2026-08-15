@@ -23,7 +23,7 @@ semantido/
 │       ├── sqlalchemy_mapping.py    # type normalisation, metadata reads, FK resolution
 │       └── time_grain.py            # grain normalisation + type compatibility
 ├── lint/
-│   └── linter.py                # lint_layer() — SL001–SL008, Tier-2 static
+│   └── linter.py                # lint_layer() — SL001–SL010, Tier-2 static
 └── exporters/
     ├── json_exporter.py
     ├── markdown_exporter.py     # tiered: schema / enriched / concepts

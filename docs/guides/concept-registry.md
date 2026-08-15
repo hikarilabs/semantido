@@ -70,7 +70,13 @@ figi = registry.concept(
     grain="listing", distinct_from=isin)
 ```
 
-Grain is free-form — the registry imposes no vocabulary — but declared grains are compared verbatim by the linter: a join equality between columns bound to concepts of different grain is an [SL008 error](lint.md#grain-mismatched-joins-sl008). This is the static form of the reference-data trap where an issue-level identifier joined to a listing-level identifier fans out or drops rows. Grain travels with the meaning artifact (`registry.to_yaml()`), not the groundings.
+Grain is free-form — the registry imposes no vocabulary — but declared grains are compared verbatim by the linter: a join equality between columns bound to concepts of different grain is an [SL008 error](lint.md#grain-mismatched-joins-sl008). This is the static form of the reference-data trap where an issue-level identifier is joined to a listing-level one. In practice such a join usually returns *nothing*, since different grains normally mean different identifier schemes and therefore disjoint value spaces — wrong, but silently so, because an empty result reads as an answer.
+
+Grain covers cardinality only. Two concepts may share a grain and still denote different things: the EMIR and MiFIR senses of "counterparty" are both legal entities, so SL008 has nothing to compare. That axis is `distinct_from` and [SL009](lint.md#joins-across-a-declared-distinction-sl009) — and because same-grain concepts share a value space, an SL009 join *matches rows* and returns a plausible wrong answer rather than an empty one.
+
+Note that neither check catches a fan-out join, where the same concept keys both sides but the tables sit at a finer grain. That needs a table-level grain declaration, which the registry does not currently carry.
+
+Grain travels with the meaning artifact (`registry.to_yaml()`), not the groundings.
 
 ## Binding concepts to the schema
 

@@ -172,7 +172,7 @@ from semantido.lint import lint_layer, Finding, Severity
 lint_layer(layer, groundings: str | dict | None = None) -> list[Finding]
 ```
 
-Tier-2 static checks for the seams between claim systems — SL001–SL008, deterministic order, errors first. Passing `groundings` (a path or dict) enables SL007. Requires sqlglot (`pip install 'semantido[lint]'`).
+Tier-2 static checks for the seams between claim systems — SL001–SL010, deterministic order, errors first. Passing `groundings` (a path or dict) enables SL007. Requires sqlglot (`pip install 'semantido[lint]'`).
 
 `Finding` is a dataclass: `code`, `severity`, `location`, `message`. `Severity` is an enum: `ERROR`, `WARNING`. Errors should gate CI; warnings should not. Check semantics: [Linting the layer](../guides/lint.md).
 
@@ -271,7 +271,7 @@ from semantido.concepts import (
 
 Fields: `id`, `label`, `definition`, `synonyms`, `mappings`, `relations`, `grain` *(v0.5.0)*, plus computed `definition_checksum` — a stable fingerprint of the definition text.
 
-`grain` declares the level at which the concept identifies or measures its subject (`"issue"` / `"listing"` / `"product"` in the security-master idiom). Free-form, compared verbatim by the linter: joins between columns bound to concepts of different grain are SL008 errors.
+`grain` declares the level at which the concept identifies or measures its subject (`"issue"` / `"listing"` / `"product"` in the security-master idiom). Free-form, compared verbatim by the linter: joins between columns bound to concepts of different grain are SL008 errors. Grain is about cardinality only: two concepts may share a grain and still denote different things, which is what `distinct_from` and SL009 cover.
 
 ### `OntologySource`
 

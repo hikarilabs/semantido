@@ -17,7 +17,7 @@ class Finding:
     """One linter finding.
 
     Attributes:
-        code: Stable check identifier (``SL001`` ... ``SL008``).
+        code: Stable check identifier (``SL001`` ... ``SL010``).
         severity: :class: `Severity` of the finding.
         location: Where the problem lives, as a dotted/physical path
             (e.g. ``"security_master.sql_filters[0]"``).
@@ -206,6 +206,30 @@ def _check_joins(
                     concept_id = column_concepts.get((side.table, side.name))
                     grain = grains.get(concept_id) if concept_id else None
                     sides.append((side.table, side.name, concept_id, grain))
+            if len(sides) == 2 and sides[0][2] and sides[1][2]:
+                # SL009 — denotation: the registry asserts these two concepts
+                # are not the same thing, and the join equates them anyway.
+                # Independent of grain: two concepts may share a grain and
+                # still denote different things (the EMIR/MiFIR "counterparty"
+                # homonym is exactly this shape).
+                if sides[0][2] != sides[1][2] and _asserted_distinct(
+                    registry, sides[0][2], sides[1][2]
+                ):
+                    findings.append(
+                        Finding(
+                            "SL009",
+                            Severity.ERROR,
+                            location,
+                            f"join equates concepts asserted DISTINCT_FROM: "
+                            f"{sides[0][0]}.{sides[0][1]} is "
+                            f"{sides[0][2]!r} but {sides[1][0]}.{sides[1][1]} "
+                            f"is {sides[1][2]!r} — these are different "
+                            "concepts that share a surface form. Where they "
+                            "also share a value space the join will match "
+                            "rows, silently returning a plausible answer to "
+                            "a question nobody asked",
+                        )
+                    )
             if len(sides) == 2 and sides[0][3] and sides[1][3]:
                 if sides[0][3] != sides[1][3]:
                     findings.append(
@@ -318,25 +342,87 @@ def _check_synonym_collisions(layer_dict, column_concepts) -> list[Finding]:
     return findings
 
 
-def _check_undeclared_homonyms(registry) -> list[Finding]:
-    if registry is None:
-        return []
+def _asserted_distinct(registry, first: str, second: str) -> bool:
+    """True if a DISTINCT_FROM edge exists between the two concepts.
+
+    Relations are reciprocated on declaration, but both directions are
+    checked so a hand-built registry behaves the same as a declared one.
+    """
+    if registry is None or first is None or second is None:
+        return False
     from semantido.generators.concept_registry import (  # pylint: disable=C0415
         ConceptRelation,
     )
+
+    for near, far in ((first, second), (second, first)):
+        concept = registry.concepts.get(near)
+        if concept is not None and any(
+            relation == ConceptRelation.DISTINCT_FROM and target == far
+            for relation, target in concept.relations
+        ):
+            return True
+    return False
+
+
+def _check_contradictory_mappings(registry) -> list[Finding]:
+    """SL010 — concepts asserted DISTINCT_FROM that claim the same exactMatch.
+
+    ``skos:exactMatch`` is symmetric and transitive (SKOS Reference S44/S45),
+    so ``A exactMatch X`` and ``B exactMatch X`` entail ``A exactMatch B``.
+    Where a DISTINCT_FROM edge also exists between A and B, the registry
+    asserts both that they are interchangeable and that they are not.
+
+    Only exactMatch is transitive; closeMatch deliberately is not, so two
+    distinct concepts may legitimately closeMatch the same external concept.
+    """
+    if registry is None:
+        return []
+    from semantido.generators.concept_registry import (  # pylint: disable=C0415
+        MappingRelation,
+    )
+
+    exact: dict[str, set[str]] = {}
+    for concept_id, concept in registry.concepts.items():
+        for mapping in concept.mappings:
+            if mapping.relation == MappingRelation.EXACT_MATCH:
+                exact.setdefault(concept_id, set()).add(mapping.target)
+
+    findings = []
+    seen = set()
+    for first, first_targets in exact.items():
+        for second, second_targets in exact.items():
+            if first == second or (second, first) in seen:
+                continue
+            shared = first_targets & second_targets
+            if not shared or not _asserted_distinct(registry, first, second):
+                continue
+            seen.add((first, second))
+            for target in sorted(shared):
+                findings.append(
+                    Finding(
+                        "SL010",
+                        Severity.ERROR,
+                        f"registry.{first}",
+                        f"contradictory mapping: {first!r} and {second!r} are "
+                        f"asserted DISTINCT_FROM, but both claim exactMatch to "
+                        f"{target!r}. skos:exactMatch is transitive, so this "
+                        "entails the two concepts are interchangeable. Use "
+                        "closeMatch or broadMatch for a regime-specific "
+                        "reading of a shared external concept",
+                    )
+                )
+    return sorted(findings, key=lambda f: (f.location, f.message))
+
+
+def _check_undeclared_homonyms(registry) -> list[Finding]:
+    if registry is None:
+        return []
 
     findings = []
     for form, concept_ids in registry.find_homonyms().items():
         for i, first in enumerate(concept_ids):
             for second in concept_ids[i + 1 :]:
-                declared = any(
-                    relation == ConceptRelation.DISTINCT_FROM and target == second
-                    for relation, target in registry.concepts[first].relations
-                ) or any(
-                    relation == ConceptRelation.DISTINCT_FROM and target == first
-                    for relation, target in registry.concepts[second].relations
-                )
-                if not declared:
+                if not _asserted_distinct(registry, first, second):
                     findings.append(
                         Finding(
                             "SL006",
@@ -427,7 +513,8 @@ def lint_layer(
     Args:
         layer: The :class:`~semantido.SemanticLayer` to check. Its
             attached concept registry (if any) powers the homonym,
-            checksum-drift, and grain checks.
+            checksum-drift, grain, denotation, and mapping-consistency
+            checks.
         groundings: Optional groundings document — a path to a YAML file
             produced by: func:`semantido.exporters.to_groundings_file`, or an
             already-parsed dict. Enables the SL007 staleness check.
@@ -447,6 +534,7 @@ def lint_layer(
     findings += _check_sample_values(layer_dict)
     findings += _check_synonym_collisions(layer_dict, column_concepts)
     findings += _check_undeclared_homonyms(registry)
+    findings += _check_contradictory_mappings(registry)
     if groundings is not None:
         findings += _check_groundings(schema, registry, groundings)
 

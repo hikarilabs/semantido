@@ -5,7 +5,56 @@ All notable changes to semantido are documented here. The project adheres to
 the authoring surface is stable in practice; exporter output may move with the
 specs it targets.
 
+## [0.5.3] — unreleased
+
+### Added
+
+- **SL009 — join equates concepts asserted `DISTINCT_FROM`.** A gap in the
+  v0.5.0 check set: SL006 warns that a homonym exists without a
+  `DISTINCT_FROM` edge, and SL008 rejects joins across differing grain, but
+  nothing rejected a join that equates two concepts the registry explicitly
+  says are *not* the same thing. Where those concepts share a grain — the
+  EMIR/MiFIR "Counterparty" case, both denoting a legal entity — SL008 has
+  nothing to compare and the join passed silently. SL009 is grain-independent
+  and reported as an error. Where both SL008 and SL009 apply to one join,
+  both are reported: each names a distinct reason the join is wrong.
+
+  SL009 is the more consequential of the two. A grain mismatch usually
+  implies two different identifier schemes and therefore two disjoint value
+  spaces, so an SL008 join tends to return nothing — wrong, but visibly so.
+  Two concepts that share a grain share a value space (both LEIs, both NPIs),
+  so an SL009 join *matches rows* and returns a plausible number. In the
+  EMIR/MiFIR fixture it doubles a counterparty exposure, reporting 50m
+  against a true 25m, with no error anywhere in the stack.
+
+- **SL010 — `DISTINCT_FROM` concepts claiming the same `exactMatch`.**
+  `skos:exactMatch` is symmetric and transitive, so two concepts that both
+  exactMatch the same external IRI are entailed to be interchangeable. Where
+  a `DISTINCT_FROM` edge also exists, the registry asserts both that they are
+  distinct and that they are the same, and the exported Turtle is
+  inconsistent under any SKOS reasoner. Reported as an error. `closeMatch`,
+  `broadMatch`, `narrowMatch` and `relatedMatch` are unaffected — closeMatch
+  is deliberately non-transitive, so a shared target there is legitimate and
+  is the correct way to map two regime-specific readings onto one external
+  concept.
+
+### Changed
+
+- The reciprocated `DISTINCT_FROM` lookup used by SL006 is extracted into
+  `_asserted_distinct()` and shared with SL009; behaviour is unchanged.
+
 ## [0.5.2] — 2026-08-01
+
+- **SL010 — `DISTINCT_FROM` concepts claiming the same `exactMatch`.**
+  `skos:exactMatch` is symmetric and transitive, so two concepts that both
+  exactMatch the same external IRI are entailed to be interchangeable. Where
+  a `DISTINCT_FROM` edge also exists, the registry asserts both that they are
+  distinct and that they are the same, and the exported Turtle is
+  inconsistent under any SKOS reasoner. Reported as an error. `closeMatch`,
+  `broadMatch`, `narrowMatch` and `relatedMatch` are unaffected — closeMatch
+  is deliberately non-transitive, so a shared target there is legitimate and
+  is the correct way to map two regime-specific readings onto one external
+  concept.
 
 ### Changed
 

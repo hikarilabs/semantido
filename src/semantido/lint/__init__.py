@@ -37,6 +37,14 @@ SL008   error     Grain-mismatched join: a join condition equates
                   columns bound to concepts with different declared
                   ``grain`` (e.g., an issue-level identifier joined to a
                   listing-level identifier).
+SL009   error     Denotation-mismatched join: a join condition equates
+                  two concepts asserted ``DISTINCT_FROM``. Independent
+                  of grain — concepts may share a grain and still
+                  denote different things.
+SL010   error     Contradictory external mapping: two concepts asserted
+                  ``DISTINCT_FROM`` both claim ``skos:exactMatch`` to
+                  the same target. exactMatch is transitive, so this
+                  entails they are interchangeable.
 ======  ========  ======================================================
 
 Usage:
