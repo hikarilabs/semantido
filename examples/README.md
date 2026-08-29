@@ -1,11 +1,12 @@
 # Examples
 
-Each folder is self-contained and runnable. Examples 01–05 predate v0.5 and
-demonstrate the earlier feature set; 06–08 cover grain, groundings and lint.
+Each folder is self-contained and runnable. 01 is the full walkthrough and is
+current with v0.5; 02–05 demonstrate earlier feature sets; 06–08 cover grain,
+groundings and lint in depth.
 
 | | Example | Demonstrates | Needs |
 |---|---|---|---|
-| 01 | `01_getting_started` | Decorators, exports, EMIR/MiFIR trade reporting schema | — |
+| 01 | `01_getting_started` | Concepts, grain, exports, lint gate, EMIR/MiFIR schema | `semantido[lint,ossie]` |
 | 02 | `02_osi_time_dimension` | `time_dimension`, time grain, three OSI strategies | — |
 | 03 | `03_md_vs_osi_context` | Markdown vs Ossie YAML as text-to-SQL context | `ANTHROPIC_API_KEY` |
 | 04 | `04_federated_agents` | Concept registry, cross-institution alignment | — |

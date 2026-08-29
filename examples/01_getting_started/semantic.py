@@ -1,38 +1,77 @@
-"""Builds the semantic layer for the trade reporting schema and exports it
-to JSON, Markdown (LLM prompt context) and Apache Ossie YAML (interchange)."""
+"""Builds the semantic layer for the trade reporting schema, exports it, and
+gates the result on the linter.
 
+Four stages, matching the shape of a real pipeline:
+
+  1. sync the layer from the annotated models and the concept registry
+  2. lint it — errors fail the build, warnings do not
+  3. export the agent context (JSON, Markdown, Ossie YAML)
+  4. export the groundings document, which binds meaning to deployment
+
+Stage 2 is the one that changed in v0.5. Before it existed, everything below
+was documentation: true when written, unverifiable afterwards.
+
+    pip install 'semantido[lint,ossie]>=0.5.3'
+    python semantic.py
+"""
+
+import sys
 from pathlib import Path
 
 from semantido import SemanticDeclarativeBase
-from semantido.exporters import to_json_file, to_markdown_file, to_ossie_yaml
+from semantido.exporters import (
+    to_groundings_file,
+    to_json_file,
+    to_markdown_file,
+    to_ossie_yaml,
+)
+from semantido.lint import lint_layer
 
-from models.trade_reporting import (
+from models.concepts import registry
+from models.trade_reporting import (  # noqa: F401  (import registers the models)
     Counterparty,
     Instrument,
-    TradeReport,
-    TradeParty,
-    TradeValuation,
     MifirTransaction,
-)  # importing registers the mapped classes
+    TradeParty,
+    TradeReport,
+    TradeValuation,
+)
 
-OUT = Path(__file__).parent
+OUT = Path(__file__).parent / "exports"
+
+
+def gate(layer) -> None:
+    """Fail the build on lint errors. Report warnings without failing."""
+    findings = lint_layer(layer)
+    errors = [f for f in findings if f.severity.value == "error"]
+    warnings = [f for f in findings if f.severity.value == "warning"]
+
+    for f in findings:
+        print(f"  {f.code} {f.severity.value:<7} {f.location}: {f.message}")
+
+    if errors:
+        print(f"\nlint FAILED - {len(errors)} error(s)")
+        sys.exit(1)
+    print(f"lint clean - {len(warnings)} warning(s), 0 errors")
 
 
 def main() -> None:
-    layer = SemanticDeclarativeBase.sync_semantic_layer()
+    registry.validate()
+    layer = SemanticDeclarativeBase.sync_semantic_layer(concept_registry=registry)
 
-    # Domain glossary consumed by the Apache Ossie model-level ai_context
     layer.application_glossary.update(
         {
             "UTI": "Unique Trade Identifier per ISO 23897",
-            "notional": "unsigned contract size — not exposure",
+            "notional": "unsigned contract size - not exposure",
             "exposure": "signed mark-to-market valuation (trade_valuations)",
             "NFC+": "non-financial counterparty above the clearing threshold",
         }
     )
 
-    to_json_file(layer, str(OUT / "exports" / "trade_reporting.semantic.json"))
-    to_markdown_file(layer, str(OUT / "exports" / "trade_reporting.semantic.md"))
+    gate(layer)
+
+    to_json_file(layer, str(OUT / "trade_reporting.semantic.json"))
+    to_markdown_file(layer, str(OUT / "trade_reporting.semantic.md"))
     to_ossie_yaml(
         layer,
         model_name="emir_mifir_trade_reporting",
@@ -44,13 +83,17 @@ def main() -> None:
             "Amounts are unsigned unless stated otherwise; direction always "
             "comes from a code column, never from an amount sign."
         ),
-        path=str(OUT / "exports" / "trade_reporting.ossie.yaml"),
+        path=str(OUT / "trade_reporting.ossie.yaml"),
     )
+    to_groundings_file(layer, str(OUT / "groundings.yaml"))
 
+    concepts = registry.to_dict()["concepts"]
     print(
-        f"tables={len(layer.tables)} "
+        f"\ntables={len(layer.tables)} "
         f"relationships={len(layer.relationships)} "
-        f"columns={sum(len(t.columns) for t in layer.tables.values())}"
+        f"columns={sum(len(t.columns) for t in layer.tables.values())} "
+        f"concepts={len(concepts)} "
+        f"grains={len({c['grain'] for c in concepts.values() if c.get('grain')})}"
     )
 
 

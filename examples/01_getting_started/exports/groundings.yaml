@@ -1,0 +1,41 @@
+format: semantido/groundings
+version: '1'
+namespace: tradereporting
+groundings:
+  counterparty.emir:
+    definition_checksum: 25b4434341d9
+    columns:
+    - trade_parties.counterparty_id
+  isin:
+    definition_checksum: 2fb0ba62a381
+    columns:
+    - instruments.isin
+  lei:
+    definition_checksum: 5723bdf8c5d1
+    columns:
+    - counterparties.lei
+  notional:
+    definition_checksum: 63cb78fae954
+    columns:
+    - trade_reports.notional_amount
+  party.mifir:
+    definition_checksum: a4596ac4a8c1
+    columns:
+    - mifir_transactions.buyer_id
+    - mifir_transactions.seller_id
+  price:
+    definition_checksum: 8ae4f318f288
+    columns:
+    - mifir_transactions.price
+  transaction_reference:
+    definition_checksum: 81efed8efaef
+    columns:
+    - mifir_transactions.transaction_reference
+  uti:
+    definition_checksum: 2cd122af38b4
+    columns:
+    - trade_reports.uti
+  valuation:
+    definition_checksum: 27733bd8fca8
+    columns:
+    - trade_valuations.valuation_amount

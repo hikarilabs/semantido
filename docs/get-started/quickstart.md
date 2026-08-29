@@ -477,7 +477,7 @@ The Markdown export gains a `## Concepts` section and a `## Disambiguation` sect
 
 ## A realistic example
 
-The two-table version above is a tutorial. [`examples/01_getting_started`](https://github.com/hikarilabs/semantido/tree/main/examples/01_getting_started) is a walkthrough on a synthetic EMIR/MiFIR regulatory reporting subset that deliberately encodes the three classic text-to-SQL failure modes — bridge fan-out, sign conventions, and amount ambiguity — and shows the annotations that counter each. Reference exports in all three formats are committed alongside it.
+The two-table version above is a tutorial. [`examples/01_getting_started`](https://github.com/hikarilabs/semantido/tree/main/examples/01_getting_started) is a walkthrough on a synthetic EMIR/MiFIR regulatory reporting subset that deliberately encodes four classic text-to-SQL failure modes — bridge fan-out, identifier grain, amount ambiguity, and a counterparty homonym. Three are rejected statically by the linter once the concepts are declared; the fourth, the fan-out, is not, and the example says so. Reference exports in all four formats are committed alongside it.
 
 ## Next
 

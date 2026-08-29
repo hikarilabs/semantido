@@ -55,6 +55,7 @@ class Counterparty(SemanticDeclarativeBase):
     is_ccp = Column(Boolean, nullable=False, default=False)
 
     lei_description = "ISO 17442 Legal Entity Identifier (20 characters)."
+    lei_concept = "lei"
     lei_synonyms = ["legal entity identifier"]
     lei_sample_values = ["529900T8BM49AURSDO55", "213800MBWEIJDM5CU638"]
     lei_privacy_level = PrivacyLevel.INTERNAL
@@ -104,6 +105,7 @@ class Instrument(SemanticDeclarativeBase):
         "ISO 6166 ISIN. NULL for bespoke OTC products with no ISIN; "
         "such products are identified by instrument_id only."
     )
+    isin_concept = "isin"
     isin_sample_values = ["EZ9VVV8CQC69", "DE000C6900B7"]
 
     asset_class_description = "EMIR asset class: IR, CR, EQ, FX or CO."
@@ -157,6 +159,7 @@ class TradeReport(SemanticDeclarativeBase):
     created_at = Column(DateTime, nullable=False)
 
     uti_description = "Unique Trade Identifier (ISO 23897), max 52 chars."
+    uti_concept = "uti"
     uti_synonyms = ["trade identifier", "UTI"]
     uti_privacy_level = PrivacyLevel.INTERNAL
 
@@ -177,6 +180,7 @@ class TradeReport(SemanticDeclarativeBase):
         "Trade notional in notional_currency. Always positive; direction of "
         "risk is given by `direction`, never by sign."
     )
+    notional_amount_concept = "notional"
     notional_amount_synonyms = ["notional", "trade size"]
     notional_amount_application_rules = [
         "Never SUM across both trade_parties roles — double counts.",
@@ -238,6 +242,13 @@ class TradeParty(SemanticDeclarativeBase):
     )
     role = Column(String(16), nullable=False)
 
+    counterparty_id_concept = "counterparty.emir"
+    counterparty_id_description = (
+        "The EMIR-sense counterparty on this contract. NOT interchangeable "
+        "with the MiFIR buyer/seller on mifir_transactions, even when the "
+        "same legal entity occupies both roles."
+    )
+
     role_description = (
         "Role of the counterparty on the trade: REPORTING, OTHER, CCP, "
         "BROKER or CLEARING_MEMBER."
@@ -285,6 +296,7 @@ class TradeValuation(SemanticDeclarativeBase):
         "Signed mark-to-market value from the reporting counterparty's view. "
         "Positive = in the money; negative = out of the money."
     )
+    valuation_amount_concept = "valuation"
     valuation_amount_synonyms = ["MTM value", "mark to market", "exposure"]
     valuation_amount_application_rules = [
         "Signed — do not take ABS() unless the question asks for gross MTM.",
@@ -332,6 +344,11 @@ class MifirTransaction(SemanticDeclarativeBase):
     )
     trading_datetime = Column(DateTime, nullable=False)
     price = Column(Numeric(20, 8), nullable=False)
+
+    buyer_id_concept = "party.mifir"
+    buyer_id_description = "MiFIR buyer. Not the EMIR counterparty."
+    seller_id_concept = "party.mifir"
+    seller_id_description = "MiFIR seller. Not the EMIR counterparty."
     quantity = Column(Numeric(20, 4), nullable=False)
     venue_mic = Column(String(4), nullable=False)
     report_status = Column(String(4), nullable=False)
@@ -339,6 +356,7 @@ class MifirTransaction(SemanticDeclarativeBase):
     transaction_reference_description = (
         "Firm-assigned transaction reference number (MiFIR field 2)."
     )
+    transaction_reference_concept = "transaction_reference"
     trading_datetime_description = (
         "UTC execution timestamp (MiFIR field 28). Primary time axis."
     )
@@ -347,6 +365,7 @@ class MifirTransaction(SemanticDeclarativeBase):
     price_description = (
         "Execution price excluding commission and accrued interest (field 33)."
     )
+    price_concept = "price"
     quantity_description = (
         "Unsigned quantity (field 30). Direction is buyer_id/seller_id, "
         "never quantity sign."

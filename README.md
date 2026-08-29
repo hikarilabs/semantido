@@ -153,15 +153,28 @@ Exporters
   ...) are demoted with an explicit "do not use as a time axis"
   instruction, keeping the signal-to-noise high for agentic consumers.
 
-Example: trade reporting
+Examples
 -----
 
-[`examples/01_getting_started`](examples/01_getting_started) is a full
-walkthrough on a realistic wholesale-banking schema: a synthetic
-EMIR/MiFIR regulatory reporting subset that deliberately encodes three
-classic text-to-SQL failure modes — bridge fan-out, sign conventions,
-and amount ambiguity — and shows how semantic annotations counter each
-one. Reference exports in all three formats are committed alongside it.
+[`examples/`](examples) has eight runnable walkthroughs, each self-contained.
+Start here:
+
+| | Example | Demonstrates |
+|---|---|---|
+| 01 | [`01_getting_started`](examples/01_getting_started) | Full walkthrough: concepts, grain, exports, lint gate |
+| 02 | [`02_osi_time_dimension`](examples/02_osi_time_dimension) | Time dimensions and the eight-false-axes problem |
+| 03 | [`03_md_vs_osi_context`](examples/03_md_vs_osi_context) | Markdown vs Ossie YAML as text-to-SQL context |
+| 04 | [`04_federated_agents`](examples/04_federated_agents) | Cross-institution concept alignment |
+| 05 | [`05_toolchain_drift`](examples/05_toolchain_drift) | Drift between an authored and a generated registry |
+| 06 | [`06_groundings_and_lint`](examples/06_groundings_and_lint) | Groundings lifecycle and the checks that guard it |
+| 07 | [`07_security_master`](examples/07_security_master) | Grain, fan-out, and the limits of static checking |
+| 08 | [`08_release_timeline`](examples/08_release_timeline) | What each release could express and enforce |
+
+`01_getting_started` is a synthetic EMIR/MiFIR regulatory reporting subset
+that deliberately encodes four classic text-to-SQL failure modes. Three are
+now rejected statically by the linter; the fourth is not, and the example
+says which and why. Reference exports in all four formats are committed
+alongside it.
 
 Full documentation: [semantido.ai](https://semantido.ai)
 

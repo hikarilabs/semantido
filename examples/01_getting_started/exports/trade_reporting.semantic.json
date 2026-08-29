@@ -38,7 +38,8 @@
                     "synonyms": [
                         "legal entity identifier"
                     ],
-                    "is_foreign_key": false
+                    "is_foreign_key": false,
+                    "concept": "lei"
                 },
                 {
                     "name": "legal_name",
@@ -109,7 +110,8 @@
                         "EZ9VVV8CQC69",
                         "DE000C6900B7"
                     ],
-                    "is_foreign_key": false
+                    "is_foreign_key": false,
+                    "concept": "isin"
                 },
                 {
                     "name": "asset_class",
@@ -176,7 +178,8 @@
                     "name": "transaction_reference",
                     "data_type": "VARCHAR",
                     "description": "Firm-assigned transaction reference number (MiFIR field 2).",
-                    "is_foreign_key": false
+                    "is_foreign_key": false,
+                    "concept": "transaction_reference"
                 },
                 {
                     "name": "instrument_id",
@@ -188,16 +191,18 @@
                 {
                     "name": "buyer_id",
                     "data_type": "INTEGER",
-                    "description": "Column: buyer_id",
+                    "description": "MiFIR buyer. Not the EMIR counterparty.",
                     "is_foreign_key": true,
-                    "references": "counterparties.counterparty_id"
+                    "references": "counterparties.counterparty_id",
+                    "concept": "party.mifir"
                 },
                 {
                     "name": "seller_id",
                     "data_type": "INTEGER",
-                    "description": "Column: seller_id",
+                    "description": "MiFIR seller. Not the EMIR counterparty.",
                     "is_foreign_key": true,
-                    "references": "counterparties.counterparty_id"
+                    "references": "counterparties.counterparty_id",
+                    "concept": "party.mifir"
                 },
                 {
                     "name": "trading_datetime",
@@ -211,7 +216,8 @@
                     "name": "price",
                     "data_type": "DECIMAL",
                     "description": "Execution price excluding commission and accrued interest (field 33).",
-                    "is_foreign_key": false
+                    "is_foreign_key": false,
+                    "concept": "price"
                 },
                 {
                     "name": "quantity",
@@ -268,9 +274,10 @@
                 {
                     "name": "counterparty_id",
                     "data_type": "INTEGER",
-                    "description": "Column: counterparty_id",
+                    "description": "The EMIR-sense counterparty on this contract. NOT interchangeable with the MiFIR buyer/seller on mifir_transactions, even when the same legal entity occupies both roles.",
                     "is_foreign_key": true,
-                    "references": "counterparties.counterparty_id"
+                    "references": "counterparties.counterparty_id",
+                    "concept": "counterparty.emir"
                 },
                 {
                     "name": "role",
@@ -327,7 +334,8 @@
                         "trade identifier",
                         "UTI"
                     ],
-                    "is_foreign_key": false
+                    "is_foreign_key": false,
+                    "concept": "uti"
                 },
                 {
                     "name": "instrument_id",
@@ -375,7 +383,8 @@
                     "application_rules": [
                         "Never SUM across both trade_parties roles \u2014 double counts.",
                         "Sign is always positive; use direction for buy/sell split."
-                    ]
+                    ],
+                    "concept": "notional"
                 },
                 {
                     "name": "direction",
@@ -470,7 +479,8 @@
                     "application_rules": [
                         "Signed \u2014 do not take ABS() unless the question asks for gross MTM.",
                         "For 'current exposure' use the latest valuation_date per trade."
-                    ]
+                    ],
+                    "concept": "valuation"
                 },
                 {
                     "name": "valuation_currency",
@@ -568,5 +578,167 @@
             "relationship_type": "many-to-one",
             "description": "Relationship between trade_valuations and trade_reports"
         }
-    ]
+    ],
+    "concepts": {
+        "namespace": "tradereporting",
+        "sources": {
+            "tradereporting": {
+                "namespace": "urn:hikarilabs:tradereporting",
+                "version": "1.0.0"
+            }
+        },
+        "concepts": {
+            "counterparty.emir": {
+                "label": "Counterparty",
+                "definition": "EMIR Article 9: either of the two entities party to a derivative contract. Both sides report, and both appear on the contract.",
+                "definition_checksum": "25b4434341d9",
+                "grain": "legal_entity",
+                "synonyms": [
+                    "counterparty",
+                    "cpty"
+                ],
+                "relations": [
+                    {
+                        "relation": "distinct_from",
+                        "concept": "party.mifir"
+                    }
+                ]
+            },
+            "isin": {
+                "label": "isin",
+                "definition": "ISO 6166 identifier. Identifies an issue \u2014 one security as issued, irrespective of where it trades.",
+                "definition_checksum": "2fb0ba62a381",
+                "grain": "issue",
+                "synonyms": [
+                    "ISIN"
+                ],
+                "relations": [
+                    {
+                        "relation": "distinct_from",
+                        "concept": "uti"
+                    }
+                ]
+            },
+            "lei": {
+                "label": "lei",
+                "definition": "ISO 17442 Legal Entity Identifier. Identifies a legal entity, not a trading relationship and not an account.",
+                "definition_checksum": "5723bdf8c5d1",
+                "grain": "legal_entity",
+                "synonyms": [
+                    "LEI"
+                ]
+            },
+            "notional": {
+                "label": "notional",
+                "definition": "Unsigned contract size, per contract. Not exposure and not market value. Economic direction lives in the direction code, never in the sign of this amount.",
+                "definition_checksum": "63cb78fae954",
+                "grain": "contract",
+                "synonyms": [
+                    "notional amount",
+                    "contract size"
+                ],
+                "relations": [
+                    {
+                        "relation": "distinct_from",
+                        "concept": "valuation"
+                    },
+                    {
+                        "relation": "distinct_from",
+                        "concept": "price"
+                    }
+                ]
+            },
+            "party.mifir": {
+                "label": "Buyer or seller",
+                "definition": "MiFIR RTS 22: the buyer or seller in a transaction report. A client on whose behalf the firm deals is a buyer or seller here \u2014 it is NOT the EMIR counterparty, even though the same legal entity may occupy both roles on the same trade.",
+                "definition_checksum": "a4596ac4a8c1",
+                "grain": "legal_entity",
+                "synonyms": [
+                    "buyer",
+                    "seller"
+                ],
+                "relations": [
+                    {
+                        "relation": "distinct_from",
+                        "concept": "counterparty.emir"
+                    }
+                ]
+            },
+            "price": {
+                "label": "price",
+                "definition": "Execution price of a single transaction, in the venue's quote convention. Per execution, not per contract.",
+                "definition_checksum": "8ae4f318f288",
+                "grain": "execution",
+                "synonyms": [
+                    "execution price"
+                ],
+                "relations": [
+                    {
+                        "relation": "distinct_from",
+                        "concept": "notional"
+                    },
+                    {
+                        "relation": "distinct_from",
+                        "concept": "valuation"
+                    }
+                ]
+            },
+            "transaction_reference": {
+                "label": "transaction reference",
+                "definition": "MiFIR RTS 22 transaction reference. Identifies one execution on a venue. A single block execution may be allocated into many contracts, so this is a finer grain than the UTI.",
+                "definition_checksum": "81efed8efaef",
+                "grain": "execution",
+                "synonyms": [
+                    "transaction reference"
+                ],
+                "relations": [
+                    {
+                        "relation": "distinct_from",
+                        "concept": "uti"
+                    }
+                ]
+            },
+            "uti": {
+                "label": "uti",
+                "definition": "Unique Trade Identifier per ISO 23897. Identifies one derivative contract, shared bilaterally: both counterparties report the same UTI to their respective trade repositories.",
+                "definition_checksum": "2cd122af38b4",
+                "grain": "contract",
+                "synonyms": [
+                    "UTI",
+                    "trade identifier"
+                ],
+                "relations": [
+                    {
+                        "relation": "distinct_from",
+                        "concept": "transaction_reference"
+                    },
+                    {
+                        "relation": "distinct_from",
+                        "concept": "isin"
+                    }
+                ]
+            },
+            "valuation": {
+                "label": "valuation",
+                "definition": "Signed mark-to-market valuation of a contract on a given date. Changes daily while the notional does not.",
+                "definition_checksum": "27733bd8fca8",
+                "grain": "contract_date",
+                "synonyms": [
+                    "mark to market",
+                    "MTM",
+                    "exposure"
+                ],
+                "relations": [
+                    {
+                        "relation": "distinct_from",
+                        "concept": "notional"
+                    },
+                    {
+                        "relation": "distinct_from",
+                        "concept": "price"
+                    }
+                ]
+            }
+        }
+    }
 }

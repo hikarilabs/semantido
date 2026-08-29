@@ -24,6 +24,8 @@ The second result surprises people. The mechanism is mundane: DDL is long, unifo
 
 The [trade reporting example](https://github.com/hikarilabs/semantido/tree/main/examples/01_getting_started) is built around the three that recur on every real schema.
 
+Since v0.5 the example does more than annotate against them. Amount ambiguity and identifier grain are now rejected statically by the linter, because the concepts carry declared grains and `DISTINCT_FROM` edges — run `lint_demo.py` in that example to see the findings. Bridge fan-out is **not** caught: both sides of that join carry the same concept at the same grain, which is precisely the case a grain comparison cannot see. Cardinality is a separate axis and needs the column tuple that makes a row unique.
+
 ### Bridge fan-out
 
 A many-to-many bridge table joined into an aggregate silently multiplies rows. The model sums `notional` across the join and reports a number that is 3.4× correct. Nothing errors.

@@ -6,11 +6,49 @@ semantic_model:
   ai_context:
     instructions: 'Amounts are unsigned unless stated otherwise; direction always comes from
       a code column, never from an amount sign. Glossary — UTI: Unique Trade Identifier per
-      ISO 23897; notional: unsigned contract size — not exposure; exposure: signed mark-to-market
+      ISO 23897; notional: unsigned contract size - not exposure; exposure: signed mark-to-market
       valuation (trade_valuations); NFC+: non-financial counterparty above the clearing threshold'
   custom_extensions:
   - vendor_name: SEMANTIDO
-    data: '{"exporter": "semantido.exporters.ossie"}'
+    data: '{"concept_registry": {"concepts": {"counterparty.emir": {"definition": "EMIR Article
+      9: either of the two entities party to a derivative contract. Both sides report, and
+      both appear on the contract.", "definition_checksum": "25b4434341d9", "grain": "legal_entity",
+      "label": "Counterparty", "relations": [{"concept": "party.mifir", "relation": "distinct_from"}],
+      "synonyms": ["counterparty", "cpty"]}, "isin": {"definition": "ISO 6166 identifier.
+      Identifies an issue \u2014 one security as issued, irrespective of where it trades.",
+      "definition_checksum": "2fb0ba62a381", "grain": "issue", "label": "isin", "relations":
+      [{"concept": "uti", "relation": "distinct_from"}], "synonyms": ["ISIN"]}, "lei": {"definition":
+      "ISO 17442 Legal Entity Identifier. Identifies a legal entity, not a trading relationship
+      and not an account.", "definition_checksum": "5723bdf8c5d1", "grain": "legal_entity",
+      "label": "lei", "synonyms": ["LEI"]}, "notional": {"definition": "Unsigned contract
+      size, per contract. Not exposure and not market value. Economic direction lives in the
+      direction code, never in the sign of this amount.", "definition_checksum": "63cb78fae954",
+      "grain": "contract", "label": "notional", "relations": [{"concept": "valuation", "relation":
+      "distinct_from"}, {"concept": "price", "relation": "distinct_from"}], "synonyms": ["notional
+      amount", "contract size"]}, "party.mifir": {"definition": "MiFIR RTS 22: the buyer or
+      seller in a transaction report. A client on whose behalf the firm deals is a buyer or
+      seller here \u2014 it is NOT the EMIR counterparty, even though the same legal entity
+      may occupy both roles on the same trade.", "definition_checksum": "a4596ac4a8c1", "grain":
+      "legal_entity", "label": "Buyer or seller", "relations": [{"concept": "counterparty.emir",
+      "relation": "distinct_from"}], "synonyms": ["buyer", "seller"]}, "price": {"definition":
+      "Execution price of a single transaction, in the venue''s quote convention. Per execution,
+      not per contract.", "definition_checksum": "8ae4f318f288", "grain": "execution", "label":
+      "price", "relations": [{"concept": "notional", "relation": "distinct_from"}, {"concept":
+      "valuation", "relation": "distinct_from"}], "synonyms": ["execution price"]}, "transaction_reference":
+      {"definition": "MiFIR RTS 22 transaction reference. Identifies one execution on a venue.
+      A single block execution may be allocated into many contracts, so this is a finer grain
+      than the UTI.", "definition_checksum": "81efed8efaef", "grain": "execution", "label":
+      "transaction reference", "relations": [{"concept": "uti", "relation": "distinct_from"}],
+      "synonyms": ["transaction reference"]}, "uti": {"definition": "Unique Trade Identifier
+      per ISO 23897. Identifies one derivative contract, shared bilaterally: both counterparties
+      report the same UTI to their respective trade repositories.", "definition_checksum":
+      "2cd122af38b4", "grain": "contract", "label": "uti", "relations": [{"concept": "transaction_reference",
+      "relation": "distinct_from"}, {"concept": "isin", "relation": "distinct_from"}], "synonyms":
+      ["UTI", "trade identifier"]}, "valuation": {"definition": "Signed mark-to-market valuation
+      of a contract on a given date. Changes daily while the notional does not.", "definition_checksum":
+      "27733bd8fca8", "grain": "contract_date", "label": "valuation", "relations": [{"concept":
+      "notional", "relation": "distinct_from"}, {"concept": "price", "relation": "distinct_from"}],
+      "synonyms": ["mark to market", "MTM", "exposure"]}}, "sources": {}}, "exporter": "semantido.exporters.ossie"}'
   datasets:
   - name: counterparties
     source: counterparties
@@ -48,7 +86,8 @@ semantic_model:
         - legal entity identifier
       custom_extensions:
       - vendor_name: SEMANTIDO
-        data: '{"privacy_level": "internal", "sample_values": ["529900T8BM49AURSDO55", "213800MBWEIJDM5CU638"]}'
+        data: '{"concept": "lei", "privacy_level": "internal", "sample_values": ["529900T8BM49AURSDO55",
+          "213800MBWEIJDM5CU638"]}'
     - name: legal_name
       expression:
         dialects:
@@ -115,7 +154,7 @@ semantic_model:
         are identified by instrument_id only.
       custom_extensions:
       - vendor_name: SEMANTIDO
-        data: '{"sample_values": ["EZ9VVV8CQC69", "DE000C6900B7"]}'
+        data: '{"concept": "isin", "sample_values": ["EZ9VVV8CQC69", "DE000C6900B7"]}'
     - name: asset_class
       expression:
         dialects:
@@ -176,6 +215,9 @@ semantic_model:
         - dialect: ANSI_SQL
           expression: transaction_reference
       description: Firm-assigned transaction reference number (MiFIR field 2).
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        data: '{"concept": "transaction_reference"}'
     - name: instrument_id
       expression:
         dialects:
@@ -187,13 +229,19 @@ semantic_model:
         dialects:
         - dialect: ANSI_SQL
           expression: buyer_id
-      description: 'Column: buyer_id'
+      description: MiFIR buyer. Not the EMIR counterparty.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        data: '{"concept": "party.mifir"}'
     - name: seller_id
       expression:
         dialects:
         - dialect: ANSI_SQL
           expression: seller_id
-      description: 'Column: seller_id'
+      description: MiFIR seller. Not the EMIR counterparty.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        data: '{"concept": "party.mifir"}'
     - name: trading_datetime
       expression:
         dialects:
@@ -213,6 +261,9 @@ semantic_model:
         - dialect: ANSI_SQL
           expression: price
       description: Execution price excluding commission and accrued interest (field 33).
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        data: '{"concept": "price"}'
     - name: quantity
       expression:
         dialects:
@@ -269,7 +320,12 @@ semantic_model:
         dialects:
         - dialect: ANSI_SQL
           expression: counterparty_id
-      description: 'Column: counterparty_id'
+      description: The EMIR-sense counterparty on this contract. NOT interchangeable with
+        the MiFIR buyer/seller on mifir_transactions, even when the same legal entity occupies
+        both roles.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        data: '{"concept": "counterparty.emir"}'
     - name: role
       expression:
         dialects:
@@ -323,7 +379,7 @@ semantic_model:
         - UTI
       custom_extensions:
       - vendor_name: SEMANTIDO
-        data: '{"privacy_level": "internal"}'
+        data: '{"concept": "uti", "privacy_level": "internal"}'
     - name: instrument_id
       expression:
         dialects:
@@ -381,6 +437,9 @@ semantic_model:
         - trade size
         instructions: Never SUM across both trade_parties roles — double counts. Sign is always
           positive; use direction for buy/sell split.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        data: '{"concept": "notional"}'
     - name: direction
       expression:
         dialects:
@@ -481,6 +540,9 @@ semantic_model:
         - exposure
         instructions: Signed — do not take ABS() unless the question asks for gross MTM. For
           'current exposure' use the latest valuation_date per trade.
+      custom_extensions:
+      - vendor_name: SEMANTIDO
+        data: '{"concept": "valuation"}'
     - name: valuation_currency
       expression:
         dialects:

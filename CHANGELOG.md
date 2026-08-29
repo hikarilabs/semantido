@@ -31,6 +31,24 @@ specs it targets.
 
 ### Changed
 
+- **`examples/01_getting_started` updated to v0.5.** The walkthrough now
+  declares a concept registry (`models/concepts.py`) with nine concepts
+  across five grains, binds them to columns, exports a groundings document,
+  and gates the build on the linter. A new `lint_demo.py` shows which of the
+  schema's documented failure modes are now rejected statically — amount
+  ambiguity, identifier grain and the counterparty homonym — and which is
+  not: the bridge fan-out, where both sides carry the same concept at the
+  same grain.
+
+  The example previously taught a v0.3-era model while being the only one
+  linked from the README.
+
+- **README now indexes all eight examples** rather than only the first.
+  `docs/get-started/quickstart.md` and `docs/concepts/correctness.md`
+  updated to match.
+
+### Changed
+
 - **SL008 message wording corrected.** It claimed a grain-mismatched join
   "fans out or drops rows". It does neither: identifiers at different grains
   occupy different value spaces, so the equality matches nothing and the join
