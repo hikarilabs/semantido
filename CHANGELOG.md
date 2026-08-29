@@ -5,7 +5,7 @@ All notable changes to semantido are documented here. The project adheres to
 the authoring surface is stable in practice; exporter output may move with the
 specs it targets.
 
-## [0.5.3] — unreleased
+## [0.5.3]
 
 ### Added
 
