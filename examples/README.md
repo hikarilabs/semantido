@@ -4,16 +4,16 @@ Each folder is self-contained and runnable. 01 is the full walkthrough and is
 current with v0.5; 02–05 demonstrate earlier feature sets; 06–08 cover grain,
 groundings and lint in depth.
 
-|    | Example                  | Demonstrates                                           | Needs                   |
-|----|--------------------------|--------------------------------------------------------|-------------------------|
-| 01 | `01_getting_started`     | Concepts, grain, exports, lint gate, EMIR/MiFIR schema | `semantido[lint,ossie]` |
-| 02 | `02_osi_time_dimension`  | `time_dimension`, time grain, three OSI strategies     | —                       |
-| 03 | `03_md_vs_ossie_context` | Markdown vs Ossie YAML as text-to-SQL context          | `ANTHROPIC_API_KEY`     |
-| 04 | `04_federated_agents`    | Concept registry, cross-institution alignment          | —                       |
-| 05 | `05_toolchain_drift`     | External mappings, drift across a toolchain            | —                       |
-| 06 | `06_groundings_and_lint` | Groundings, SL007, SL009, SL010                        | `semantido[lint]`       |
-| 07 | `07_security_master`     | Grain, fan-out, and the limits of static checks        | `semantido[lint]`       |
-| 08 | `08_release_timeline`    | What each release could express and enforce            | git checkout            |
+|    | Example                   | Demonstrates                                           | Needs                   |
+|----|---------------------------|--------------------------------------------------------|-------------------------|
+| 01 | `01_getting_started`      | Concepts, grain, exports, lint gate, EMIR/MiFIR schema | `semantido[lint,ossie]` |
+| 02 | `02_ossie_time_dimension` | `time_dimension`, time grain, three OSI strategies     | —                       |
+| 03 | `03_md_vs_ossie_context`  | Markdown vs Ossie YAML as text-to-SQL context          | `ANTHROPIC_API_KEY`     |
+| 04 | `04_federated_agents`     | Concept registry, cross-institution alignment          | —                       |
+| 05 | `05_toolchain_drift`      | External mappings, drift across a toolchain            | —                       |
+| 06 | `06_groundings_and_lint`  | Groundings, SL007, SL009, SL010                        | `semantido[lint]`       |
+| 07 | `07_security_master`      | Grain, fan-out, and the limits of static checks        | `semantido[lint]`       |
+| 08 | `08_release_timeline`     | What each release could express and enforce            | git checkout            |
 
 ## Where to start
 
