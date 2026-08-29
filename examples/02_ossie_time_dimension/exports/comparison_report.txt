@@ -1,4 +1,4 @@
-TIME-DIMENSION COMPARISON — what an OSI consumer sees
+TIME-DIMENSION COMPARISON — what an OSSIE consumer sees
 ============================================================
 
 Strategy: OFF
@@ -16,7 +16,7 @@ Strategy: CURATED
 Agent task: 'monthly transaction volume' -> needs ONE GROUP BY
 column on transaction_info.
   OFF     : 0 candidates flagged; the agent guesses from names and
-            types — booking vs value vs settlement is a coin toss.
+            types — booking vs. value vs. settlement is a coin toss.
   NAIVE   : 5 candidates flagged, including created_at/updated_at.
             Signal-to-noise 1:5; audit timestamps look identical
             to business dates.

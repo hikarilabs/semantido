@@ -1,4 +1,4 @@
-"""Exports the core banking models to OSI under three time-dimension
+"""Exports the core banking models to OSSIE under three time-dimension
 strategies and writes a comparison report.
 
 Strategies:
@@ -14,7 +14,7 @@ Strategies:
     OFF — no time metadata at all: what the export looks like if the
               format's time dimension is not used.
 
-Run from this directory:  python compare_osi_strategies.py
+Run from this directory:  python compare_ossie_strategies.py
 Outputs land in ./exports/
 """
 
@@ -69,7 +69,7 @@ def strip_time_curation(layer):
 
 
 def strip_dimension_blocks(doc):
-    """Returns a copy of an OSI doc with every field's dimension block
+    """Returns a copy of an OSSIE doc with every field's dimension block
     removed — the OFF strategy."""
     stripped = copy.deepcopy(doc)
     for model in stripped["semantic_model"]:
@@ -98,29 +98,29 @@ def main() -> None:
 
     # CURATED — the library default, straight from the real exporter
     curated = to_ossie_dict(layer, **MODEL_KWARGS)
-    to_ossie_yaml(layer, path=str(OUT / "osi_export_curated.yaml"), **MODEL_KWARGS)
+    to_ossie_yaml(layer, path=str(OUT / "ossie_export_curated.yaml"), **MODEL_KWARGS)
 
     # NAIVE — no curation, no audit demotion: pure type inference
     naive_layer = strip_time_curation(layer)
     naive = to_ossie_dict(naive_layer, audit_pattern=NEVER_MATCH, **MODEL_KWARGS)
-    (OUT / "osi_export_naive.yaml").write_text(
+    (OUT / "ossie_export_naive.yaml").write_text(
         yaml.safe_dump(naive, sort_keys=False, allow_unicode=True, width=88)
     )
 
     # OFF — the naive doc with every dimension block removed
     off = strip_dimension_blocks(naive)
-    (OUT / "osi_export_off.yaml").write_text(
+    (OUT / "ossie_export_off.yaml").write_text(
         yaml.safe_dump(off, sort_keys=False, allow_unicode=True, width=88)
     )
 
     # Round-trip check: every written file reloads to its source document
     for name, doc in (("curated", curated), ("naive", naive), ("off", off)):
-        reloaded = yaml.safe_load((OUT / f"osi_export_{name}.yaml").read_text())
+        reloaded = yaml.safe_load((OUT / f"ossie_export_{name}.yaml").read_text())
         assert reloaded == doc, f"round-trip failed: {name}"
 
-    # Comparison report — what an OSI consumer (agent, BI tool) sees
+    # Comparison report — what an OSSIE consumer (agent, BI tool) sees
     lines = [
-        "TIME-DIMENSION COMPARISON — what an OSI consumer sees",
+        "TIME-DIMENSION COMPARISON — what an OSSIE consumer sees",
         "=" * 60,
     ]
     for name, doc in (("OFF", off), ("NAIVE", naive), ("CURATED", curated)):

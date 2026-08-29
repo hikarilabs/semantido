@@ -1,8 +1,8 @@
-# OSI export and the time dimension — a three-strategy comparison
+# Apache Ossie export and the time dimension — a three-strategy comparison
 
 Exports a small core-banking model (`account_info`, `transaction_info`) to
-[Open Semantic Interchange](https://github.com/open-semantic-interchange/OSI)
-YAML under three time-dimension strategies, and reports what an OSI consumer
+[Apache Ossie]([https://github.com/apache/ossie])
+YAML under three time-dimension strategies and reports what an OSSIE consumer
 — an agent or a BI tool — sees under each.
 
 The `transaction_info` table is deliberately adversarial: five temporal
@@ -17,8 +17,8 @@ sibling attributes for grain and secondary axes.
 
 ```bash
 pip install semantido pyyaml
-cd examples/02_osi_time_dimension
-python compare_osi_strategies.py
+cd examples/02_ossie_time_dimension
+python compare_ossie_strategies.py
 ```
 
 ## What you'll see
@@ -29,18 +29,18 @@ python compare_osi_strategies.py
 | **naive** — flag every DATE/TIMESTAMP | 8 (incl. `created_at`, `updated_at`)                                                                                 | 1-in-5 signal-to-noise on transactions        |
 | **curated** — semantido default       | 4 business dates; `booking_date` PRIMARY, grain `day`; audit columns demoted with an explicit do-not-use instruction | one unambiguous axis                          |
 
-Outputs land in `exports/`: the three OSI YAML files (diffable side by side)
+Outputs land in `exports/`: the three OSSIE YAML files (diffable side by side)
 and `comparison_report.txt`.
 
 ## Files
 
 - `models/core_banking.py` — the two models with primary axis, a secondary
   axis, grains, privacy levels, and audit columns declared.
-- `compare_osi_strategies.py` — builds the layer once, exports it three ways
+- `compare_ossie_strategies.py` — builds the layer once, exports it three ways
   with the real exporter, validates YAML round-trips, writes the report.
 
 For the full analysis of *why* the strategies differ — which metadata signal
 does the work, and what `TimeGrain` does and does not contribute — see the
-companion article, and `examples/03_md_vs_osi_context` for the follow-on
-question of how the OSI export compares with semantido's Markdown export as
+companion article, and `examples/03_md_vs_ossie_context` for the follow-on
+question of how the Apache Ossie export compares with semantido's Markdown export as
 LLM prompt context.

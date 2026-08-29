@@ -52,7 +52,7 @@ dot shows the generated SQL and the check that decided it. Inside a Claude
 
 ## Files
 
-- `experiment_md_vs_osi.py` — builds the three contexts from the models in
+- `experiment_md_vs_ossie.py` — builds the three contexts from the models in
   `../02_osi_time_dimension` (single source of truth, no duplicated models),
   writes the structural report, and runs the live grid when a key is set.
 - `runner.html` — the same experiment as an interactive page.

@@ -1,4 +1,4 @@
-"""Experiment: semantido Markdown vs. OSI YAML as LLM context for text-to-SQL.
+"""Experiment: semantido Markdown vs. OSSIE YAML as LLM context for text-to-SQL.
 
 Design
 ------
@@ -6,7 +6,7 @@ One semantic layer, three serializations fed as the ONLY schema context to a
 text-to-SQL prompt:
 
     MD — semantido's Markdown export as shipped today.
-    OSI — semantido's OSI YAML export as shipped today.
+    OSSIE — semantido's OSSIE YAML export as shipped today.
     MD_SCHEMA — the structural tier alone (to_markdown_schema): tables,
                 keys, types, FK targets, relationships; no enrichment.
 
@@ -15,7 +15,7 @@ signals this experiment originally appended by hand (time dimensions,
 grains, default filters, glossary) — MD *is* the old MD_ENRICHED. The
 control that decomposes the comparison is now the schema tier:
 MD_SCHEMA vs. MD isolates the content effect at exactly constant
-format; MD vs. OSI isolates the format effect at (near) constant
+format; MD vs. OSSIE isolates the format effect at (near) constant
 content.
 
 Six probe questions each target one metadata signal, scored deterministically
@@ -24,8 +24,8 @@ forbids = none may match). The primary metric is the per-condition pass rate.
 
 Usage
 -----
-    python experiment_md_vs_osi.py # builds contexts + structural report
-    ANTHROPIC_API_KEY=... python experiment_md_vs_osi.py --trials 5
+    python experiment_md_vs_ossie.py # builds contexts + structural report
+    ANTHROPIC_API_KEY=... python experiment_md_vs_ossie.py --trials 5
                                                    # + runs the live evaluation
 
 Without a key the script still produces the three context files and the
@@ -54,7 +54,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Models live in example 02 — single source of truth, no duplication.
-sys.path.insert(0, str(Path(__file__).parent.parent / "02_osi_time_dimension"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "02_ossie_time_dimension"))
 import models.core_banking  # noqa: E402,F401 (registers the mapped classes)
 
 OUT = Path(__file__).parent / "exports"
@@ -132,7 +132,7 @@ def build_contexts() -> dict[str, str]:
 
     md = to_markdown(layer, include=("schema", "enriched"))
     md_schema = to_markdown_schema(layer)
-    osi = to_ossie_yaml(
+    ossie = to_ossie_yaml(
         layer,
         model_name="core_banking_analytics",
         instructions=(
@@ -147,10 +147,10 @@ def build_contexts() -> dict[str, str]:
     # output: MD *is* the old MD_ENRICHED. The content-effect comparison
     # is now expressed as tiers -- md_schema (structure only) vs. md
     # (structure + enrichment) -- at exactly constant format.
-    contexts = {"md": md, "osi": osi, "md_schema": md_schema}
+    contexts = {"md": md, "ossie": ossie, "md_schema": md_schema}
     OUT.mkdir(exist_ok=True)
     (OUT / "context_md.md").write_text(md)
-    (OUT / "context_osi.yaml").write_text(osi)
+    (OUT / "context_ossie.yaml").write_text(ossie)
     (OUT / "context_md_schema.md").write_text(md_schema)
     return contexts
 
