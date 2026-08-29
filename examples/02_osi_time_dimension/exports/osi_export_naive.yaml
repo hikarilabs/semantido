@@ -9,7 +9,7 @@ semantic_model:
       signed sum of amounts over a period (not turnover)'
   custom_extensions:
   - vendor_name: SEMANTIDO
-    data: '{"exporter": "semantido.exporters.osi"}'
+    data: '{"exporter": "semantido.exporters.ossie"}'
   datasets:
   - name: account_info
     source: account_info

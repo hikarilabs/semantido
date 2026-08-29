@@ -242,8 +242,9 @@ def _check_joins(
                             f"{sides[0][2]!r} (grain {sides[0][3]!r}) but "
                             f"{sides[1][0]}.{sides[1][1]} is "
                             f"{sides[1][2]!r} (grain {sides[1][3]!r}) — "
-                            "equating identifiers at different grains "
-                            "fans out or drops rows",
+                            "identifiers at different grains occupy "
+                            "different value spaces, so this equality "
+                            "matches nothing",
                         )
                     )
     return findings

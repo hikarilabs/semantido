@@ -5,6 +5,46 @@ All notable changes to semantido are documented here. The project adheres to
 the authoring surface is stable in practice; exporter output may move with the
 specs it targets.
 
+## [Unreleased]
+
+### Added
+
+- **Deprecated aliases `to_osi_dict` / `to_osi_yaml`.** These were renamed to
+  `to_ossie_*` in 0.5.1 with no shim and no changelog entry, so code written
+  against 0.5.0 broke on upgrade. The old names now work again and emit a
+  `DeprecationWarning` naming the replacement. They will be removed in 0.7.
+
+- **`examples/06_groundings_and_lint`** — groundings lifecycle and the four
+  checks that guard it (SL007 in both directions, SL009, SL010), on the
+  EMIR/MiFIR counterparty homonym. Every finding in the output is real
+  linter output.
+
+- **`examples/07_security_master`** — grain, the fan-out, and the limits of
+  static checking. The twelve-row matrix is computed from the fixture rather
+  than asserted.
+
+- **`examples/08_release_timeline`** — one fixed schema probed under every
+  published release, showing what each could express and enforce.
+  Deterministic and offline.
+
+- **`examples/README.md`** — an index, with a reading order.
+
+### Changed
+
+- **SL008 message wording corrected.** It claimed a grain-mismatched join
+  "fans out or drops rows". It does neither: identifiers at different grains
+  occupy different value spaces, so the equality matches nothing and the join
+  returns an empty set. The fan-out comes from the *same* concept keying both
+  sides at the same grain, which SL008 does not catch. `docs/guides/lint.md`
+  carried the same overclaim and has been corrected alongside.
+
+### Removed
+
+- **`examples/04_federated_agents/bank_a.py` and `bank_b.py`** (root copies).
+  `run_experiment.py` prepends `models/` to `sys.path`, so the `models/`
+  copies were the live ones and these never loaded. They had already drifted
+  from their live counterparts.
+
 ## [0.5.3]
 
 ### Added

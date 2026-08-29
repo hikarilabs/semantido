@@ -17,6 +17,9 @@ This module provides the file exporter functionality for Semantido,
 including JSON and Markdown exporters.
 """
 
+import warnings
+from typing import Any
+
 from semantido.exporters.json_exporter import to_json, to_json_file
 from semantido.exporters.markdown_exporter import (
     to_markdown,
@@ -34,6 +37,37 @@ from semantido.exporters.groundings_exporter import (
 )
 from semantido.exporters.skos_exporter import to_skos_file, to_skos_turtle
 
+
+def to_osi_dict(*args: Any, **kwargs: Any) -> Any:
+    """Deprecated alias for :func:`to_ossie_dict`.
+
+    Renamed in 0.5.1 when the exporter moved to the Ossie naming. Kept so
+    that code written against 0.5.0 keeps working; will be removed in 0.7.
+    """
+    warnings.warn(
+        "to_osi_dict() was renamed to to_ossie_dict() in 0.5.1 and will be "
+        "removed in 0.7.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return to_ossie_dict(*args, **kwargs)
+
+
+def to_osi_yaml(*args: Any, **kwargs: Any) -> Any:
+    """Deprecated alias for :func:`to_ossie_yaml`.
+
+    Renamed in 0.5.1 when the exporter moved to the Ossie naming. Kept so
+    that code written against 0.5.0 keeps working; will be removed in 0.7.
+    """
+    warnings.warn(
+        "to_osi_yaml() was renamed to to_ossie_yaml() in 0.5.1 and will be "
+        "removed in 0.7.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return to_ossie_yaml(*args, **kwargs)
+
+
 __all__ = [
     "to_json",
     "to_json_file",
@@ -42,6 +76,8 @@ __all__ = [
     "to_markdown_file",
     "to_markdown_schema",
     "to_markdown_tables",
+    "to_osi_dict",
+    "to_osi_yaml",
     "to_ossie_dict",
     "to_ossie_yaml",
     "load_groundings",

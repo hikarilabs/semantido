@@ -1,0 +1,17 @@
+format: semantido/groundings
+version: '1'
+namespace: regreport
+groundings:
+  counterparty.emir:
+    definition_checksum: a37bb4e5f041
+    tables:
+    - emir_trade_report
+    columns:
+    - emir_trade_report.other_cpty_lei
+    - emir_trade_report.reporting_cpty_lei
+  counterparty.mifir:
+    definition_checksum: d6c52fb1719c
+    tables:
+    - mifir_transaction_report
+    columns:
+    - mifir_transaction_report.market_cpty_lei

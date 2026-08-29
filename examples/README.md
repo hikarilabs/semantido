@@ -1,0 +1,36 @@
+# Examples
+
+Each folder is self-contained and runnable. Examples 01–05 predate v0.5 and
+demonstrate the earlier feature set; 06–08 cover grain, groundings and lint.
+
+| | Example | Demonstrates | Needs |
+|---|---|---|---|
+| 01 | `01_getting_started` | Decorators, exports, EMIR/MiFIR trade reporting schema | — |
+| 02 | `02_osi_time_dimension` | `time_dimension`, time grain, three OSI strategies | — |
+| 03 | `03_md_vs_osi_context` | Markdown vs Ossie YAML as text-to-SQL context | `ANTHROPIC_API_KEY` |
+| 04 | `04_federated_agents` | Concept registry, cross-institution alignment | — |
+| 05 | `05_toolchain_drift` | External mappings, drift across a toolchain | — |
+| 06 | `06_groundings_and_lint` | Groundings, SL007, SL009, SL010 | `semantido[lint]` |
+| 07 | `07_security_master` | Grain, fan-out, and the limits of static checks | `semantido[lint]` |
+| 08 | `08_release_timeline` | What each release could express and enforce | git checkout |
+
+## Where to start
+
+**New to the library** → `01_getting_started`, then `07_security_master`.
+
+**Evaluating whether a semantic layer is worth it** → `07_security_master`
+for the failure mode, then `08_release_timeline` for what it costs in context
+tokens (629 → 660 across the whole release history).
+
+**Setting up a CI gate** → `06_groundings_and_lint`.
+
+## A note on scope
+
+`07_security_master` and `08_release_timeline` both show a failure the linter
+does **not** catch: a join where the same concept keys both sides at the same
+grain fans out, and no shipped check has ever caught it. That is deliberate.
+Cardinality is a separate axis from grain and needs the column tuple that
+makes a row unique — a v0.6 question.
+
+Examples that assert what the library catches are only useful if they are
+equally clear about what it does not.

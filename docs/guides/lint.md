@@ -63,11 +63,19 @@ figi = registry.concept(
 
 Grain is free-form: the registry imposes no vocabulary. But declared grains
 are compared **verbatim** by the linter: any join equality between columns
-bound to concepts of different grain is an SL008 error. This is the static
-form of the classic reference-data trap — joining an issue-level identifier
-(one ISIN) to a listing-level identifier (many FIGIs) fans out or drops rows,
-and nothing at the schema tier can see it. The linter can, because the
-grains are declared.
+bound to concepts of different grain is an SL008 error.
+
+Note what this does and does not catch. Identifiers at different grains
+occupy different value spaces, so `isin = ric` matches nothing — the join
+returns an empty set. That is loud and cheap to fix, and SL008 catches it.
+
+The expensive failure is the opposite shape: `isin = isin` across two
+listing-grain feeds, where an issue-grain identifier is a repeated non-key
+column on both sides. That fans out — twelve rows for one instrument in the
+worked example — and SL008 is silent, because both sides carry the same
+concept at the same grain. Cardinality is a separate axis from grain, and
+expressing it needs the column tuple that makes a row unique. See
+`examples/07_security_master` for both cases side by side.
 
 ## Joins across a declared distinction (SL009)
 

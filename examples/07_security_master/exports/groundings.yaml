@@ -1,0 +1,24 @@
+format: semantido/groundings
+version: '1'
+namespace: secmaster
+groundings:
+  figi:
+    definition_checksum: 5b3641d2feea
+    tables:
+    - bloomberg_feed
+    columns:
+    - bloomberg_feed.figi
+  isin:
+    definition_checksum: 728c544e1eb5
+    tables:
+    - anna_register
+    columns:
+    - anna_register.isin
+    - bloomberg_feed.isin
+    - refinitiv_feed.isin
+  ric:
+    definition_checksum: 7f343fda473f
+    tables:
+    - refinitiv_feed
+    columns:
+    - refinitiv_feed.ric
