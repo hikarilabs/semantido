@@ -55,6 +55,7 @@ The design rules, each of which prevents a class of silent error:
 - **Relation kwargs take `Concept` handles, not strings.** A misspelled handle is a `NameError` at author time; a string is a `TypeError`; a handle from another registry is a `ValueError`. There is no unresolved-reference state to discover later.
 - **Symmetric relations reciprocate automatically.** Declaring `distinct_from=emir` on `mifir` also records the mirror edge on `emir` — exports show the assertion from both sides, and you cannot forget half of it.
 - **External mappings must state their relation.** There is no way to write an untyped pointer at FIBO: you build the mapping with `exact_match()`, `close_match()`, `narrow_match()`, `broad_match()`, or `related_match()` (SKOS-aligned), against a *pinned* source version.
+- **External mappings are checked against your own relations.** Two concepts asserted `distinct_from` cannot both claim `exact_match()` to the same target — exactMatch is transitive, so that would entail they are the same thing. See [Mapping onto an external ontology](#mapping-onto-an-external-ontology) below. *(SL010, v0.5.3.)*
 - **Dotted ids are namespacing convention only.** `counterparty.emir` derives no relation from its prefix; every edge is explicit.
 - **`validate()` collects everything.** Unresolvable targets, self-relations, unpinned mapping sources, and cycles in the broader/narrower graph are reported in one raise, not one at a time.
 
@@ -77,6 +78,38 @@ Grain covers cardinality only. Two concepts may share a grain and still denote d
 Note that neither check catches a fan-out join, where the same concept keys both sides but the tables sit at a finer grain. That needs a table-level grain declaration, which the registry does not currently carry.
 
 Grain travels with the meaning artifact (`registry.to_yaml()`), not the groundings.
+
+## Mapping onto an external ontology
+
+*(SL010 added in v0.5.3.)* External mappings and `distinct_from` edges are two kinds of claim about the same concepts, and they can contradict each other.
+
+`skos:exactMatch` is symmetric **and transitive** (SKOS Reference S44/S45). So if two concepts both claim an exactMatch to the same external IRI, SKOS entails that they are interchangeable with each other. Assert `distinct_from` between them as well, and the registry says both that they are distinct and that they are the same:
+
+```python
+emir = reg.concept(
+    "counterparty.emir", "...", label="Counterparty",
+    external=exact_match("fibo", "fibo-fnd-pty-pty:PartyInRole"))
+
+mifir = reg.concept(
+    "counterparty.mifir", "...", label="Counterparty",
+    distinct_from=emir,
+    external=exact_match("fibo", "fibo-fnd-pty-pty:PartyInRole"))  # contradiction
+```
+
+Any SKOS reasoner over the exported Turtle would reject that. [SL010](lint.md#contradictory-external-mappings-sl010) catches it before export:
+
+```
+SL010 error registry.counterparty.emir
+  contradictory mapping: 'counterparty.emir' and 'counterparty.mifir' are
+  asserted DISTINCT_FROM, but both claim exactMatch to
+  'fibo-fnd-pty-pty:PartyInRole'. skos:exactMatch is transitive, so this
+  entails the two concepts are interchangeable. Use closeMatch or broadMatch
+  for a regime-specific reading of a shared external concept
+```
+
+`skos:closeMatch` is deliberately **not** transitive — precisely so that similarity assessments don't propagate across schemes. Two distinct concepts may legitimately closeMatch the same external concept, and SL010 stays silent for `close_match()`, `broad_match()`, `narrow_match()` and `related_match()`.
+
+Which is also the better modelling. Neither regime's *Counterparty* **is** FIBO's `PartyInRole` — each is a narrower, regime-scoped reading, so `broad_match()` states the relationship honestly where `exact_match()` overclaims it. The authoring example above maps only the EMIR concept for this reason; mapping both to the same IRI with `exact_match()` would be exactly the contradiction SL010 exists to catch.
 
 ## Binding concepts to the schema
 
