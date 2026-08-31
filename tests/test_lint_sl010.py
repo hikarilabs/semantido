@@ -4,7 +4,7 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import DeclarativeBase
 
 from semantido import ConceptRegistry, OntologySource, SemanticBase, semantic_table
-from semantido.generators.concept_registry import close_match, exact_match
+from semantido.concepts import close_match, exact_match
 from semantido.lint import Severity, lint_layer
 
 FIBO = "https://spec.edmcouncil.org/fibo/ontology/FND/Parties/Parties/Counterparty"
